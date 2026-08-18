@@ -1,0 +1,120 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Funzione helper per controllare autenticazione
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Regola di default chiusa
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Funzione helper per verificare se utente e' amministratore
+    function isAdmin() {
+      let userData = get(/databases/$(database)/documents/dipendenti/$(request.auth.uid)).data;
+      return userData.ruolo == 'amministratore';
+    }
+
+    // Funzione helper per verificare se utente e' impiegata base
+    function isImpiegata() {
+      return get(/databases/$(database)/documents/dipendenti/$(request.auth.uid)).data.ruolo == 'impiegata';
+    }
+
+    // Funzione helper per verificare se utente e' soel
+    function isSoel() {
+      return get(/databases/$(database)/documents/dipendenti/$(request.auth.uid)).data.ruolo == 'soel';
+    }
+
+    // Helper per chiavi modificate
+    function getAffectedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // Campi anagrafici e contatto primario
+    function selfEditableFields() {
+      return ['nome', 'cognome', 'emailPersonale', 'cellulare', 'sesso', 'data_nascita', 'luogo_nascita', 'residenza'];
+    }
+
+    // Regole per i dipendenti (lettura/scrittura profilo)
+    match /dipendenti/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata() || isSoel());
+      
+      allow update: if isAuthenticated() && request.auth.uid == userId &&
+        getAffectedKeys().hasOnly(selfEditableFields());
+        
+      allow update: if isAuthenticated() && isAdmin() &&
+        !getAffectedKeys().hasAny(['ruolo', 'canElevate', 'uid', 'email', 'createdAt']);
+        
+      allow create: if isAuthenticated() && isAdmin() &&
+        request.resource.data.ruolo in ['autista', 'fornitore', 'impiegata', 'soel'] && 
+        request.resource.data.canElevate != true;
+        
+      allow delete: if false; 
+    }
+
+    // Protezione registro amministratori atomico
+    match /config/system_status {
+      allow read: if isAuthenticated() && isAdmin();
+      allow write: if false;
+    }
+
+    // Protezione audit logs
+    match /audit_logs_admin/{logId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow write: if false;
+    }
+
+    match /mezzi/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /progetti/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /clienti_fatturazione/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /giustificativi/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /presenze/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /costi_carburante/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /costi_personale/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Regole per il nuovo sistema Tenant (DNR)
+    match /customers/{tenant}/{collection=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /clienti/{tenant}/{collection=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Legacy (mantenute per compatibilita, da rimuovere in futuro)
+    match /mappatura/{docId} { allow read, write: if isAuthenticated(); }
+    match /articoli/{docId} { allow read, write: if isAuthenticated(); }
+    match /config/permessi_dashboard {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isAdmin();
+    }
+    match /config/{docId} { 
+      allow read, write: if isAuthenticated() && docId != 'permessi_dashboard'; 
+    }
+    match /viaggi/{document=**} { allow read, write: if isAuthenticated(); }
+    match /ddt/{docId} { allow read, write: if isAuthenticated(); }
+  }
+}

@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fatturazione Clienti - Log Solution</title>
+    <link rel="stylesheet" href="styles.css?v=6.428">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .list-row:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+        }
+        .zone-card {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .zone-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        .zone-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .price-input {
+            width: 100px;
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .price-container {
+            display: none;
+            margin-left: auto;
+            align-items: center;
+            gap: 8px;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .delete-btn:hover {
+            color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .action-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #64748b;
+            outline: none;
+        }
+        .action-btn:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.1);
+        }
+        .action-btn.delete-btn:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #ef4444;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+<body style="overflow: hidden;"> <!-- bloccato scroll finché non si sblocca -->
+<div id="impostazioniLockScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: opacity 0.3s ease;">
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; text-align: center; max-width: 400px; width: 90%;">
+        <span class="material-icons-round" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;">lock</span>
+        <h3 style="margin: 0 0 10px 0; color: #1e293b;">Area Riservata</h3>
+        <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Inserisci la tua password personale per accedere alle anagrafiche.</p>
+        
+        <input type="text" id="impostazioniUnlockPassword" placeholder="Password" style="width: 100%; padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 16px; text-align: center; box-sizing: border-box; -webkit-text-security: disc;" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true">
+        
+        <button id="btnUnlockImpostazioni" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+            <span class="material-icons-round" style="margin-right: 8px;">lock_open</span>
+            Sblocca
+        </button>
+        <button onclick="window.navigateWithState('dashboard.html')" style="margin-top: 15px; background: none; border: none; color: #64748b; text-decoration: underline; cursor: pointer; font-size: 13px;">
+            Torna alla Dashboard
+        </button>
+    </div>
+</div>
+<nav class="glass-nav">
+    <div class="nav-content">
+        <img src="img/logo.png" alt="LS" style="height: 32px; width: auto; margin-right: 8px;">
+        <button id="dashboardBtn" class="logout-btn" title="Dashboard"
+            onclick="window.navigateWithState('dashboard.html')"
+            style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
+            <span class="material-icons-round">dashboard</span>
+        </button>
+        <div class="nav-title" style="flex: 1;">Fatturazione Clienti (Motore Dinamico)</div>
+        <a href="#" onclick="window.logoutFirebase(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
+    </div>
+</nav>
+
+<main class="main-container">
+    <div class="glass-panel form-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+            <h2 style="margin: 0; color: var(--primary);">Gestione Clienti e Fatturazione</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn-primary" style="width:auto; font-size:13px; padding:10px 16px;" onclick="mostraFormNuovoCliente()">
+                    <span class="material-icons-round" style="font-size:18px; vertical-align:middle; margin-right:6px;">add_circle</span>Nuovo Cliente
+                </button>
+                <button type="button" class="btn-primary" style="width:auto; box-shadow:none; font-size:13px; padding:10px 16px; background-color: white; color: #d97706; border: 1px solid #d97706;" onclick="const f = document.getElementById('gestioneMagazziniContainer'); f.style.display = f.style.display==='none'?'block':'none';"><span class="material-icons-round" style="font-size:18px; vertical-align:middle; margin-right:6px; color:#d97706;">inventory_2</span>Magazzini</button>
+                <button type="button" class="btn-primary" style="width:auto; box-shadow:none; font-size:13px; padding:10px 16px; background-color: white; color: #7c3aed; border: 1px solid #7c3aed;" onclick="const f = document.getElementById('gestioneListeNavetteContainer'); f.style.display = f.style.display==='none'?'block':'none';"><span class="material-icons-round" style="font-size:18px; vertical-align:middle; margin-right:6px; color:#7c3aed;">airport_shuttle</span>Gestione Liste Navette</button>
+            </div>
+        </div>
+
+        <!-- Container: Sedi Magazzino -->
+        <div id="gestioneMagazziniContainer" style="display: none; background:#fffbeb; padding:20px; border-radius:12px; border:1px solid #fde68a; margin-bottom:24px;">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid #d97706; padding-left: 10px;">
+                📦 Liste per le <strong>Sedi Magazzino</strong>: utilizzate dai magazzinieri. I magazzini inseriti qui non verranno inclusi nella fatturazione clienti.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #fde68a;">
+                    <label style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 8px; display: block;">Sedi / Destinazioni Magazzino</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <input type="text" id="nuovoMagazzinoSede" placeholder="es. Sommacampagna" style="text-transform: uppercase; width: 100%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #fde68a; box-sizing: border-box;">
+                        <button type="button" class="btn-primary" style="padding: 8px; font-size: 13px; border-radius: 6px; width: 100%; justify-content: center; background:#d97706; border-color:#d97706;" onclick="window.aggiungiNuovaAnagrafica('magazzini_sedi', 'nuovoMagazzinoSede', 'fatturazione_magazzini_sedi', 'listaMagazziniSedi')"><span class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">add</span>Aggiungi</button>
+                    </div>
+                    <div id="listaMagazziniSedi" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
+                </div>
+                <!-- Div vuoti per forzare la stessa larghezza della griglia a 4 colonne -->
+                <div></div><div></div><div></div>
+            </div>
+        </div>
+
+        <!-- Container: Gestione Liste Navette (Unified) -->
+        <div id="gestioneListeNavetteContainer" style="display: none; background:#faf5ff; padding:20px; border-radius:12px; border:1px solid #e9d5ff; margin-bottom:24px;">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid #7c3aed; padding-left: 10px;">
+                🚐 Liste per la <strong>Navetta</strong> e <strong>Navetta Autisti</strong>: configura qui i punti e i clienti abilitando ciascuna voce per l'utilizzo su uno o entrambi i moduli tramite le spunte a lato del nome. Ora puoi anche impostare il <strong>Prezzo/Importo (€)</strong>.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+                
+                <!-- 1. Partenza / Rientro -->
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e9d5ff;">
+                    <label style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 8px; display: block;">1. Partenza / Rientro</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="nuovaNavettaPartenza" placeholder="es. Deposito" style="text-transform: uppercase; width: 100%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                        </div>
+                        <button type="button" class="btn-primary" style="padding: 8px; font-size: 13px; border-radius: 6px; width: 100%; justify-content: center; background:#7c3aed; border-color:#7c3aed;" onclick="window.aggiungiNuovaAnagraficaNavetta('partenze', 'fatturazione_navette_partenze', 'nuovaNavettaPartenza', '')"><span class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">add</span>Aggiungi</button>
+                    </div>
+                    <div id="listaAnagraficaPartenze" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; max-height: 250px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- 2. Luogo di Carico -->
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e9d5ff;">
+                    <label style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 8px; display: block;">2. Luogo di Carico</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="nuovaNavettaCarico" placeholder="es. Hub Logistico" style="text-transform: uppercase; width: 60%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                            <input type="number" step="0.01" id="nuovaNavettaCaricoPrezzo" placeholder="€ (Tariffa)" style="width: 40%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                        </div>
+                        <button type="button" class="btn-primary" style="padding: 8px; font-size: 13px; border-radius: 6px; width: 100%; justify-content: center; background:#7c3aed; border-color:#7c3aed;" onclick="window.aggiungiNuovaAnagraficaNavetta('carichi', 'fatturazione_navette_carichi', 'nuovaNavettaCarico', 'nuovaNavettaCaricoPrezzo')"><span class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">add</span>Aggiungi</button>
+                    </div>
+                    <div id="listaAnagraficaCarichi" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; max-height: 250px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- 3. Clienti / Merce -->
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e9d5ff;">
+                    <label style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 8px; display: block;">3. Clienti / Merce</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="nuovaNavettaClienti" placeholder="es. Cliente Y" style="text-transform: uppercase; width: 60%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                            <input type="number" step="0.01" id="nuovaNavettaClientiPrezzo" placeholder="€ (Tariffa)" style="width: 40%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                        </div>
+                        <div style="display:flex; flex-direction: column; gap:4px; margin-bottom: 4px;">
+                            <label style="font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                                <input type="checkbox" id="nuovaNavettaClientiFatturaDiretta" onchange="document.getElementById('nuovaNavettaClientiIntestatarioContainer').style.display = this.checked ? 'block' : 'none'">
+                                Fattura Diretta
+                            </label>
+                            <div id="nuovaNavettaClientiIntestatarioContainer" style="display: none;">
+                                <input type="text" id="nuovaNavettaClientiIntestatario" placeholder="A chi fatturare? (Intestatario)" style="text-transform: uppercase; width: 100%; padding: 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                            </div>
+                        </div>
+                        <button type="button" class="btn-primary" style="padding: 8px; font-size: 13px; border-radius: 6px; width: 100%; justify-content: center; background:#7c3aed; border-color:#7c3aed;" onclick="window.aggiungiNuovaAnagraficaNavetta('clienti', 'fatturazione_navette_clienti', 'nuovaNavettaClienti', 'nuovaNavettaClientiPrezzo', 'nuovaNavettaClientiFatturaDiretta', 'nuovaNavettaClientiIntestatario')"><span class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">add</span>Aggiungi</button>
+                    </div>
+                    <div id="listaAnagraficaClienti" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; max-height: 250px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- 4. Destinazione Merce -->
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e9d5ff;">
+                    <label style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 8px; display: block;">4. Destinazione Merce</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="nuovaNavettaDestinazioni" placeholder="es. Punto Scarico B" style="text-transform: uppercase; width: 100%; padding: 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                        </div>
+                        <button type="button" class="btn-primary" style="padding: 8px; font-size: 13px; border-radius: 6px; width: 100%; justify-content: center; background:#7c3aed; border-color:#7c3aed;" onclick="window.aggiungiNuovaAnagraficaNavetta('destinazioni', 'fatturazione_navette_destinazioni', 'nuovaNavettaDestinazioni', '')"><span class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">add</span>Aggiungi</button>
+                    </div>
+                    <div id="listaAnagraficaDestinazioni" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; max-height: 250px; overflow-y: auto;"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="listaClientiContainer" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Lista dei clienti esistenti popolata via JS -->
+        </div>
+
+        <!-- Form Inserimento/Modifica Cliente -->
+        <div id="formClienteContainer" style="display: none; background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0; margin-top:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="margin:0; color:#334155; font-size:16px;" id="formTitle">Nuovo Cliente</h3>
+                <button type="button" onclick="nascondiFormCliente()" style="background:none; border:none; color:#94a3b8; cursor:pointer;"><span class="material-icons-round">close</span></button>
+            </div>
+
+            <!-- NOME E VISIBILITA CLIENTE -->
+            <div class="form-grid" style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end;">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label for="clienteNomeInput">Nome Cliente / Progetto *</label>
+                    <input type="text" id="clienteNomeInput" placeholder="es. CATTEL o GRAN_CHEF" style="text-transform: uppercase;">
+                </div>
+                <div style="padding-bottom: 8px;">
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; user-select: none;">
+                        <input type="checkbox" id="clienteVisibileInput" checked style="width: 16px; height: 16px; accent-color: #d946ef;">
+                        Visibile in Presenze
+                    </label>
+                </div>
+            </div>
+
+            <!-- MAGAZZINI (PARTENZA / ARRIVO) -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                <label style="font-size: 14px; font-weight: 700; color: #475569; display: block; margin-bottom: 12px;">
+                    <span class="material-icons-round" style="font-size:18px; vertical-align:middle; color:var(--primary);">warehouse</span> 
+                    Magazzini del Cliente (Partenze e Arrivi)
+                </label>
+                <p style="font-size:12px; color:#64748b; margin-bottom:16px;">I magazzini inseriti qui compariranno nelle tendine Partenza/Arrivo nella Pianificazione Viaggi.</p>
+                
+                <div id="magazziniClienteList" style="display: flex; flex-direction: column; gap: 8px; min-height: 10px; margin-bottom: 16px;"></div>
+                
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 8px;">
+                    <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: block;">+ Aggiungi Nuovo Magazzino</label>
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-bottom: 8px;">
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">Nome (es. Sede Centrale) *</label>
+                            <input type="text" id="magNome" placeholder="Nome Magazzino" style="padding:4px 8px; font-size:11px; height:28px; text-transform: uppercase;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">Indirizzo (con autocompletamento) *</label>
+                            <input type="text" id="magIndirizzo" placeholder="Inizia a digitare l'indirizzo..." style="padding:4px 8px; font-size:11px; height:28px;">
+                        </div>
+                    </div>
+                    <!-- Hidden fields per Lat e Lon -->
+                    <input type="hidden" id="magLat">
+                    <input type="hidden" id="magLon">
+                    <button type="button" onclick="aggiungiMagazzinoCliente()" class="btn-primary" style="width: auto; padding: 4px 12px; font-size: 11px; background: #3b82f6; border: none; height: 26px; line-height: 1;">Salva Magazzino</button>
+                </div>
+            </div>
+
+            <!-- RUBRICA REFERENTI -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                <label style="font-size: 14px; font-weight: 700; color: #475569; display: block; margin-bottom: 12px;">
+                    <span class="material-icons-round" style="font-size:18px; vertical-align:middle; color:var(--primary);">contacts</span> 
+                    Rubrica Referenti o Reparti
+                </label>
+                
+                <div id="referentiList" style="display: flex; flex-direction: column; gap: 8px; min-height: 10px; margin-bottom: 16px;"></div>
+                
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 8px;">
+                    <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: block;">+ Aggiungi Nuovo Referente</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 8px;">
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">Nome Referente *</label>
+                            <input type="text" id="refNome" placeholder="es. Mario Rossi" style="padding:4px 8px; font-size:11px; height:28px;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">Ruolo / Reparto</label>
+                            <input type="text" id="refRuolo" placeholder="es. Amministrazione" style="padding:4px 8px; font-size:11px; height:28px;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">E-mail</label>
+                            <input type="email" id="refEmail" placeholder="es. admin@azienda.it" style="padding:4px 8px; font-size:11px; height:28px;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">Telefono Fisso</label>
+                            <input type="tel" id="refFisso" placeholder="es. 045123456" style="padding:4px 8px; font-size:11px; height:28px;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:10px; margin-bottom:2px;">Cellulare</label>
+                            <input type="tel" id="refCell" placeholder="es. 3401234567" style="padding:4px 8px; font-size:11px; height:28px;">
+                        </div>
+                    </div>
+                    <button type="button" onclick="aggiungiReferente()" class="btn-primary" style="width: auto; padding: 4px 12px; font-size: 11px; background: #10b981; border: none; height: 26px; line-height: 1;">Aggiungi in Rubrica</button>
+                </div>
+            </div>
+
+            <!-- GESTIONE ZONE E FATTURAZIONE -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                <label style="font-size: 14px; font-weight: 700; color: #475569; display: block; margin-bottom: 12px;">
+                    <span class="material-icons-round" style="font-size:18px; vertical-align:middle; color:var(--primary);">map</span> 
+                    Tariffe Viaggi e Tariffe DDT (Gestione Zone)
+                </label>
+                <p style="font-size:12px; color:#64748b; margin-bottom:16px;">Definisci qui le zone di competenza per questo cliente e le relative regole di fatturazione (Mensile, a Viaggio o a DDT).</p>
+
+                <!-- Elenco delle Zone Create -->
+                <div id="zoneListContainer" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;"></div>
+
+                <!-- Aggiunta Nuova Zona -->
+                <div style="display: flex; gap: 8px; align-items: flex-end; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 12px; font-weight: 700; color:#334155;">Nome Nuova Zona *</label>
+                        <input type="text" id="nuovaZonaInput" placeholder="Es. LAGO SIRMIONE, MANTOVA, BELLUNO..." style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; margin-top: 4px; text-transform: uppercase;">
+                    </div>
+                    <button type="button" onclick="aggiungiZona()" class="btn-primary" style="width: auto; padding: 10px 16px; font-size: 13px; height: 42px;">+ Crea Zona</button>
+                </div>
+            </div>
+
+            <!-- SEZIONE CREDENZIALI PORTALE CATTEL (Conditional) -->
+            <div id="cattelCredentialsContainer" style="display: none; background: #ffffff; border: 1.5px solid #10b981; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                <label style="font-size: 14px; font-weight: 700; color: #10b981; display: block; margin-bottom: 12px;">
+                    <span class="material-icons-round" style="font-size:18px; vertical-align:middle;">vpn_key</span> 
+                    Credenziali Portale CATTEL (Integrazione)
+                </label>
+                <p style="font-size:12px; color:#64748b; margin-bottom:16px;">Queste credenziali vengono usate nella pagina di Elaborazione per accedere automaticamente al portale Cattel e scaricare i DDT.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="font-size:11px; margin-bottom:4px; font-weight:600;">Cattel Username</label>
+                        <input type="text" id="cattelUsername" placeholder="Username" style="width:100%; padding:8px 12px; font-size:13px; border-radius:8px; border:1px solid #cbd5e1;">
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="font-size:11px; margin-bottom:4px; font-weight:600;">Cattel Password</label>
+                        <input type="password" id="cattelPassword" placeholder="Password" style="width:100%; padding:8px 12px; font-size:13px; border-radius:8px; border:1px solid #cbd5e1;">
+                    </div>
+                    <div class="input-group" style="grid-column: 1 / -1; margin-bottom:0;">
+                        <label style="font-size:11px; margin-bottom:4px; font-weight:600;">Cattel URL Portale</label>
+                        <input type="text" id="cattelUrl" placeholder="https://..." style="width:100%; padding:8px 12px; font-size:13px; border-radius:8px; border:1px solid #cbd5e1;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button type="button" id="btnSalvaCliente" class="btn-primary" style="flex: 1;" onclick="salvaClienteFatturazione()">Salva Configurazione Cliente</button>
+                <button type="button" class="btn-primary" style="flex: 1; background:#f1f5f9; color:#334155; box-shadow:none;" onclick="nascondiFormCliente()">Annulla</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Geolocation Magazzino -->
+    <div id="geoloc-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:1050; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:white; border-radius:16px; width:100%; max-width:800px; height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow:hidden;">
+            <!-- Header -->
+            <div style="padding:16px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
+                <div>
+                    <h3 style="margin:0; font-size:18px; font-weight:700; color:#0f172a;" id="geoloc-title">Verifica Posizione Magazzino</h3>
+                    <p style="margin:4px 0 0 0; font-size:13px; color:#64748b;" id="geoloc-subtitle">Trascina il marcatore sul punto esatto del cancello logistico</p>
+                </div>
+                <button onclick="window.chiudiGeolocalizzatoreMappa()" style="background:none; border:none; color:#94a3b8; cursor:pointer; padding:4px; border-radius:6px; display:flex; align-items:center; transition:all 0.2s;" onmouseover="this.style.color='#0f172a'; this.style.background='#f1f5f9';" onmouseout="this.style.color='#94a3b8'; this.style.background='none';">
+                    <span class="material-icons-round" style="font-size:24px;">close</span>
+                </button>
+            </div>
+            <!-- Body -->
+            <div style="flex:1; display:flex; flex-direction:column; padding:20px; gap:16px; min-height:0; overflow:hidden;">
+                <!-- Map Container -->
+                <div id="geoloc-map-container" style="flex:1; border-radius:12px; border:1px solid #cbd5e1; position:relative; overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,0.05);">
+                    <div id="geoloc-map" style="width:100%; height:100%;"></div>
+                </div>
+                <!-- Coordinates / Display -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; flex-shrink:0;">
+                    <div style="display:flex; gap:16px; font-size:13px; color:#334155;">
+                        <div>Latitudine: <b id="geoloc-val-lat" style="font-family:monospace; color:#0f172a;">-</b></div>
+                        <div>Longitudine: <b id="geoloc-val-lon" style="font-family:monospace; color:#0f172a;">-</b></div>
+                    </div>
+                    <button onclick="window.confermaGeolocMagazzino()" style="background:#10b981; color:white; border:none; border-radius:8px; padding:10px 24px; font-weight:700; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s; box-shadow:0 4px 6px rgba(16,185,129,0.2);" onmouseover="this.style.background='#059669';" onmouseout="this.style.background='#10b981';">
+                        <span class="material-icons-round" style="font-size:20px;">check_circle</span>
+                        Conferma Nuova Posizione
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+    const GOOGLE_MAPS_API_KEY = "AIzaSyAHQ3HjuEEIS8bn5KMh6N3UoM6kZ2MYGL4";
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMapsAutocomplete`;
+    script.async = true;
+    script.defer = true;
+    
+    window.initMapsAutocomplete = function() {
+        const input = document.getElementById('magIndirizzo');
+        if(input) {
+            // L'API Legacy Autocomplete è disabilitata per i nuovi account, usiamo il Geocoder al salvataggio
+            /*
+            const autocomplete = new google.maps.places.Autocomplete(input, { types: ['geocode', 'establishment'] });
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (place.geometry && place.geometry.location) {
+                    document.getElementById('magLat').value = place.geometry.location.lat();
+                    document.getElementById('magLon').value = place.geometry.location.lng();
+                }
+            });
+            */
+            input.addEventListener('input', function() {
+                document.getElementById('magLat').value = '';
+                document.getElementById('magLon').value = '';
+            });
+        }
+    };
+    document.head.appendChild(script);
+</script>
+
+<script src="script.js"></script>
+<script type="module" src="firebase-auth-sync.js"></script>
+
+<!-- Logica di Base -->
+<script type="module">
+    import { db } from './core/firebase-init.js';
+    import { collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    let currentReferenti = [];
+    let currentZone = [];
+    let currentMagazziniCliente = [];
+    let editingClientId = null;
+
+    // ----- UI Form -----
+    window.mostraFormNuovoCliente = () => {
+        editingClientId = null;
+        document.getElementById('formTitle').innerText = 'Nuovo Cliente';
+        document.getElementById('clienteNomeInput').value = '';
+        document.getElementById('clienteVisibileInput').checked = true; // Default true per i nuovi
+        currentReferenti = [];
+        currentZone = [];
+        currentMagazziniCliente = [];
+        renderReferenti();
+        renderZone();
+        renderMagazziniCliente();
+        document.getElementById('cattelCredentialsContainer').style.display = 'none';
+        document.getElementById('cattelUsername').value = '';
+        document.getElementById('cattelPassword').value = '';
+        document.getElementById('cattelUrl').value = '';
+        document.getElementById('formClienteContainer').style.display = 'block';
+        document.getElementById('listaClientiContainer').style.display = 'none';
+    };
+
+    window.nascondiFormCliente = () => {
+        document.getElementById('formClienteContainer').style.display = 'none';
+        document.getElementById('listaClientiContainer').style.display = 'flex';
+    };
+
+    // ----- Referenti -----
+    window.aggiungiReferente = () => {
+        const nome = document.getElementById('refNome').value.trim();
+        if (!nome) return alert('Il Nome Referente è obbligatorio.');
+        currentReferenti.push({
+            nome: nome,
+            ruolo: document.getElementById('refRuolo').value.trim(),
+            email: document.getElementById('refEmail').value.trim(),
+            fisso: document.getElementById('refFisso').value.trim(),
+            cellulare: document.getElementById('refCell').value.trim()
+        });
+        document.getElementById('refNome').value = '';
+        document.getElementById('refRuolo').value = '';
+        document.getElementById('refEmail').value = '';
+        document.getElementById('refFisso').value = '';
+        document.getElementById('refCell').value = '';
+        renderReferenti();
+    };
+
+    window.rimuoviReferente = (index) => {
+        currentReferenti.splice(index, 1);
+        renderReferenti();
+    };
+
+    function renderReferenti() {
+        const list = document.getElementById('referentiList');
+        list.innerHTML = '';
+        if(currentReferenti.length === 0) {
+            list.innerHTML = '<span style="font-size:12px;color:#94a3b8;">Nessun referente.</span>';
+            return;
+        }
+        currentReferenti.forEach((r, i) => {
+            list.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f1f5f9; padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div>
+                        <div style="font-weight:700; font-size:13px; color:#334155;">${r.nome} <span style="font-weight:400; color:#64748b;">${r.ruolo ? '('+r.ruolo+')' : ''}</span></div>
+                        <div style="font-size:11px; color:#64748b;">${r.email ? 'Email: '+r.email : ''} ${r.cellulare ? '| Cell: '+r.cellulare : ''}</div>
+                    </div>
+                    <button type="button" onclick="rimuoviReferente(${i})" class="remove-btn">&times;</button>
+                </div>
+            `;
+        });
+    }
+
+    // ----- Magazzini Cliente -----
+    window.aggiungiMagazzinoCliente = () => {
+        const nome = document.getElementById('magNome').value.trim().toUpperCase();
+        const indirizzo = document.getElementById('magIndirizzo').value.trim();
+        let lat = document.getElementById('magLat').value;
+        let lon = document.getElementById('magLon').value;
+        
+        if (!nome || !indirizzo) return alert('Nome e Indirizzo del magazzino sono obbligatori.');
+        
+        const salvaMagazzinoFinal = (n, ind, lt, ln) => {
+            currentMagazziniCliente.push({
+                nome: n,
+                indirizzo: ind,
+                lat: parseFloat(lt),
+                lon: parseFloat(ln)
+            });
+            document.getElementById('magNome').value = '';
+            document.getElementById('magIndirizzo').value = '';
+            document.getElementById('magLat').value = '';
+            document.getElementById('magLon').value = '';
+            renderMagazziniCliente();
+        };
+
+        if (!lat || !lon) {
+            Swal.fire({ title: 'Ricerca Coordinate...', text: 'Sto cercando la posizione esatta...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: indirizzo }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    Swal.close();
+                    salvaMagazzinoFinal(nome, results[0].formatted_address, results[0].geometry.location.lat(), results[0].geometry.location.lng());
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Indirizzo non trovato',
+                        text: 'Impossibile trovare le coordinate per questo indirizzo. Per favore, specifica città e provincia.'
+                    });
+                }
+            });
+        } else {
+            salvaMagazzinoFinal(nome, indirizzo, lat, lon);
+        }
+    };
+
+    window.rimuoviMagazzinoCliente = (index) => {
+        currentMagazziniCliente.splice(index, 1);
+        renderMagazziniCliente();
+    };
+
+    function renderMagazziniCliente() {
+        const list = document.getElementById('magazziniClienteList');
+        list.innerHTML = '';
+        if(currentMagazziniCliente.length === 0) {
+            list.innerHTML = '<span style="font-size:12px;color:#94a3b8;">Nessun magazzino configurato.</span>';
+            return;
+        }
+        currentMagazziniCliente.forEach((m, i) => {
+            list.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f1f5f9; padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div>
+                        <div style="font-weight:700; font-size:13px; color:#334155;">${m.nome}</div>
+                        <div style="font-size:11px; color:#64748b;">${m.indirizzo} ${m.lat ? '(GPS OK)' : ''}</div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" onclick="window.apriMappaMagazzino(${i})" style="background:none; border:none; color:#3b82f6; cursor:pointer;" title="Controlla Mappa">
+                            <span class="material-icons-round" style="font-size:20px;">map</span>
+                        </button>
+                        <button type="button" onclick="rimuoviMagazzinoCliente(${i})" class="remove-btn" title="Rimuovi">&times;</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // ----- Controllo su Mappa -----
+    let geolocMap = null;
+    let geolocMarker = null;
+    let geolocEditingIndex = null;
+
+    window.apriMappaMagazzino = (index) => {
+        geolocEditingIndex = index;
+        const mag = currentMagazziniCliente[index];
+        document.getElementById('geoloc-modal').style.display = 'flex';
+        
+        let lat = mag.lat || 45.438; // Default
+        let lon = mag.lon || 10.991;
+        
+        document.getElementById('geoloc-val-lat').innerText = lat.toFixed(6);
+        document.getElementById('geoloc-val-lon').innerText = lon.toFixed(6);
+
+        if (!geolocMap) {
+            geolocMap = new google.maps.Map(document.getElementById('geoloc-map'), {
+                center: { lat: lat, lng: lon },
+                zoom: 18,
+                mapTypeId: 'hybrid'
+            });
+            geolocMarker = new google.maps.Marker({
+                position: { lat: lat, lng: lon },
+                map: geolocMap,
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+            geolocMarker.addListener('dragend', () => {
+                const pos = geolocMarker.getPosition();
+                document.getElementById('geoloc-val-lat').innerText = pos.lat().toFixed(6);
+                document.getElementById('geoloc-val-lon').innerText = pos.lng().toFixed(6);
+            });
+        } else {
+            const pos = new google.maps.LatLng(lat, lon);
+            geolocMap.setCenter(pos);
+            geolocMarker.setPosition(pos);
+            // Forza ridimensionamento nel caso fosse nascosta
+            setTimeout(() => { google.maps.event.trigger(geolocMap, 'resize'); geolocMap.setCenter(pos); }, 100);
+        }
+    };
+
+    window.chiudiGeolocalizzatoreMappa = () => {
+        document.getElementById('geoloc-modal').style.display = 'none';
+        geolocEditingIndex = null;
+    };
+
+    window.confermaGeolocMagazzino = () => {
+        if (geolocEditingIndex !== null && geolocMarker) {
+            const pos = geolocMarker.getPosition();
+            currentMagazziniCliente[geolocEditingIndex].lat = pos.lat();
+            currentMagazziniCliente[geolocEditingIndex].lon = pos.lng();
+            renderMagazziniCliente();
+            window.chiudiGeolocalizzatoreMappa();
+        }
+    };
+
+    // ----- Zone e Fatturazione -----
+    window.aggiungiZona = () => {
+        const nomeZona = document.getElementById('nuovaZonaInput').value.trim().toUpperCase();
+        if (!nomeZona) return alert('Inserisci il nome della zona.');
+        
+        currentZone.push({
+            nome_zona: nomeZona,
+            id_dom: 'zona_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+            is_mensile: false,
+            tipo_calcolo: '', // 'viaggio' o 'ddt'
+            prezzo_viaggio: '',
+            prezzo_ddt: ''
+        });
+        document.getElementById('nuovaZonaInput').value = '';
+        renderZone();
+    };
+
+    window.rimuoviZona = (index) => {
+        currentZone.splice(index, 1);
+        renderZone();
+    };
+
+    // Quando un flag cambia, aggiorno il JSON in memoria
+    window.updateZonaField = (index, field, value) => {
+        currentZone[index][field] = value;
+        if(field === 'tipo_calcolo') {
+            renderZone(); // Ridisegna per mostrare i colori aggiornati
+        }
+    };
+
+    function renderZone() {
+        const container = document.getElementById('zoneListContainer');
+        container.innerHTML = '';
+        if(currentZone.length === 0) {
+            container.innerHTML = '<span style="font-size:12px;color:#94a3b8;">Nessuna zona creata per questo cliente.</span>';
+            return;
+        }
+
+        currentZone.forEach((z, i) => {
+            const uid = z.id_dom;
+            // HTML per la card della Zona
+            const card = document.createElement('div');
+            card.className = 'zone-card';
+            card.innerHTML = `
+                <div class="zone-title">
+                    <span><span class="material-icons-round" style="font-size:16px; vertical-align:middle; color:var(--primary); margin-right:4px;">place</span> ${z.nome_zona}</span>
+                    <button type="button" onclick="rimuoviZona(${i})" class="remove-btn" title="Elimina Zona">&times;</button>
+                </div>
+                <div class="zone-options">
+                    <!-- Fatturazione Mensile -->
+                    <label class="option-row" style="cursor:pointer;">
+                        <input type="checkbox" onchange="updateZonaField(${i}, 'is_mensile', this.checked)" ${z.is_mensile ? 'checked' : ''} style="width:16px; height:16px;">
+                        <span style="font-size:13px; font-weight:600; color:#334155;">Fatturazione Mensile (Fine Mese)</span>
+                    </label>
+
+                    <!-- Fatturazione a Viaggio -->
+                    <label class="option-row" style="cursor:pointer; background: ${z.tipo_calcolo==='viaggio' ? '#e0e7ff' : '#ffffff'}; border-color: ${z.tipo_calcolo==='viaggio' ? '#818cf8' : '#e2e8f0'};">
+                        <input type="radio" name="tipo_${uid}" value="viaggio" onchange="updateZonaField(${i}, 'tipo_calcolo', this.value)" ${z.tipo_calcolo === 'viaggio' ? 'checked' : ''} style="width:16px; height:16px;">
+                        <span style="font-size:13px; font-weight:600; color:#334155;">Fatturazione a Viaggio (Giro Intero)</span>
+                        <div class="price-container" style="display: flex;">
+                            <span style="font-size:12px; font-weight:700; color:#4f46e5;">Tariffa €</span>
+                            <input type="number" step="0.01" class="price-input" placeholder="es. 400.00" value="${z.prezzo_viaggio || ''}" oninput="updateZonaField(${i}, 'prezzo_viaggio', this.value)">
+                        </div>
+                    </label>
+
+                    <!-- Fatturazione a DDT -->
+                    <label class="option-row" style="cursor:pointer; background: ${z.tipo_calcolo==='ddt' ? '#fce7f3' : '#ffffff'}; border-color: ${z.tipo_calcolo==='ddt' ? '#f472b6' : '#e2e8f0'};">
+                        <input type="radio" name="tipo_${uid}" value="ddt" onchange="updateZonaField(${i}, 'tipo_calcolo', this.value)" ${z.tipo_calcolo === 'ddt' ? 'checked' : ''} style="width:16px; height:16px;">
+                        <span style="font-size:13px; font-weight:600; color:#334155;">Fatturazione a DDT (Singolo Punto)</span>
+                        <div class="price-container" style="display: flex;">
+                            <span style="font-size:12px; font-weight:700; color:#db2777;">Tariffa Cad. €</span>
+                            <input type="number" step="0.01" class="price-input" placeholder="es. 15.00" value="${z.prezzo_ddt || ''}" oninput="updateZonaField(${i}, 'prezzo_ddt', this.value)">
+                        </div>
+                    </label>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // ----- Salvataggio Firestore -----
+    window.salvaClienteFatturazione = async () => {
+        const nome = document.getElementById('clienteNomeInput').value.trim().toUpperCase();
+        const visibile = document.getElementById('clienteVisibileInput').checked;
+        if (!nome) return Swal.fire('Errore', 'Inserire il nome del cliente.', 'error');
+
+        // Validazione zone
+        for(let z of currentZone) {
+            if (z.tipo_calcolo === 'viaggio' && (!z.prezzo_viaggio || parseFloat(z.prezzo_viaggio) < 0)) {
+                return Swal.fire('Errore', `La zona ${z.nome_zona} ha impostato 'A Viaggio' ma manca la tariffa corrispondente.`, 'error');
+            }
+            if (z.tipo_calcolo === 'ddt' && (!z.prezzo_ddt || parseFloat(z.prezzo_ddt) < 0)) {
+                return Swal.fire('Errore', `La zona ${z.nome_zona} ha impostato 'A DDT' ma manca la tariffa corrispondente.`, 'error');
+            }
+        }
+
+        const data = {
+            nome: nome,
+            visibile_presenze: visibile,
+            referenti: currentReferenti,
+            magazzini: currentMagazziniCliente,
+            zone_fatturazione: currentZone.map(z => ({
+                nome_zona: z.nome_zona,
+                is_mensile: z.is_mensile,
+                tipo_calcolo: z.tipo_calcolo,
+                prezzo_viaggio: z.prezzo_viaggio ? parseFloat(z.prezzo_viaggio) : null,
+                prezzo_ddt: z.prezzo_ddt ? parseFloat(z.prezzo_ddt) : null
+            })),
+            updatedAt: new Date().toISOString()
+        };
+
+        if (nome === 'CATTEL') {
+            data.cattel_username = document.getElementById('cattelUsername').value.trim();
+            data.cattel_password = document.getElementById('cattelPassword').value.trim();
+            data.cattel_url = document.getElementById('cattelUrl').value.trim();
+        }
+
+        const btn = document.getElementById('btnSalvaCliente');
+        btn.disabled = true; btn.textContent = 'Salvataggio...';
+
+        try {
+            if (editingClientId) {
+                await updateDoc(doc(db, "clienti_fatturazione", editingClientId), data);
+            } else {
+                await addDoc(collection(db, "clienti_fatturazione"), data);
+            }
+            Swal.fire('Salvato!', 'Configurazione cliente salvata con successo.', 'success');
+            nascondiFormCliente();
+        } catch(e) {
+            console.error(e);
+            Swal.fire('Errore', 'Impossibile salvare: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false; btn.textContent = 'Salva Configurazione Cliente';
+        }
+    };
+
+    // ----- Lettura Dati da Firestore -----
+    onSnapshot(collection(db, "clienti_fatturazione"), (snap) => {
+        const container = document.getElementById('listaClientiContainer');
+        container.innerHTML = '';
+        window.appData = window.appData || {};
+        window.appData.lista_clienti_fatturazione = [];
+        
+        if (snap.empty) {
+            container.innerHTML = '<div style="padding:20px; text-align:center; color:#64748b;">Nessun cliente configurato per la fatturazione.</div>';
+            return;
+        }
+
+        snap.docs.forEach(docSnap => {
+            const c = docSnap.data();
+            const cid = docSnap.id;
+            window.appData.lista_clienti_fatturazione.push({ id: cid, nome: c.nome });
+            
+            const numZone = (c.zone_fatturazione || []).length;
+            const numRef = (c.referenti || []).length;
+
+            // Costruisci l'HTML per referenti
+            let refHtml = '<div style="font-size:12px; color:#64748b; padding:4px 0;">Nessun referente</div>';
+            if(numRef > 0) {
+                refHtml = (c.referenti).map(r => 
+                    `<div style="font-size:12px; color:#475569; padding:4px 0; border-bottom:1px solid #f1f5f9;">
+                        <b>${r.nome}</b> ${r.ruolo ? '('+r.ruolo+')' : ''} - 
+                        ${r.email ? r.email : ''} ${r.cellulare ? r.cellulare : ''}
+                    </div>`
+                ).join('');
+            }
+
+            // Costruisci l'HTML per zone
+            let zoneHtml = '<div style="font-size:12px; color:#64748b; padding:4px 0;">Nessuna zona</div>';
+            if(numZone > 0) {
+                zoneHtml = (c.zone_fatturazione).map(z => {
+                    let calc = z.is_mensile ? 'Mensile' : '';
+                    if(z.tipo_calcolo === 'viaggio') calc += (calc?', ':'') + 'Viaggio (€'+(z.prezzo_viaggio||0)+')';
+                    if(z.tipo_calcolo === 'ddt') calc += (calc?', ':'') + 'DDT (€'+(z.prezzo_ddt||0)+')';
+                    return `<div style="font-size:12px; color:#475569; padding:4px 0; border-bottom:1px solid #f1f5f9;">
+                        <b>${z.nome_zona}</b>: ${calc}
+                    </div>`;
+                }).join('');
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.style.marginBottom = '12px';
+            wrapper.style.border = '1px solid #e2e8f0';
+            wrapper.style.borderRadius = '12px';
+            wrapper.style.overflow = 'hidden';
+            wrapper.style.background = '#ffffff';
+
+            wrapper.innerHTML = `
+                <div class="list-row" style="border:none; border-radius:0; margin-bottom:0; cursor:pointer;" onclick="document.getElementById('det_${cid}').style.display = document.getElementById('det_${cid}').style.display==='none' ? 'block' : 'none'">
+                    <div>
+                        <div style="font-weight: 700; color: #1e293b; font-size: 15px;">${c.nome}</div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                            <span style="background:#f1f5f9; padding:2px 8px; border-radius:12px;">Zone: <b>${numZone}</b></span>
+                            <span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; margin-left:6px;">Referenti: <b>${numRef}</b></span>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:12px; align-items:center;" onclick="event.stopPropagation()">
+                        <label style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:#475569; cursor:pointer;" title="Visibile nel menù a tendina del Registro Presenze">
+                            <input type="checkbox" ${c.visibile_presenze !== false ? 'checked' : ''} onchange="window.toggleClientVisibility('${cid}', this.checked)" style="width:14px; height:14px; accent-color:#d946ef;">
+                            Visibile in Presenze
+                        </label>
+                        <button class="action-btn" onclick="modificaCliente('${cid}')" title="Modifica"><span class="material-icons-round">edit</span></button>
+                        <button class="action-btn delete-btn" onclick="eliminaCliente('${cid}')" title="Elimina"><span class="material-icons-round">delete</span></button>
+                        <button class="action-btn" style="pointer-events:none;"><span class="material-icons-round">expand_more</span></button>
+                    </div>
+                </div>
+                <div id="det_${cid}" style="display:none; padding:16px; background:#f8fafc; border-top:1px solid #e2e8f0;">
+                    <div style="display:flex; gap:24px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:200px;">
+                            <h4 style="margin:0 0 8px 0; font-size:13px; color:#334155;">Referenti</h4>
+                            ${refHtml}
+                        </div>
+                        <div style="flex:1; min-width:200px;">
+                            <h4 style="margin:0 0 8px 0; font-size:13px; color:#334155;">Tariffe e Zone</h4>
+                            ${zoneHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(wrapper);
+        });
+    });
+
+    window.modificaCliente = async (id) => {
+        // Lettura veloce, potremmo usare cache ma semplifichiamo leggendo on demand
+        // per evitare complessità.
+        import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js").then(async ({ getDoc, doc }) => {
+            const d = await getDoc(doc(db, "clienti_fatturazione", id));
+            if(!d.exists()) return;
+            const c = d.data();
+            editingClientId = id;
+            document.getElementById('formTitle').innerText = 'Modifica Cliente: ' + c.nome;
+            document.getElementById('clienteNomeInput').value = c.nome;
+            document.getElementById('clienteVisibileInput').checked = (c.visibile_presenze !== false); // Default true per i vecchi
+            currentReferenti = c.referenti || [];
+            currentMagazziniCliente = c.magazzini || [];
+            currentZone = (c.zone_fatturazione || []).map(z => ({
+                ...z,
+                id_dom: 'zona_' + Date.now() + '_' + Math.floor(Math.random()*1000)
+            }));
+            
+            renderReferenti();
+            renderZone();
+            renderMagazziniCliente();
+            
+            const isCattel = (c.nome || '').toUpperCase() === 'CATTEL';
+            document.getElementById('cattelCredentialsContainer').style.display = isCattel ? 'block' : 'none';
+            document.getElementById('cattelUsername').value = c.cattel_username || '';
+            document.getElementById('cattelPassword').value = c.cattel_password || '';
+            document.getElementById('cattelUrl').value = c.cattel_url || '';
+            
+            document.getElementById('formClienteContainer').style.display = 'block';
+            document.getElementById('listaClientiContainer').style.display = 'none';
+        });
+    };
+
+    window.eliminaCliente = (id) => {
+        Swal.fire({
+            title: 'Sei sicuro?',
+            text: "Vuoi davvero eliminare questo cliente dalla fatturazione?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sì, elimina'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await deleteDoc(doc(db, "clienti_fatturazione", id));
+            }
+        });
+    };
+
+    window.toggleClientVisibility = async (id, checked) => {
+        try {
+            await updateDoc(doc(db, "clienti_fatturazione", id), {
+                visibile_presenze: checked
+            });
+        } catch (error) {
+            console.error("Errore aggiornamento visibilità:", error);
+            alert("Errore: " + error.message);
+        }
+    };
+
+    // --- GESTIONE MAGAZZINI ---
+    window.renderScaletteItems = function(tipo) {
+        let items = [];
+        let containerId = '';
+        if (tipo === 'fatturazione_magazzini_sedi' || tipo === 'magazzini_sedi') { items = window.appData?.lista_magazzini_sedi || []; containerId = 'listaMagazziniSedi'; }
+        else { return; }
+
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = '<div style="color: #64748b; font-size: 11px;">Nessuna voce registrata.</div>';
+            return;
+        }
+
+        let sorted = [...items].sort((a,b) => (a.nome || "").localeCompare(b.nome || ""));
+
+        container.innerHTML = sorted.map(d => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <span style="font-weight: 500;">${d.nome}</span>
+                <button type="button" style="background: none; border: none; color: #ef4444; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Elimina" onclick="window.eliminaAnagrafica('clienti/DNR/fatturazione_magazzini_sedi', '${d.id}', '${d.nome.replace(/'/g, "\\'")}')">
+                    <span class="material-icons-round" style="font-size: 18px;">delete_outline</span>
+                </button>
+            </div>
+        `).join('');
+    };
+
+    window.aggiungiNuovaAnagrafica = async (tipo, inputId, collectionPath, listId) => {
+        const input = document.getElementById(inputId);
+        const nome = input.value.trim().toUpperCase();
+        if (!nome) {
+            alert("Inserisci un nome.");
+            return;
+        }
+        try {
+            await addDoc(collection(db, "clienti/DNR/" + collectionPath), { nome: nome });
+            input.value = '';
+            Swal.fire({ title: 'Aggiunto', icon: 'success', timer: 1000, showConfirmButton: false });
+        } catch (error) {
+            alert("Errore aggiunta: " + error.message);
+        }
+    };
+
+    // --- GESTIONE NAVETTE (con prezzo e flag) ---
+    window.renderUnifiedNavetteList = function(tipo) {
+        let items = [];
+        let containerId = '';
+        let collectionPath = '';
+        
+        if (tipo === 'partenze') { 
+            items = window.appData?.anagrafica_partenze || []; 
+            containerId = 'listaAnagraficaPartenze';
+            collectionPath = 'fatturazione_navette_partenze';
+        } else if (tipo === 'carichi') { 
+            items = window.appData?.anagrafica_carichi || []; 
+            containerId = 'listaAnagraficaCarichi';
+            collectionPath = 'fatturazione_navette_carichi';
+        } else if (tipo === 'clienti') { 
+            items = window.appData?.anagrafica_clienti || []; 
+            containerId = 'listaAnagraficaClienti';
+            collectionPath = 'fatturazione_navette_clienti';
+        } else if (tipo === 'destinazioni') { 
+            items = window.appData?.anagrafica_destinazioni || []; 
+            containerId = 'listaAnagraficaDestinazioni';
+            collectionPath = 'fatturazione_navette_destinazioni';
+        }
+        
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        if (items.length === 0) {
+            container.innerHTML = '<div style="color: #64748b; font-size: 11px;">Nessuna voce registrata.</div>';
+            return;
+        }
+        
+        container.innerHTML = items.map(d => {
+            const id = d.id;
+            const isAutisti = d.is_navetta_autisti === true;
+            const isNavetta = d.is_navetta === true;
+            const isFatturaDiretta = d.fattura_diretta === true;
+            const prezzo = d.prezzo ? '€' + parseFloat(d.prezzo).toFixed(2) : '€0.00';
+            
+            let fatturaDirettaHtml = '';
+            if (tipo === 'clienti' || tipo === 'carichi') {
+                const clientiPrincipali = window.appData?.lista_clienti_fatturazione || [];
+                const intestatarioCorrente = d.intestatario_fattura_diretta || '';
+                
+                let selectOptions = tipo === 'carichi' ? '<option value="">-- SELEZIONE OBBLIGATORIA --</option>' : '<option value="">-- Seleziona --</option>';
+                clientiPrincipali.sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(cp => {
+                    selectOptions += `<option value="${cp.nome}" ${intestatarioCorrente === cp.nome ? 'selected' : ''}>${cp.nome}</option>`;
+                });
+
+                if (tipo === 'carichi') {
+                    const warningStyle = !intestatarioCorrente ? 'border: 2px solid #ef4444; background-color: #fee2e2;' : 'background-color: #f8fafc;';
+                    fatturaDirettaHtml = `
+                        <div style="display: flex; align-items: center; border-left:1px solid #cbd5e1; padding-left:10px; margin-left:5px;">
+                            <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: #ef4444;">
+                                Assegna a Cliente:
+                            </label>
+                            <select id="select_intestatario_${id}" onchange="window.toggleUnifiedFlag('${collectionPath}', '${id}', 'intestatario_fattura_diretta', this.value)" style="margin-left: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 11px; max-width: 150px; outline: none; ${warningStyle}">
+                                ${selectOptions}
+                            </select>
+                        </div>`;
+                } else {
+                    fatturaDirettaHtml = `
+                        <div style="display: flex; align-items: center; border-left:1px solid #cbd5e1; padding-left:10px; margin-left:5px;">
+                            <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #475569; cursor: pointer;">
+                                <input type="checkbox" ${isFatturaDiretta ? 'checked' : ''} onchange="window.toggleUnifiedFlag('${collectionPath}', '${id}', 'fattura_diretta', this.checked); document.getElementById('select_intestatario_${id}').style.display = this.checked ? 'block' : 'none';" style="width: 14px; height: 14px; accent-color: #d946ef;">
+                                Fattura Diretta
+                            </label>
+                            <select id="select_intestatario_${id}" onchange="window.toggleUnifiedFlag('${collectionPath}', '${id}', 'intestatario_fattura_diretta', this.value)" style="display: ${isFatturaDiretta ? 'block' : 'none'}; margin-left: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 11px; max-width: 150px;">
+                                ${selectOptions}
+                            </select>
+                        </div>`;
+                }
+            }
+
+            const isNoPrezzo = (tipo === 'destinazioni' || tipo === 'partenze');
+
+            return `
+                <div style="background: #fff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: #1e293b; font-size: 13px; text-transform: uppercase;">${d.nome} ${!isNoPrezzo ? `<span style="color:#059669; font-weight:500; font-size:12px;">(${prezzo})</span>` : ''}</span>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" style="background: none; border: none; color: #3b82f6; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Modifica" onclick="window.modificaAnagraficaNavetta('${collectionPath}', '${id}', '${d.nome.replace(/'/g, "\\'")}', '${d.prezzo || ''}', ${!isNoPrezzo})">
+                                <span class="material-icons-round" style="font-size: 18px;">edit</span>
+                            </button>
+                            <button type="button" style="background: none; border: none; color: #ef4444; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Elimina" onclick="window.eliminaAnagrafica('clienti/DNR/${collectionPath}', '${id}', '${d.nome.replace(/'/g, "\\'")}')">
+                                <span class="material-icons-round" style="font-size: 18px;">delete_outline</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 14px; border-top: 1px dashed #f1f5f9; padding-top: 6px; flex-wrap: wrap;">
+                        <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #475569; cursor: pointer;">
+                            <input type="checkbox" ${isAutisti ? 'checked' : ''} onchange="window.toggleUnifiedFlag('${collectionPath}', '${id}', 'is_navetta_autisti', this.checked)" style="width: 14px; height: 14px; accent-color: #7c3aed;">
+                            Autisti
+                        </label>
+                        <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #475569; cursor: pointer;">
+                            <input type="checkbox" ${isNavetta ? 'checked' : ''} onchange="window.toggleUnifiedFlag('${collectionPath}', '${id}', 'is_navetta', this.checked)" style="width: 14px; height: 14px; accent-color: #7c3aed;">
+                            Navetta Esterna
+                        </label>
+                        ${fatturaDirettaHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    };
+
+    window.modificaAnagraficaNavetta = async (collectionPath, id, oldNome, oldPrezzo, hasPrezzo) => {
+        let htmlForm = `<input id="swal-input-nome" class="swal2-input" placeholder="Nome" value="${oldNome}" style="text-transform: uppercase;">`;
+        if (hasPrezzo) {
+            htmlForm += `<input id="swal-input-prezzo" type="number" step="0.01" class="swal2-input" placeholder="Tariffa €" value="${oldPrezzo}">`;
+        }
+        
+        const { value: formValues } = await Swal.fire({
+            title: 'Modifica Anagrafica',
+            html: htmlForm,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Salva',
+            cancelButtonText: 'Annulla',
+            preConfirm: () => {
+                const nome = document.getElementById('swal-input-nome').value.trim().toUpperCase();
+                const prezzo = hasPrezzo ? document.getElementById('swal-input-prezzo').value : '';
+                if (!nome) {
+                    Swal.showValidationMessage('Il nome è obbligatorio');
+                }
+                return { nome, prezzo };
+            }
+        });
+
+        if (formValues) {
+            try {
+                let dataToUpdate = { nome: formValues.nome };
+                if (hasPrezzo && formValues.prezzo !== "") {
+                    dataToUpdate.prezzo = parseFloat(formValues.prezzo);
+                } else if (hasPrezzo) {
+                    dataToUpdate.prezzo = null;
+                }
+                await updateDoc(doc(db, "clienti/DNR/" + collectionPath, id), dataToUpdate);
+                Swal.fire({ title: 'Salvato', icon: 'success', timer: 1000, showConfirmButton: false });
+            } catch (error) {
+                alert("Errore modifica: " + error.message);
+            }
+        }
+    };
+
+    window.aggiungiNuovaAnagraficaNavetta = async (tipo, collectionPath, inputNomeId, inputPrezzoId, inputFatturaDirettaId = null, inputIntestatarioId = null) => {
+        const inputNome = document.getElementById(inputNomeId);
+        const inputPrezzo = document.getElementById(inputPrezzoId);
+        const inputFatturaDiretta = inputFatturaDirettaId ? document.getElementById(inputFatturaDirettaId) : null;
+        const inputIntestatario = inputIntestatarioId ? document.getElementById(inputIntestatarioId) : null;
+
+        const nome = inputNome.value.trim().toUpperCase();
+        let prezzo = parseFloat(inputPrezzo.value);
+        if (isNaN(prezzo)) prezzo = 0;
+        
+        if (!nome) {
+            alert("Inserisci un nome.");
+            return;
+        }
+        
+        try {
+            const payload = {
+                nome: nome,
+                prezzo: prezzo,
+                is_navetta_autisti: true,
+                is_navetta: true
+            };
+            if (tipo === 'carichi') {
+                payload.fattura_diretta = true;
+            }
+            if (inputFatturaDiretta && inputFatturaDiretta.checked) {
+                payload.fattura_diretta = true;
+                if (inputIntestatario) {
+                    payload.intestatario_fattura_diretta = inputIntestatario.value.trim().toUpperCase();
+                }
+            }
+            await addDoc(collection(db, "clienti/DNR/" + collectionPath), payload);
+            inputNome.value = '';
+            if (inputPrezzo) inputPrezzo.value = '';
+            if (inputFatturaDiretta) inputFatturaDiretta.checked = false;
+            if (inputIntestatario) {
+                inputIntestatario.value = '';
+                document.getElementById(inputFatturaDirettaId).dispatchEvent(new Event('change'));
+            }
+            Swal.fire({ title: 'Aggiunto', icon: 'success', timer: 1000, showConfirmButton: false });
+        } catch (error) {
+            alert("Errore aggiunta: " + error.message);
+        }
+    };
+
+    window.toggleUnifiedFlag = async (collectionPath, id, flagName, checked) => {
+        try {
+            await updateDoc(doc(db, "clienti/DNR/" + collectionPath, id), {
+                [flagName]: checked
+            });
+        } catch (error) {
+            alert("Errore aggiornamento flag: " + error.message);
+        }
+    };
+
+    window.eliminaAnagrafica = async (fullPath, id, nome) => {
+        if (!confirm(`Sei sicuro di voler eliminare "${nome}"?`)) return;
+        try {
+            await deleteDoc(doc(db, fullPath, id));
+        } catch (error) {
+            alert("Errore eliminazione: " + error.message);
+        }
+    };
+    
+    // Fallback per rendering iniziale
+    setTimeout(() => {
+        if (typeof window.renderScaletteItems === 'function') window.renderScaletteItems('magazzini_sedi');
+        if (typeof window.renderUnifiedNavetteList === 'function') {
+            ['partenze', 'carichi', 'clienti', 'destinazioni'].forEach(t => window.renderUnifiedNavetteList(t));
+        }
+    }, 1000);
+</script>
+<script type="module">
+    import { getAuth, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnUnlock = document.getElementById('btnUnlockImpostazioni');
+        const passwordInput = document.getElementById('impostazioniUnlockPassword');
+        const lockScreen = document.getElementById('impostazioniLockScreen');
+        
+        const nameInput = document.getElementById('clienteNomeInput');
+        if (nameInput) {
+            nameInput.addEventListener('input', (e) => {
+                const isCattel = e.target.value.trim().toUpperCase() === 'CATTEL';
+                const cont = document.getElementById('cattelCredentialsContainer');
+                if (cont) cont.style.display = isCattel ? 'block' : 'none';
+            });
+        }
+        
+        async function tryUnlock() {
+            const pwd = passwordInput.value;
+            if (!pwd) return;
+            
+            btnUnlock.disabled = true;
+            btnUnlock.innerHTML = '<span class="material-icons-round" style="animation: spin 1s linear infinite;">autorenew</span> Verifica...';
+            
+            try {
+                const auth = getAuth();
+                const user = auth.currentUser;
+                
+                if (!user) {
+                    Swal.fire('Attesa', 'Il sistema di autenticazione non è ancora pronto. Riprova tra un secondo.', 'info');
+                    return;
+                }
+                
+                const credential = EmailAuthProvider.credential(user.email, pwd);
+                await reauthenticateWithCredential(user, credential);
+                
+                lockScreen.style.opacity = '0';
+                document.body.style.overflow = ''; 
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                }, 300);
+                
+            } catch (err) {
+                console.error("Errore sblocco:", err);
+                Swal.fire('Errore', 'Password non valida. Riprova.', 'error');
+                passwordInput.value = '';
+            } finally {
+                btnUnlock.disabled = false;
+                btnUnlock.innerHTML = '<span class="material-icons-round" style="margin-right: 8px;">lock_open</span> Sblocca';
+            }
+        }
+        
+        btnUnlock.addEventListener('click', tryUnlock);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') tryUnlock();
+        });
+        
+        setTimeout(() => {
+            passwordInput.focus();
+        }, 500);
+    });
+</script>
+<script type="module" src="firebase-auth-sync.js?v=6.428"></script>
+</body>
+</html>

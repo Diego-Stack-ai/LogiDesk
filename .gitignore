@@ -1,0 +1,137 @@
+# Credenziali / segreti
+credenziali_dipendenti.csv
+backend/config/log-solution-60007-firebase-adminsdk-fbsvc-2cf3d0c171.json
+backend/config/log-solution-60007-firebase-adminsdk-*.json
+webapp/config/ID_GESTIONE.txt
+webapp/config/ID_GESTIONE_IMPOSTAZIONI.txt
+docs/ID_GESTIONE.txt
+docs/ID_GESTIONE_IMPOSTAZIONI.txt
+
+# Dati logistica generati (PDF, Excel, JSON, HTML consegne)
+**/CONSEGNE/
+**/DDT-ORIGINALI-DIVISI/
+**/FRUTTA/
+**/LATTE/
+*.pdf
+*.xlsx
+*.xls
+*.kml
+*.txt
+
+# Eccezioni: file Excel e txt di configurazione che DEVONO restare tracciati
+!functions/requirements.txt
+!**/README.md
+
+# Cartelle AI / sistema
+brain/
+scratch/
+.agent/
+.firebase/
+
+# File temporanei / di sistema
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ambiente/editor
+.vscode/
+.idea/
+*.code-workspace
+node_modules/
+
+# Python
+venv/
+.env/
+__pycache__/
+*.pyc
+# env files con chiavi
+.env
+.env.local
+.env.*.local
+
+# File scratch/temporanei di lavoro agente
+scratch_*.html
+scratch_*.py
+test.js
+main_vecchio.py
+# Credenziali / segreti
+credenziali_dipendenti.csv
+backend/config/log-solution-60007-firebase-adminsdk-fbsvc-2cf3d0c171.json
+backend/config/log-solution-60007-firebase-adminsdk-*.json
+webapp/config/ID_GESTIONE.txt
+webapp/config/ID_GESTIONE_IMPOSTAZIONI.txt
+docs/ID_GESTIONE.txt
+docs/ID_GESTIONE_IMPOSTAZIONI.txt
+
+# Dati logistica generati (PDF, Excel, JSON, HTML consegne)
+**/CONSEGNE/
+**/DDT-ORIGINALI-DIVISI/
+**/FRUTTA/
+**/LATTE/
+*.pdf
+*.xlsx
+*.xls
+*.kml
+*.txt
+
+# Eccezioni: file Excel e txt di configurazione che DEVONO restare tracciati
+!functions/requirements.txt
+!**/README.md
+
+# Cartelle AI / sistema
+brain/
+scratch/
+.agent/
+.firebase/
+
+# File temporanei / di sistema
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ambiente/editor
+.vscode/
+.idea/
+*.code-workspace
+node_modules/
+
+# Python
+venv/
+.env/
+__pycache__/
+*.pyc
+# env files con chiavi
+.env
+.env.local
+.env.*.local
+
+# File scratch/temporanei di lavoro agente
+scratch_*.html
+scratch_*.py
+test.js
+main_vecchio.py
+elaborazione_vecchia.html
+bump2.py
+check.js
+fix_firebase.py
+test_firestore.py
+update_version.py
+prod_key.json
+dev_key.json
+*key.json
+# Playwright E2E Tests
+e2e-tests/node_modules/
+e2e-tests/test-results/
+e2e-tests/playwright-report/
+e2e-tests/.auth/
+e2e-tests/.env
+
+e2e-tests/.profiles/
+e2e-tests/.qa-state.json
+e2e-tests/.qa-backups/
+
+e2e-tests/.qa-recovery/

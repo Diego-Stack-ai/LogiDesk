@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro Costi - Log Solution</title>
+    <link rel="stylesheet" href="styles.css?v=6.428">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <meta name="theme-color" content="#4f46e5">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .upload-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .drop-zone {
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px dashed var(--primary);
+            border-radius: 16px;
+            padding: 32px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .drop-zone:hover {
+            background: rgba(79, 70, 229, 0.1);
+            transform: translateY(-4px);
+        }
+        .file-input {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+        .error-row {
+            background-color: #fce7f3 !important; /* red-100 */
+        }
+        .error-text {
+            color: #e11d48; /* red-700 */
+            font-weight: bold;
+        }
+        .positive-margin { color: #059669; font-weight: bold; }
+        .negative-margin { color: #e11d48; font-weight: bold; }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+        .chat-message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .chat-message.user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-message.ai {
+            align-self: flex-start;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid var(--border-color);
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            outline: none;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <img src="img/logo.png" alt="LS" style="height: 32px; width: auto; margin-right: 8px;">
+            <button id="dashboardBtn" class="logout-btn" title="Dashboard"
+                onclick="window.navigateWithState('dashboard.html')"
+                style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
+                <span class="material-icons-round">dashboard</span>
+            </button>
+            <div class="nav-title" style="flex: 1;">Centro Costi e Redditività</div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="welcome-section" style="text-align: center; padding-bottom: 0;">
+            <h1 class="text-gradient-primary" style="justify-content: center;">Controllo di Gestione AI</h1>
+            <p>Il tuo assistente intelligente per l'analisi dei costi e della redditività.</p>
+        </div>
+
+        <div class="glass-panel" style="padding: 24px;">
+            <!-- Unica vista: AI CHAT -->
+            <div id="tab-ai-chat" class="tab-content active" style="display: block;">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message ai">
+                            <strong>Assistente Logistico AI</strong><br>
+                            Ciao! Sono il tuo assistente intelligente. Puoi farmi domande a voce o caricare un documento cliccando sulla graffetta per farmelo analizzare in automatico.
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="file" id="fileAI" accept="application/pdf, .xlsx, .xls, image/*" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('fileAI').click()" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border: none; color: #475569;" title="Allega File (PDF/Excel)">
+                            <span class="material-icons-round">attach_file</span>
+                        </button>
+                        <button class="btn btn-secondary" id="micButton" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; background: #fee2e2; border: none; color: #dc2626;" title="Dettatura Vocale" onclick="startDictation()">
+                            <span class="material-icons-round">mic</span>
+                        </button>
+                        <input type="text" id="chatInputText" class="chat-input" placeholder="Fai una domanda sui costi o sui margini..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                        <button class="btn btn-primary" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="sendChatMessage()">
+                            <span class="material-icons-round">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Overlay Caricamento -->
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
+        <div class="loader"></div>
+        <p style="color: white; margin-top: 16px; font-weight: 500; font-size: 18px;" id="loadingText">Elaborazione in corso...</p>
+    </div>
+
+    <!-- Script Base -->
+    <script src="script.js?v=6.428"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.428"></script>
+    <script type="module" src="centro_costi.js?v=6.428"></script>
+</body>
+</html>
