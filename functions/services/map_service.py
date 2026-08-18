@@ -1,4 +1,5 @@
 import time
+from infrastructure.firebase_setup import PROJECT_ID
 
 def handle_genera_mappa_autista(
     viaggio_id,
@@ -779,7 +780,7 @@ async function applicaESalvaRiordino() {{
             realViaggioId = realViaggioId.split(" - ").pop();
         }}
         
-        const resp = await fetch("https://europe-west1-{os.environ.get('GCP_PROJECT', 'log-solution-60007')}.cloudfunctions.net/autista_aggiorna_sequenza", {{
+        const resp = await fetch("https://europe-west1-{PROJECT_ID}.cloudfunctions.net/autista_aggiorna_sequenza", {{
             method: "POST",
             headers: {{ "Content-Type": "application/json" }},
             body: JSON.stringify({{
