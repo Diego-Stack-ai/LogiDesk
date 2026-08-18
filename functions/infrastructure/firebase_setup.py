@@ -6,13 +6,8 @@ from firebase_admin import initialize_app, firestore, storage
 
 # --- Inizializzazione Firebase ---
 if not firebase_admin._apps:
-    import os
-    cred_path = r"H:\Il mio Drive\App\AppLogSolutionsWeb\cantiere_key.json"
-    if os.path.exists(cred_path):
-        cred = firebase_admin.credentials.Certificate(cred_path)
-        initialize_app(cred)
-    else:
-        initialize_app()
+    # Utilizzo di Application Default Credentials (ADC) o ambiente Google Cloud nativo
+    initialize_app()
 
 def get_dynamic_project_id():
     pid = os.environ.get("GCP_PROJECT") or os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCLOUD_PROJECT")
@@ -22,8 +17,8 @@ def get_dynamic_project_id():
         except Exception:
             pass
     if not pid:
-        pid = "log-solutions-cantiere"
-    return pid or "log-solution-60007"
+        pid = os.environ.get("LOGIDESK_PROJECT_ID", "log-solutions-cantiere")
+    return pid
 
 PROJECT_ID = get_dynamic_project_id()
 
