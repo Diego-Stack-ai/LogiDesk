@@ -18,6 +18,7 @@ from infrastructure.firebase_setup import (
     load_storage_cache, save_storage_cache
 )
 from core.utils import (
+    _genera_url_storage_token,
     normalize_code, _build_tripla_chiave, _extract_phone, clean_client_code, _safe_float
 )
 
@@ -323,23 +324,6 @@ SCAD_RE = re.compile(r"Scad\.\s*min\.\s*(\d{2}/\d{2}/\d{4})", re.I)
 
 
 
-def _genera_url_storage_token(blob):
-    import uuid
-    from urllib.parse import quote
-    
-    # Prova a recuperare il token esistente dai metadati per evitare di invalidare vecchi link
-    try:
-        blob.reload()
-        if blob.metadata and "firebaseStorageDownloadTokens" in blob.metadata:
-            token = blob.metadata["firebaseStorageDownloadTokens"]
-            return f"https://firebasestorage.googleapis.com/v0/b/{BUCKET_NAME}/o/{quote(blob.name, safe='')}?alt=media&token={token}"
-    except Exception as e_meta:
-        print(f"[WARN] Impossibile leggere metadati esistenti per token: {e_meta}")
-        
-    token = str(uuid.uuid4())
-    blob.metadata = {"firebaseStorageDownloadTokens": token}
-    blob.patch()
-    return f"https://firebasestorage.googleapis.com/v0/b/{BUCKET_NAME}/o/{quote(blob.name, safe='')}?alt=media&token={token}"
 
 
 

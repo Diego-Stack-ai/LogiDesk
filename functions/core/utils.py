@@ -61,23 +61,14 @@ def normalize_code(raw, articoli_noti):
 
 from infrastructure.firebase_setup import BUCKET_NAME
 def _genera_url_storage_token(blob):
-    import uuid
-    from urllib.parse import quote
-    
-    # Prova a recuperare il token esistente dai metadati per evitare di invalidare vecchi link
+    import datetime
+    # Utilizziamo le API Storage standard per Signed URL
+    # per evitare hardcode di domini e bucket name raw string.
     try:
-        blob.reload()
-        if blob.metadata and "firebaseStorageDownloadTokens" in blob.metadata:
-            token = blob.metadata["firebaseStorageDownloadTokens"]
-            return f"https://firebasestorage.googleapis.com/v0/b/{BUCKET_NAME}/o/{quote(blob.name, safe='')}?alt=media&token={token}"
-    except Exception as e_meta:
-        print(f"[WARN] Impossibile leggere metadati esistenti per token: {e_meta}")
-        
-    token = str(uuid.uuid4())
-    blob.metadata = {"firebaseStorageDownloadTokens": token}
-    blob.patch()
-    return f"https://firebasestorage.googleapis.com/v0/b/{BUCKET_NAME}/o/{quote(blob.name, safe='')}?alt=media&token={token}"
-
+        return blob.generate_signed_url(expiration=datetime.timedelta(days=3650))
+    except Exception as e:
+        print(f"[WARN] Impossibile generare signed url: {e}")
+        return ""
 
 
 from infrastructure.firebase_setup import get_db
