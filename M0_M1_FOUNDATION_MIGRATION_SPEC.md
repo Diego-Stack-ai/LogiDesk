@@ -18,12 +18,13 @@ This document defines the design for the M0 (Company Shell) and M1 (Tenants Shel
 - **Minimum Model:**
   ```json
   {
-    "nome": "REVIEW_REQUIRED", 
+    "nome": "LogiDesk Demo", 
     "attiva": true,
-    "schema_version": "1.0.0"
+    "schema_version": 1,
+    "tipo_ambiente": "DEVELOPMENT_DEMO"
   }
   ```
-  *(Note: LogiDesk is the product name. The operating company name must be configured/certified; hence REVIEW_REQUIRED by default in the script).*
+  *(Note: LogiDesk is the product name. "LogiDesk Demo" is the organization using the product in this environment. The company name is now CERTIFIED).*
 
 ## 3. M1: TENANTS SHELL
 - **Target:** `aziende/{azienda_id}/tenants/{tenant_id}`

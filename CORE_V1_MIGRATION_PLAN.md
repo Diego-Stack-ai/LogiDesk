@@ -60,3 +60,6 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **FUTURE TARGET M5**: `aziende/{azienda_id}/tenants/{tenant_id}/punti_consegna`.
 - **M5_DNR_DRY_RUN_CERTIFIED**: TRUE
 - **M5_DNR_TARGET_COLLECTION**: punti_consegna
+- **MULTI_COMPANY_MODEL**: TRUE. L'azienda funge da data isolation boundary.
+- **PRODUCT**: LogiDesk
+- **DEMO_COMPANY**: LogiDesk Demo

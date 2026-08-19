@@ -30,7 +30,7 @@ class TestM0M1FoundationDryRun(unittest.TestCase):
             
         self.assertEqual(summary["company_preview_count"], 1)
         self.assertEqual(summary["tenant_preview_count"], 4)
-        self.assertEqual(summary["company_name_status"], "REVIEW_REQUIRED")
+        self.assertEqual(summary["company_name_status"], "CERTIFIED")
         self.assertFalse(summary["dac_created_preview"])
         
         # Verify Tenants Preview
@@ -76,7 +76,15 @@ class TestM0M1FoundationDryRun(unittest.TestCase):
         with open(manifest_path) as f:
             manifest = json.load(f)
             
-        self.assertEqual(manifest["overall_status"], "PASS_WITH_REVIEW")
+        self.assertEqual(manifest["overall_status"], "PASS")
+        self.assertTrue(manifest["company_name_certified"])
+        
+        # Verify M0_COMPANY_PREVIEW
+        company_path = os.path.join(self.output_dir, "M0_COMPANY_PREVIEW.json")
+        with open(company_path) as f:
+            company = json.load(f)
+        self.assertEqual(company["data"]["nome"], "LogiDesk Demo")
+        self.assertEqual(company["data"]["migration_status"], "READY")
 
 if __name__ == "__main__":
     unittest.main()
