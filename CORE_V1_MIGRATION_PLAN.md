@@ -32,3 +32,9 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **IDEMPOTENZA**: Esecuzioni multiple non devono duplicare i target.
 - **BATCH/RESUMABLE**: Batch limit per evitare timeout Firestore.
 - **VALIDATION MANIFEST**: Produzione report finale count e sample checksum.
+
+## M5: SPLIT PUNTI DI CONSEGNA DNR
+**LEGACY_DNR_CODE_SPLIT_RULE**: I record con doppio codice (Frutta e Latte) vengono splittati in due target distinti (`punto_id` separati). I dati fisici vengono duplicati (COPY_TO_BOTH) o smistati (es. orari_frutta al target FRUTTA).
+**GENERIC_SUBCODE_MODEL**: Introdotto attributo opzionale `sottocodice` (es. 'FRUTTA', 'LATTE') per marcare la tipologia logistica nel tenant DNR, configurabile per altri tenant.
+**TENANT_SCOPED_SEQUENCE_CODE**: Ogni nuovo punto riceve un codice sequenziale logico (es. `DP000001`) isolato per tenant, gestito tramite counter atomico.
+**DNR_TRANSFORMATION_AWARE_COUNT_VALIDATION**: La validazione M5 non si aspetta count 1:1, ma `TARGET_COUNT = FRUTTA_ONLY + LATTE_ONLY + 2 * FRUTTA_AND_LATTE`.
