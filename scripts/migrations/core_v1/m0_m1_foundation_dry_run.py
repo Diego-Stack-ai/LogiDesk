@@ -41,7 +41,6 @@ def main():
         "nome": "LogiDesk Demo",
         "attiva": True,
         "schema_version": 1,
-        "tipo_ambiente": "DEVELOPMENT_DEMO",
         "migration_status": "READY",
         "migration_warnings": []
     }
@@ -143,6 +142,7 @@ def main():
         "mode": "DRY-RUN",
         "company_preview_count": 1,
         "company_name_status": "CERTIFIED",
+        "company_type": "DEVELOPMENT_DEMO",
         "tenant_preview_count": len(tenant_names),
         "tenant_names": tenant_names,
         "dac_status": "PENDING_RECONCILIATION",

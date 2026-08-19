@@ -63,3 +63,4 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **MULTI_COMPANY_MODEL**: TRUE. L'azienda funge da data isolation boundary.
 - **PRODUCT**: LogiDesk
 - **DEMO_COMPANY**: LogiDesk Demo
+- **DEPLOYMENT_METADATA_NOT_IN_BUSINESS_DOMAIN**: TRUE. (e.g. `tipo_ambiente` is kept in migration registry only, not in canonical payloads).

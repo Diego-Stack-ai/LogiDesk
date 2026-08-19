@@ -20,8 +20,7 @@ This document defines the design for the M0 (Company Shell) and M1 (Tenants Shel
   {
     "nome": "LogiDesk Demo", 
     "attiva": true,
-    "schema_version": 1,
-    "tipo_ambiente": "DEVELOPMENT_DEMO"
+    "schema_version": 1
   }
   ```
   *(Note: LogiDesk is the product name. "LogiDesk Demo" is the organization using the product in this environment. The company name is now CERTIFIED).*

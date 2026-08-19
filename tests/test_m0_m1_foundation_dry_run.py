@@ -84,6 +84,9 @@ class TestM0M1FoundationDryRun(unittest.TestCase):
         with open(company_path) as f:
             company = json.load(f)
         self.assertEqual(company["data"]["nome"], "LogiDesk Demo")
+        self.assertEqual(company["data"]["attiva"], True)
+        self.assertEqual(company["data"]["schema_version"], 1)
+        self.assertNotIn("tipo_ambiente", company["data"])
         self.assertEqual(company["data"]["migration_status"], "READY")
 
 if __name__ == "__main__":
