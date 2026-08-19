@@ -26,9 +26,11 @@ Output generati (JSON locale):
 Lo script si trova in `scripts/migrations/core_v1/m5_delivery_points_dry_run.py`.
 Deve essere lanciato ESCLUSIVAMENTE in modalita `--dry-run`:
 ```bash
-python scripts/migrations/core_v1/m5_delivery_points_dry_run.py \
+python3 m5_delivery_points_dry_run.py \
   --project log-solutions-cantiere \
   --tenant DNR \
   --dry-run \
-  --output-dir ./migration_output/m5_dnr
+  --output-dir "$HOME/LOGIDESK_M5_DNR_DRYRUN"
 ```
+
+**NOTA**: Questo script deve essere eseguito da Cloud Shell, sfruttando l'Application Default Credentials (ADC) dell'utente per l'accesso in sola lettura a Firestore.
