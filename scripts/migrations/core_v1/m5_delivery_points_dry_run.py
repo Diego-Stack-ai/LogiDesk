@@ -113,15 +113,12 @@ class LegacyDNRAdapter:
         target["migration_warnings"] = []
         target["finestre_consegna"] = []
         
-        if tmin and tmax:
-            if tmin < tmax:
-                target["finestre_consegna"] = [{"da": tmin, "a": tmax}]
-            else:
+        if tmin or tmax:
+            if tmin and tmax and tmin >= tmax:
                 target["migration_status"] = "REVIEW_REQUIRED"
                 target["migration_warnings"].append("INVALID_TIME_RANGE")
-        elif tmin or tmax:
-            target["migration_status"] = "REVIEW_REQUIRED"
-            target["migration_warnings"].append("PARTIAL_TIME_WINDOW")
+            else:
+                target["finestre_consegna"] = [{"da": tmin, "a": tmax}]
             
         if not target["geolocalizzazione"]:
             target["migration_status"] = "REVIEW_REQUIRED"

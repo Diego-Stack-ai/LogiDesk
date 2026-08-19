@@ -53,6 +53,48 @@ class TestM5DryRun(unittest.TestCase):
             self.assertEqual(summary["source_document_count"], 2)
             self.assertEqual(summary["simulated_target_count"], 3)
 
+    def test_adapter_time_windows(self):
+        adapter = LegacyDNRAdapter()
+        shared_base = {
+            "codice_frutta": "P123", "codice_latte": "p00000",
+            "lat": "45.0", "lon": "9.0"
+        }
+        
+        # Valid closed
+        d1 = shared_base.copy()
+        d1.update({"orario_min_frutta": "08:00", "orario_max_frutta": "10:00"})
+        r1 = adapter.parse("d1", "path/d1", d1)[0]
+        self.assertEqual(r1["finestre_consegna"], [{"da": "08:00", "a": "10:00"}])
+        self.assertEqual(r1["migration_status"], "READY")
+        
+        # Open start
+        d2 = shared_base.copy()
+        d2.update({"orario_min_frutta": "NaN", "orario_max_frutta": "10:00"})
+        r2 = adapter.parse("d2", "path/d2", d2)[0]
+        self.assertEqual(r2["finestre_consegna"], [{"da": None, "a": "10:00"}])
+        self.assertEqual(r2["migration_status"], "READY")
+        
+        # Open end
+        d3 = shared_base.copy()
+        d3.update({"orario_min_frutta": "08:00", "orario_max_frutta": ""})
+        r3 = adapter.parse("d3", "path/d3", d3)[0]
+        self.assertEqual(r3["finestre_consegna"], [{"da": "08:00", "a": None}])
+        self.assertEqual(r3["migration_status"], "READY")
+        
+        # No window
+        d4 = shared_base.copy()
+        d4.update({"orario_min_frutta": "", "orario_max_frutta": None})
+        r4 = adapter.parse("d4", "path/d4", d4)[0]
+        self.assertEqual(r4["finestre_consegna"], [])
+        self.assertEqual(r4["migration_status"], "READY")
+        
+        # Invalid range
+        d5 = shared_base.copy()
+        d5.update({"orario_min_frutta": "10:00", "orario_max_frutta": "08:00"})
+        r5 = adapter.parse("d5", "path/d5", d5)[0]
+        self.assertEqual(r5["migration_status"], "REVIEW_REQUIRED")
+        self.assertIn("INVALID_TIME_RANGE", r5["migration_warnings"])
+
     def test_static_write_safety(self):
         with open("scripts/migrations/core_v1/m5_delivery_points_dry_run.py", "r") as f:
             code = f.read()

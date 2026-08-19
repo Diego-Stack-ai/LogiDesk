@@ -34,3 +34,8 @@ python3 m5_delivery_points_dry_run.py \
 ```
 
 **NOTA**: Questo script deve essere eseguito da Cloud Shell, sfruttando l'Application Default Credentials (ADC) dell'utente per l'accesso in sola lettura a Firestore.
+
+## 6. SEMANTICA OPEN WINDOW
+- Finestre con solo `a` valido: interpretate come 'consegna entro' (valid).
+- Finestre con solo `da` valido: interpretate come 'consegna da' (valid).
+- Solo range chiusi invertiti generano `INVALID_TIME_RANGE`.
