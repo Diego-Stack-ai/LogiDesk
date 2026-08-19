@@ -38,3 +38,10 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 **GENERIC_SUBCODE_MODEL**: Introdotto attributo opzionale `sottocodice` (es. 'FRUTTA', 'LATTE') per marcare la tipologia logistica nel tenant DNR, configurabile per altri tenant.
 **TENANT_SCOPED_SEQUENCE_CODE**: Ogni nuovo punto riceve un codice sequenziale logico (es. `DP000001`) isolato per tenant, gestito tramite counter atomico.
 **DNR_TRANSFORMATION_AWARE_COUNT_VALIDATION**: La validazione M5 non si aspetta count 1:1, ma `TARGET_COUNT = FRUTTA_ONLY + LATTE_ONLY + 2 * FRUTTA_AND_LATTE`.
+
+## M5: APPROVAZIONE GEO E FINESTRE TEMPORALI
+**DELIVERY_TIME_WINDOWS_MODEL**: ARRAY_0_N. Eliminata dipendenza strutturale da mattina/pomeriggio. Array di `{da, a}`.
+**GEO_APPROVAL_MODEL**: OPERATOR_VERIFIED. Un punto geolocalizzato non e' approvato finche `stato_verifica` non e' 'OK'.
+**DNR_LEGACY_GEO_MIGRATION_POLICY**: CONFIRMED_DATASET. I 453 record DNR consolidati avranno `stato_verifica='OK'` e `fonte='LEGACY_CONFIRMED_DATASET'`, eccetto gli 8 con esplicito `stato='ok'` (fonte `LEGACY_EXPLICIT`).
+**DNR_M5_TARGET_COUNT**: 609. Derivante da 453 legacy (236 FRUTTA_ONLY + 61 LATTE_ONLY + 156 FRUTTA_AND_LATTE * 2).
+**LEGACY_NOISE**: Campi come `tipo`, `tipologia_grado` ignorati. Valori `False`, `NaN`, vuoti negli orari normalizzati a null/scartati.
