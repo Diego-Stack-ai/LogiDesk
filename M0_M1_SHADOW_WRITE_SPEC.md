@@ -92,4 +92,13 @@ The write execution will produce local reporting:
 - `M0_M1_WRITE_SUMMARY.json`
 - `M0_M1_WRITE_REGISTRY.json`
 - `M0_M1_POST_WRITE_VALIDATION.json`
-- `M0_M1_ROLLBACK_MANIFEST.json`
+## 12. EXECUTION STATUS
+- **SCRIPT IMPLEMENTED**: YES (`scripts/migrations/core_v1/m0_m1_foundation_write.py`)
+- **LIVE WRITE AUTHORIZED**: NO
+
+**Preflight Command (Cloud Shell / ADC):**
+```bash
+python scripts/migrations/core_v1/m0_m1_foundation_write.py \
+  --project log-solutions-cantiere \
+  --output-dir ./migration_output/m0_m1_write
+```
