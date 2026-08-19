@@ -135,3 +135,10 @@ e2e-tests/.qa-state.json
 e2e-tests/.qa-backups/
 
 e2e-tests/.qa-recovery/
+functions/caches/*.json
+
+frontend/mappe_autisti/*
+
+Pianificazione _ InTime_files/
+
+backup/
