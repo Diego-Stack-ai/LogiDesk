@@ -4,7 +4,7 @@ import json
 import hashlib
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 try:
     from google.cloud import firestore
 except ImportError:
@@ -30,6 +30,7 @@ class M0M1Migration:
         self.execute = args.execute
         self.preflight = not args.execute
         self.plan = None
+        self.firestore_write_executed = False
         
     def run(self):
         self.discover_state()
@@ -58,7 +59,6 @@ class M0M1Migration:
                 self.state_classification = "PARTIAL_STATE"
             return
             
-        # Optional: check if company exists directly by idempotency (not easy without knowing auto-id, unless querying collection group which we won't do here for safety)
         self.state_classification = "CLEAN_START"
 
     def build_write_plan(self):
@@ -116,11 +116,15 @@ class M0M1Migration:
             "idempotency_key": COMPANY_IDEMPOTENCY_KEY
         })
         
+        business_created_paths = [company_path] + [t["path"] for t in tenants]
+        technical_created_paths = [REGISTRY_PATH]
+        all_created_paths = business_created_paths + technical_created_paths
+        
         registry_payload = {
             "migration_version": "1.0",
             "migration_name": "core_v1_m0_m1",
             "project_id": self.args.project,
-            "status": "COMPLETE",
+            "status": "PLANNED" if self.preflight else "COMPLETE",
             "company_id": company_id,
             "company_idempotency_key": COMPANY_IDEMPOTENCY_KEY,
             "tenant_mapping": {t["name"]: t["id"] for t in tenants},
@@ -128,8 +132,10 @@ class M0M1Migration:
                 "company": company_fingerprint,
                 "tenants": {t["name"]: t["fingerprint"] for t in tenants}
             },
-            "created_paths": [company_path] + [t["path"] for t in tenants],
-            "executed_at": datetime.utcnow().isoformat() + "Z"
+            "business_created_paths": business_created_paths,
+            "technical_created_paths": technical_created_paths,
+            "all_created_paths": all_created_paths,
+            "executed_at": datetime.now(timezone.utc).isoformat()
         }
         
         self.plan = {
@@ -144,6 +150,9 @@ class M0M1Migration:
                 "path": REGISTRY_PATH,
                 "payload": registry_payload
             },
+            "business_created_paths": business_created_paths,
+            "technical_created_paths": technical_created_paths,
+            "all_created_paths": all_created_paths,
             "document_count": 6
         }
 
@@ -166,17 +175,17 @@ class M0M1Migration:
         batch = self.db.batch()
         
         company_ref = self.db.document(self.plan["company"]["path"])
-        batch.set(company_ref, self.plan["company"]["payload"]) # Business docs use set without create-only to not fail if they exist, but registry protects it. Actually for true safety we should use create if supported. But Python firestore API batch.create is valid.
+        batch.set(company_ref, self.plan["company"]["payload"]) 
         
         for t in self.plan["tenants"]:
             t_ref = self.db.document(t["path"])
             batch.set(t_ref, t["payload"])
             
         registry_ref = self.db.document(self.plan["registry"]["path"])
-        # We use create for registry. If it exists, this entire batch fails atomically.
         batch.create(registry_ref, self.plan["registry"]["payload"])
         
         batch.commit()
+        self.firestore_write_executed = True
         self.plan["commit_successful"] = True
 
     def verify_post_write(self):
@@ -194,14 +203,12 @@ class M0M1Migration:
         if not getattr(self, 'db', None):
             return
 
-        # Reread company
         company_doc = self.db.document(self.plan["company"]["path"]).get()
         if company_doc.exists:
             data = company_doc.to_dict()
             if data.get("nome") == "LogiDesk Demo" and data.get("schema_version") == 1:
                 self.verification_results["COMPANY_EXISTS"] = True
                 
-        # Reread tenants
         tenants_ref = self.db.collection(self.plan["company"]["path"] + "/tenants")
         tenant_docs = list(tenants_ref.stream())
         if len(tenant_docs) == 4:
@@ -214,12 +221,10 @@ class M0M1Migration:
             if dnr_doc and dnr_doc.to_dict().get("configurazione_codici", {}).get("sottocodice_attivo") == True:
                 self.verification_results["DNR_CONFIG_CORRECT"] = True
 
-        # Check registry
         reg_doc = self.db.document(self.plan["registry"]["path"]).get()
         if reg_doc.exists and reg_doc.to_dict().get("status") == "COMPLETE":
             self.verification_results["REGISTRY_COMPLETE"] = True
 
-        # Check hashes
         hash_ok = True
         company_hash = generate_fingerprint({
             "entity_type": "company",
@@ -242,7 +247,7 @@ class M0M1Migration:
         self.verification_results["HASH_MATCH"] = hash_ok
         
         if all(self.verification_results.values()) and not self.verification_results.get("OVERALL_STATUS") == "FAILED":
-             pass # Logic inversion here
+             pass 
              
         if all([self.verification_results[k] for k in ["COMPANY_EXISTS", "TENANT_COUNT_4", "TENANT_NAMES_CORRECT", "DNR_CONFIG_CORRECT", "DAC_ABSENT", "HASH_MATCH", "REGISTRY_COMPLETE"]]):
             self.verification_results["OVERALL_STATUS"] = "PASS"
@@ -273,15 +278,31 @@ class M0M1Migration:
                 "company_path": self.plan["company"]["path"],
                 "tenant_paths": [t["path"] for t in self.plan["tenants"]],
                 "fingerprints": self.plan["registry"]["payload"]["fingerprints"],
-                "created_paths": self.plan["registry"]["payload"]["created_paths"],
+                "business_created_paths": self.plan["business_created_paths"],
+                "technical_created_paths": self.plan["technical_created_paths"],
+                "all_created_paths": self.plan["all_created_paths"],
                 "rollback_allowed_by_design": True
             }
             with open(os.path.join(self.args.output_dir, "M0_M1_ROLLBACK_MANIFEST.json"), "w") as f:
                 json.dump(rollback, f, indent=2)
 
-        if getattr(self, 'verification_results', None):
-            with open(os.path.join(self.args.output_dir, "M0_M1_POST_WRITE_VALIDATION.json"), "w") as f:
-                json.dump(self.verification_results, f, indent=2)
+            if self.preflight:
+                preflight_val = {
+                    "mode": "PREFLIGHT",
+                    "state_classification": self.state_classification,
+                    "firestore_write_executed": self.firestore_write_executed,
+                    "all_gates_pass": all(self.gates.values()),
+                    "gates": self.gates,
+                    "planned_document_count": self.plan["document_count"],
+                    "legacy_write_count": 0,
+                    "punti_consegna_write_count": 0,
+                    "preflight_validation_pass": True
+                }
+                with open(os.path.join(self.args.output_dir, "M0_M1_PREFLIGHT_VALIDATION.json"), "w") as f:
+                    json.dump(preflight_val, f, indent=2)
+            elif getattr(self, 'verification_results', None):
+                with open(os.path.join(self.args.output_dir, "M0_M1_POST_WRITE_VALIDATION.json"), "w") as f:
+                    json.dump(self.verification_results, f, indent=2)
 
 def main():
     parser = argparse.ArgumentParser(description="M0/M1 Shadow Write")

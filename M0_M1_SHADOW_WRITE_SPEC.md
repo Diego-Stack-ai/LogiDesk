@@ -102,3 +102,18 @@ python scripts/migrations/core_v1/m0_m1_foundation_write.py \
   --project log-solutions-cantiere \
   --output-dir ./migration_output/m0_m1_write
 ```
+
+## 13. LIVE PREFLIGHT CERTIFICATION
+- **M0_M1_LIVE_PREFLIGHT_EXECUTED**: TRUE
+- **PROJECT**: log-solutions-cantiere
+- **PRE_STATE**: CLEAN_START
+- **ALL_GATES_PASS**: TRUE
+- **PLANNED_COMPANY_COUNT**: 1
+- **PLANNED_TENANT_COUNT**: 4
+- **PLANNED_REGISTRY_COUNT**: 1
+- **BUSINESS_DOCUMENT_COUNT**: 5
+- **TECHNICAL_DOCUMENT_COUNT**: 1
+- **ATOMIC_DOCUMENT_COUNT**: 6
+- **LEGACY_WRITE_COUNT**: 0
+- **PUNTI_CONSEGNA_WRITE_COUNT**: 0
+- **FIRESTORE_WRITE_EXECUTED**: FALSE

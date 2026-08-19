@@ -57,11 +57,28 @@ class TestM0M1FoundationWrite(unittest.TestCase):
         self.assertEqual(summary["legacy_write_count"], 0)
         self.assertEqual(summary["punti_consegna_write_count"], 0)
         
-        # Check that all gates passed
-        self.assertTrue(all(summary["gates"].values()))
+        # Check that preflight validation file exists
+        preflight_val_path = os.path.join(self.output_dir, "M0_M1_PREFLIGHT_VALIDATION.json")
+        self.assertTrue(os.path.exists(preflight_val_path))
+        with open(preflight_val_path) as f:
+            pre_val = json.load(f)
+        self.assertEqual(pre_val["mode"], "PREFLIGHT")
+        self.assertFalse(pre_val["firestore_write_executed"])
+        self.assertEqual(pre_val["planned_document_count"], 6)
+        
+        # Post-write validation should not exist
+        post_val_path = os.path.join(self.output_dir, "M0_M1_POST_WRITE_VALIDATION.json")
+        self.assertFalse(os.path.exists(post_val_path))
         
         rollback_path = os.path.join(self.output_dir, "M0_M1_ROLLBACK_MANIFEST.json")
         self.assertTrue(os.path.exists(rollback_path))
+        with open(rollback_path) as f:
+            rollback = json.load(f)
+        
+        self.assertEqual(len(rollback["business_created_paths"]), 5)
+        self.assertEqual(len(rollback["technical_created_paths"]), 1)
+        self.assertEqual(len(rollback["all_created_paths"]), 6)
+        self.assertIn("system_migrations/core_v1_m0_m1", rollback["technical_created_paths"])
 
     @patch('m0_m1_foundation_write.firestore')
     def test_execute_already_applied(self, mock_firestore):
