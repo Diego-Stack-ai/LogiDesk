@@ -45,3 +45,9 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 **DNR_LEGACY_GEO_MIGRATION_POLICY**: CONFIRMED_DATASET. I 453 record DNR consolidati avranno `stato_verifica='OK'` e `fonte='LEGACY_CONFIRMED_DATASET'`, eccetto gli 8 con esplicito `stato='ok'` (fonte `LEGACY_EXPLICIT`).
 **DNR_M5_TARGET_COUNT**: 609. Derivante da 453 legacy (236 FRUTTA_ONLY + 61 LATTE_ONLY + 156 FRUTTA_AND_LATTE * 2).
 **LEGACY_NOISE**: Campi come `tipo`, `tipologia_grado` ignorati. Valori `False`, `NaN`, vuoti negli orari normalizzati a null/scartati.
+
+## M5 DRY-RUN DESIGN
+**DRY_RUN_OUTPUT_FILES**: Vengono generati summary, preview dei target, preview del registry e record da revisionare in JSON locale.
+**DNR_ADAPTER_DEFINED**: Utilizzato un pattern Adapter (`LegacyDNRAdapter` -> `CanonicalDeliveryPoint`) per generalizzare il transformer e riutilizzarlo per Cattel, Gran Chef, ecc.
+**SIMULATED_ID**: `SIM::{legacy_doc_id}::SOTTOCODICE`.
+**MIGRATION_FINGERPRINT_MODEL**: SHA256 dei campi canonical target generati per validazione successiva.
