@@ -40,6 +40,14 @@ def normalize_coordinate(value):
     except (ValueError, TypeError):
         return None
 
+CERTIFIED_NAME_OVERRIDES = {
+    "p2112": "\"RINO SORIO\" MUSSOI",
+    "p2113": "\"SEGATO\" CHIESURAZZA",
+    "p2278": "\"MARCO POLO\"",
+    "p2341": "\"MADDALENA DI CANOSSA\"",
+    "p2353": "\"GIANNI RODARI\" - PARE'"
+}
+
 class LegacyDNRAdapter:
     def parse(self, legacy_doc_id, legacy_path, data):
         cf = normalize_code(data.get("codice_frutta"))
@@ -70,9 +78,19 @@ class LegacyDNRAdapter:
                 "verification_source": v_source
             }
 
+        nome = data.get("cliente")
+        name_source = "LEGACY"
+        if not nome or not str(nome).strip():
+            if legacy_doc_id in CERTIFIED_NAME_OVERRIDES:
+                nome = CERTIFIED_NAME_OVERRIDES[legacy_doc_id]
+                name_source = "CERTIFIED_MANUAL_OVERRIDE"
+            else:
+                nome = None
+
         shared = {
             "source": {"legacy_path": legacy_path, "legacy_document_id": legacy_doc_id},
-            "nome": data.get("cliente"),
+            "nome": nome,
+            "name_source": name_source,
             "indirizzo": data.get("indirizzo"),
             "cap": data.get("cap"),
             "citta": data.get("citta"),
@@ -286,6 +304,7 @@ def write_output_files(outdir, project, tenant, plan):
             "codice_punto": t["codice_punto"],
             "codice_esterno": t["codice_esterno"],
             "sottocodice": t["sottocodice"],
+            "name_source": t.get("name_source"),
             "association_group_id": t.get("association_group_id"),
             "migration_status": t["migration_status"],
             "fingerprint": t["fingerprint"]

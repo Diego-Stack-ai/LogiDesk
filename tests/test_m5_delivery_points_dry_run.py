@@ -95,6 +95,24 @@ class TestM5DryRun(unittest.TestCase):
         self.assertEqual(r5["migration_status"], "REVIEW_REQUIRED")
         self.assertIn("INVALID_TIME_RANGE", r5["migration_warnings"])
 
+    def test_name_overrides(self):
+        adapter = LegacyDNRAdapter()
+        
+        # Override
+        data1 = {"codice_frutta": "P123", "lat": "45.0", "lon": "9.0", "cliente": ""}
+        res1 = adapter.parse("p2112", "path/p2112", data1)[0]
+        self.assertEqual(res1["nome"], '"RINO SORIO" MUSSOI')
+        self.assertEqual(res1["name_source"], "CERTIFIED_MANUAL_OVERRIDE")
+        self.assertEqual(res1["migration_status"], "READY")
+        
+        # Missing
+        data2 = {"codice_frutta": "P124", "lat": "45.0", "lon": "9.0", "cliente": None}
+        res2 = adapter.parse("p9999", "path/p9999", data2)[0]
+        self.assertIsNone(res2["nome"])
+        self.assertEqual(res2["name_source"], "LEGACY")
+        self.assertEqual(res2["migration_status"], "REVIEW_REQUIRED")
+        self.assertIn("MISSING_NAME", res2["migration_warnings"])
+
     def test_static_write_safety(self):
         with open("scripts/migrations/core_v1/m5_delivery_points_dry_run.py", "r") as f:
             code = f.read()

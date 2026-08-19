@@ -39,3 +39,9 @@ python3 m5_delivery_points_dry_run.py \
 - Finestre con solo `a` valido: interpretate come 'consegna entro' (valid).
 - Finestre con solo `da` valido: interpretate come 'consegna da' (valid).
 - Solo range chiusi invertiti generano `INVALID_TIME_RANGE`.
+
+## 7. CERTIFIED NAME OVERRIDES
+- I record p2112, p2113, p2278, p2341, p2353 non possedevano il nome cliente (cliente vuoto/nullo).
+- I loro nomi sono stati accertati e inseriti manualmente tramite la mappa `CERTIFIED_NAME_OVERRIDES`.
+- Ricevono `name_source = 'CERTIFIED_MANUAL_OVERRIDE'`.
+- Qualsiasi altro punto con nome mancante in futuro andrà in REVIEW_REQUIRED con `MISSING_NAME`.
