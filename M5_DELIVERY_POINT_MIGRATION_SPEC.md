@@ -21,3 +21,14 @@ Output generati (JSON locale):
 - `M5_DNR_MIGRATION_REGISTRY_PREVIEW.json`
 - `M5_DNR_REVIEW_REQUIRED.json`
 - `M5_DNR_VALIDATION_MANIFEST.json`
+
+## 5. ESECUZIONE DRY-RUN
+Lo script si trova in `scripts/migrations/core_v1/m5_delivery_points_dry_run.py`.
+Deve essere lanciato ESCLUSIVAMENTE in modalita `--dry-run`:
+```bash
+python scripts/migrations/core_v1/m5_delivery_points_dry_run.py \
+  --project log-solutions-cantiere \
+  --tenant DNR \
+  --dry-run \
+  --output-dir ./migration_output/m5_dnr
+```
