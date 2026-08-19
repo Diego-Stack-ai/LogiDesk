@@ -58,3 +58,5 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **TERM_CLIENTE_FOR_DELIVERY_POINT**: DEPRECATED nel nuovo modello.
 - **LEGACY SOURCE M5**: `clienti/{tenant}/raccolta clienti` (NESSUN RENAME).
 - **FUTURE TARGET M5**: `aziende/{azienda_id}/tenants/{tenant_id}/punti_consegna`.
+- **M5_DNR_DRY_RUN_CERTIFIED**: TRUE
+- **M5_DNR_TARGET_COLLECTION**: punti_consegna

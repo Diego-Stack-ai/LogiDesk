@@ -1,11 +1,11 @@
 # LOGIDESK FIRESTORE TARGET SCHEMA (CORE V1)
 Ultimo aggiornamento: Agosto 2026
 
-## 1. RADICE MULTI-AZIENDA
+## 1. RADICE MULTI-AZIENDA (M0)
 Tutto il dominio LogiDesk e racchiuso sotto la root:
 `/aziende/{azienda_id}`
 - **Strategia ID**: AUTO_ID generato da Firestore.
-- **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+- **Campi Base**: `nome`, `attiva`, `schema_version`
 
 ## 2. ASSET AZIENDALI (COMPANY_SCOPED)
 ### 2.1 UTENTI
@@ -43,12 +43,13 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 `/aziende/{azienda_id}/config/ruoli_capabilities`
 - **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
 
-## 3. DOMINIO TENANT (TENANT_SCOPED)
+## 3. DOMINIO TENANT (TENANT_SCOPED) (M1)
 `/aziende/{azienda_id}/tenants/{tenant_id}`
 - **ID**: AUTO_ID
-- **Campi Base**: nome, codice_esterno, attivo
-- **Capabilities (Embedded Map)**: ddt_digitale, routing_ottimizzato, split_pdf_ddt
-- **Fatturazione (Embedded Map)**: metodo_fatturazione, prezzo_viaggio
+- **Campi Base**: `nome`, `legacy_name`, `attivo`, `schema_version`
+- **Configurazione Codici**: `{ sottocodice_attivo: bool, valori_ammessi: [...] }`
+- **Capabilities (Embedded Map)**: Configurable per tenant
+- **Fatturazione (Embedded Map)**: NON ANCORA MIGRATA (Futuro: metodo_fatturazione, prezzo_viaggio)
 
 ### 3.1 PUNTI DI CONSEGNA
 `/aziende/{azienda_id}/tenants/{tenant_id}/punti_consegna/{punto_id}`
