@@ -133,3 +133,9 @@ Il nuovo percorso target in Firestore è:
 - **Configurazione Routing (`modalita_creazione_viaggi`)**: ZONA vs IMPORTAZIONE a livello di tenant (es. DNR -> ZONA).
 - **Geocoding (`stato_geocoding`)**: Auto-geocodificato ma 'da verificare' fino a supervisione umana.
 
+
+
+## LOGIDESK CORE DATA MODEL V1 E MODELLO AUTORIZZATIVO TARGET
+LOGIDESK_CORE_DATA_MODEL_VERSION = 1
+OPERATIONS_MODEL_DEFERRED = TRUE
+Vedere report output per il dettaglio.
