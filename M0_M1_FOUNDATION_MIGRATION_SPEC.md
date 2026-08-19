@@ -94,4 +94,16 @@ Fields: `migration_version`, `entity_type`, `legacy_identifier`, `target_preview
 - `M0_COMPANY_PREVIEW.json`
 - `M1_TENANTS_PREVIEW.json`
 - `M0_M1_MIGRATION_REGISTRY_PREVIEW.json`
-- `M0_M1_VALIDATION_MANIFEST.json`
+## 8. EXECUTION
+
+**Dry-Run Command (Local):**
+```bash
+python scripts/migrations/core_v1/m0_m1_foundation_dry_run.py \
+  --project log-solutions-cantiere \
+  --dry-run \
+  --output-dir ./migration_output/m0_m1
+```
+
+**Write Safety:**
+- `COMPANY_NAME_REQUIRED_BEFORE_WRITE = TRUE`
+- The M0/M1 WRITE script must refuse to run if `company_name_certified != TRUE`.
