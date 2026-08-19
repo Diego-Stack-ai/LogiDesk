@@ -139,3 +139,6 @@ Il nuovo percorso target in Firestore è:
 LOGIDESK_CORE_DATA_MODEL_VERSION = 1
 OPERATIONS_MODEL_DEFERRED = TRUE
 Vedere report output per il dettaglio.
+
+## TERMINOLOGIA DEFINITIVA CORE V1
+Azienda (Loge Solution) -> Serve i **Tenant** (Clienti Commerciali) -> I quali gestiscono i **Punti_Consegna** (Destinazioni Fisiche).

@@ -45,3 +45,7 @@ python3 m5_delivery_points_dry_run.py \
 - I loro nomi sono stati accertati e inseriti manualmente tramite la mappa `CERTIFIED_NAME_OVERRIDES`.
 - Ricevono `name_source = 'CERTIFIED_MANUAL_OVERRIDE'`.
 - Qualsiasi altro punto con nome mancante in futuro andrà in REVIEW_REQUIRED con `MISSING_NAME`.
+
+## 8. DEPRECAZIONE TERMINE 'CLIENTE'
+- Il termine `cliente` inteso come punto fisico di scarico merce e' DEPRECATO in favore di `punto_consegna`.
+- Qualunque script futuro write dovra' rifiutarsi di scrivere nel path legacy `raccolta clienti` e usera' solo la nuova struttura `punti_consegna`.

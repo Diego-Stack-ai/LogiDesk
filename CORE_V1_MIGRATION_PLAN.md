@@ -51,3 +51,10 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 **DNR_ADAPTER_DEFINED**: Utilizzato un pattern Adapter (`LegacyDNRAdapter` -> `CanonicalDeliveryPoint`) per generalizzare il transformer e riutilizzarlo per Cattel, Gran Chef, ecc.
 **SIMULATED_ID**: `SIM::{legacy_doc_id}::SOTTOCODICE`.
 **MIGRATION_FINGERPRINT_MODEL**: SHA256 dei campi canonical target generati per validazione successiva.
+
+## TERMINOLOGIA CANONICA CORE V1
+- **TENANT**: Committente commerciale.
+- **PUNTO_CONSEGNA**: Destinazione fisica servita.
+- **TERM_CLIENTE_FOR_DELIVERY_POINT**: DEPRECATED nel nuovo modello.
+- **LEGACY SOURCE M5**: `clienti/{tenant}/raccolta clienti` (NESSUN RENAME).
+- **FUTURE TARGET M5**: `aziende/{azienda_id}/tenants/{tenant_id}/punti_consegna`.
