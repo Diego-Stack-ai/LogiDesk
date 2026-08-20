@@ -67,4 +67,4 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 
 ## WRITE STATUS
 - **M0_M1_SHADOW_WRITE**: EXECUTED and CERTIFIED (`NzXaCgyXxZWWehw1tSlo`).
-- **M2_VEHICLES_SHADOW_WRITE**: DESIGN ONLY. WRITE NOT IMPLEMENTED. WRITE NOT AUTHORIZED.
+- **M2_VEHICLES_SHADOW_WRITE**: EXECUTED and CERTIFIED (`NzXaCgyXxZWWehw1tSlo`).
