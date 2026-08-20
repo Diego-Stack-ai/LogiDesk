@@ -18,12 +18,12 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 ### 2.2 UTENTI
 `/aziende/{azienda_id}/utenti/{uid}`
 - **ID**: Firebase Auth uid
-- **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+- **Campi Base**: `uid`, `email`, `ruolo`, `attivo`, `schema_version`, `dipendente_id`
 
 ### 2.3 DIPENDENTI
-`/aziende/{azienda_id}/dipendenti/{dipendente_id}`
-- **ID**: AUTO_ID
-- **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+`/aziende/{azienda_id}/dipendenti/{legacy_document_id}`
+- **ID**: PRESERVED LEGACY DOC ID
+- **Campi Base**: `nome`, `cognome`, `telefono`, `attivo`, `schema_version`
 
 
 
