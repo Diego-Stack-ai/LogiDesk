@@ -1,0 +1,110 @@
+import unittest
+import argparse
+from unittest.mock import MagicMock
+from scripts.migrations.core_v1.m3_identity_dry_run import M3IdentityDryRun, REQUIRED_COMPANY_ID, TEST_RECORD_ID, DUPLICATES
+
+class TestM3IdentityDryRun(unittest.TestCase):
+    def setUp(self):
+        self.args = argparse.Namespace(
+            project="log-solutions-cantiere",
+            company_id=REQUIRED_COMPANY_ID,
+            dry_run=True,
+            output_dir="./migration_output/m3"
+        )
+        self.db = MagicMock()
+        
+        # Mock M0 and M2 dependencies
+        m0_doc = MagicMock()
+        m0_doc.exists = True
+        m0_doc.to_dict.return_value = {"status": "COMPLETE"}
+        
+        m2_doc = MagicMock()
+        m2_doc.exists = True
+        m2_doc.to_dict.return_value = {"status": "COMPLETE"}
+        
+        comp_doc = MagicMock()
+        comp_doc.exists = True
+        
+        def doc_side_effect(path):
+            if path == "system_migrations/core_v1_m0_m1": return m0_doc
+            if path == "system_migrations/core_v1_m2_vehicles": return m2_doc
+            if path == f"aziende/{REQUIRED_COMPANY_ID}": return comp_doc
+            return MagicMock(exists=False)
+            
+        self.db.document.side_effect = doc_side_effect
+        
+        self.auth = MagicMock()
+
+    def create_mock_employees(self, num_auth=24, num_emp_only=1, include_test=True):
+        employees = []
+        auth_users = []
+        
+        for i in range(num_auth):
+            uid = f"auth_uid_{i}"
+            if i == 0: uid = DUPLICATES[0]
+            if i == 1: uid = DUPLICATES[1]
+            employees.append({"id": uid, "data": {"nome": f"Nome {i}", "attivo": True, "uid": uid, "email": f"test{i}@test.com", "ruolo": "autista"}})
+            user_mock = MagicMock()
+            user_mock.uid = uid
+            user_mock.email = f"test{i}@test.com"
+            auth_users.append(user_mock)
+            
+        for i in range(num_emp_only):
+            employees.append({"id": f"emp_{i}", "data": {"nome": f"Emp Only {i}", "attivo": False, "ruolo": "impiegata"}})
+            
+        if include_test:
+            employees.append({"id": TEST_RECORD_ID, "data": {"nome": "Diego Test", "attivo": False}})
+            
+        def stream_mock():
+            for e in employees:
+                d = MagicMock()
+                d.id = e["id"]
+                d.to_dict.return_value = e["data"]
+                yield d
+        
+        self.db.collection().stream = stream_mock
+        
+        list_users_mock = MagicMock()
+        list_users_mock.iterate_all.return_value = auth_users
+        self.auth.list_users.return_value = list_users_mock
+
+    def test_successful_run(self):
+        self.create_mock_employees()
+        mig = M3IdentityDryRun(self.db, self.args, self.auth)
+        mig.load_data()
+        mig.transform_and_validate()
+        
+        self.assertEqual(len(mig.employees_target), 25)
+        self.assertEqual(len(mig.users_target), 24)
+        self.assertEqual(mig.status, "PASS_WITH_IDENTITY_REVIEW")
+        
+    def test_unexpected_active_value(self):
+        self.create_mock_employees(num_auth=23)
+        # Add 1 employee with unexpected "false" string active
+        e = {"id": "uid_23", "data": {"nome": "Test", "attivo": "false", "uid": "uid_23", "email": "test@test.com", "ruolo": "autista"}}
+        
+        stream_mock = self.db.collection().stream
+        def new_stream():
+            for doc in stream_mock(): yield doc
+            d = MagicMock()
+            d.id = e["id"]
+            d.to_dict.return_value = e["data"]
+            yield d
+        self.db.collection().stream = new_stream
+        
+        user_mock = MagicMock()
+        user_mock.uid = "uid_23"
+        user_mock.email = "test@test.com"
+        list_users_mock = self.auth.list_users()
+        auth_users = list(list_users_mock.iterate_all()) + [user_mock]
+        list_users_mock.iterate_all.return_value = auth_users
+        
+        mig = M3IdentityDryRun(self.db, self.args, self.auth)
+        mig.load_data()
+        mig.transform_and_validate()
+        
+        self.assertEqual(mig.status, "PASS_WITH_REVIEW")
+        self.assertTrue(any("Unexpected active value" in r for r in mig.review_required))
+
+if __name__ == '__main__':
+    unittest.main()
