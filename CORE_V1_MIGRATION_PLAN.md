@@ -12,20 +12,21 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - `target_path` / `target_id`
 - `checksum` e `status` (DRY_RUN, COPIED, VERIFIED, SHADOW_WRITE_DESIGNED)
 
-## ORDINE DELLE FASI (PHASES)
-- **M0 — Company Shell**: Creazione `aziende/{azienda_id}` vuota (Auto-ID). Nessuna dipendenza.
-- **M1 — Tenants Shell**: Creazione `aziende/{azienda_id}/tenants/{tenant_id}` per DNR, CATTEL, GRAN CHEF, BAUER. DAC in review.
-- **M2 — Mezzi**: Da `root/mezzi` a `aziende/{a}/mezzi/{id}`. `targa` diventa attributo. (COPY_TRANSFORM)
-- **M3 - Dipendenti/Utenti**: Split `root/dipendenti` in `utenti/{uid}` (auth base) e `dipendenti/{legacy_document_id}` (HR base). (COPY_SPLIT) PRESERVE_LEGACY_DOC_ID used for M6/M7 continuity. SHADOW_WRITE_DESIGNED.
-- **M4 — Magazzini**: Classificazione ownership (Azienda vs Tenant). Da `root/magazzini_sedi` e `clienti/DNR/magazzini_sedi` ai nuovi path.
-- **M5 — Punti Consegna**: Da `clienti/{t}/raccolta clienti` a `aziende/{a}/tenants/{t}/punti_consegna`. ID Auto. Mapping `codice_esterno`.
-- **M6 — Presenze**: Da `root/presenze` a `aziende/{a}/presenze/{id}`. Rischio alto, necessita validazione rigorosa per evitare danni fatturazione.
-- **M7 — Costi Personale**: Da `clienti/DNR/costi_personale` a `aziende/{a}/costi_personale`.
-- **M8 — Costi Flotta**: Da `root/costi_carburante` a `aziende/{a}/costi_flotta`.
-- **M9 — Fatturazione Tenant**: Merge e review di `clienti_fatturazione` e collection navette/magazzini_sedi in config Tenant.
-- **M10 — Ruoli / Capabilities**: Trasformazione di `permessi_dashboard` in ruoli astratti.
-- **M11 — Code Cutover**: Switch flag nel backend/frontend per usare i nuovi path.
-- **M12 — Legacy Freeze**: Blocco scritture ai path originali.
+## ORDINE DELLE FASI E STATO
+- **M0**: Core Dataset (Azienda, Impostazioni, Clienti) - **[COMPLETE]**
+- **M1**: Legacy Settings (Impostazioni App) - **[COMPLETE]**
+- **M2**: Legacy Customers (Clienti) - **[COMPLETE]**
+- **M3**: Identity (Dipendenti/Utenti) - **[COMPLETE]**
+  - **M3_TEST_IDENTITY_CLEANUP**: **[COMPLETE]**
+- **M4**: Warehouses (Magazzini) - **[NEXT RECOMMENDED MIGRATION]**
+- **M5**: Delivery Points (Punti di Consegna) - **[BLOCKED / NOT AUTHORIZED]**
+- **M6**: Vehicles (Mezzi di Trasporto) - **[PENDING]**
+- **M7**: Travel Records (Viaggi/DDT) - **[PENDING]**
+- **M8**: Invoices (Fatturazione) - **[PENDING]**
+- **M9**: Fatturazione Tenant - **[PENDING]**
+- **M10**: Ruoli / Capabilities - **[PENDING]**
+- **M11**: Code Cutover - **[PENDING]**
+- **M12**: Legacy Freeze - **[PENDING]**
 
 ## VALIDAZIONI OBBLIGATORIE E REQUISITI SCRIPT
 - **DRY_RUN**: Ogni script deve supportare `--dry-run` senza scrivere.

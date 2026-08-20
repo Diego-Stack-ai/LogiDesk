@@ -61,8 +61,13 @@ Execute a completely safe, create-only, atomic shadow write of the certified M3 
 
 ## STATE
 - WRITE SCRIPT IMPLEMENTED
-- LIVE PREFLIGHT NOT YET EXECUTED
-- LIVE WRITE NOT AUTHORIZED
+- LIVE PREFLIGHT EXECUTED
+- LIVE WRITE EXECUTED AND CERTIFIED
+
+## RESOLVED ISSUES & ENHANCEMENTS
+- **POST_WRITE_FINGERPRINT_VERIFIER_BUG**: RESOLVED
+- **REPORT_ON_FAILURE_BUG**: RESOLVED
+- **VERIFY_EXISTING_MODE**: IMPLEMENTED
 
 ## ROLLBACK PLAN
 - **Scope**: Only the 49 generated documents (25 canonical employees, 23 canonical users, 1 registry document).
