@@ -57,8 +57,9 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 
 ### 3.1 PUNTI DI CONSEGNA
 `/aziende/{azienda_id}/tenants/{tenant_id}/punti_consegna/{punto_id}`
-- **ID**: AUTO_ID
-- **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+- **ID**: SEQUENTIAL_ID (es. DP000001)
+- **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+- **Campi Tenant Specifici (DNR)**: `codice_frutta`, `codice_latte`, `orario_min_frutta`, `orario_max_frutta`, `orario_min_latte`, `orario_max_latte`
 - **Geolocalizzazione**: `geolocalizzazione: { lat, lon, stato_verifica (PENDING/OK/REJECTED/NEEDS_REVIEW), fonte, verificato_da, verificato_at }`
 - **Finestre**: `finestre_consegna: [ { da: 'HH:MM', a: 'HH:MM' } ]` (Nessuna semantica mattina/pomeriggio obbligatoria)
 - **Associazione**: associazione: { linked_point_id, rule: 'RESTRICTIVE_WINDOW' }
