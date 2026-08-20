@@ -18,6 +18,7 @@ REQUIRED_TENANT = "AgvcnbuUMu7YhzSuUKTY"
 
 class M5DeliveryPointsWrite:
     def __init__(self, db, args):
+        raise SystemExit("STOP: MODEL_SUPERSEDED_453_TO_453. Do not run this script. The valid model is 453->609.")
         self.db = db
         self.args = args
         self.legacy_points = []

@@ -1,6 +1,9 @@
 # M5 DELIVERY POINTS SHADOW WRITE SPECIFICATION
 
-## 1. OBJECTIVE
+> [!WARNING]
+> **SUPERSEDED_PENDING_REWORK**
+> This specification (453 -> 453 model) has been invalidated and superseded by the original 453 -> 609 split model.
+> See `M5_ORIGINAL_609_MODEL_RECOVERY.md` for the restored design.
 Execute a read-only migration simulation (preflight) followed by a live shadow write of legacy delivery points to the Core Data Model V1.
 The shadow write MUST be `CREATE ONLY` without overwriting or merging, and it MUST NOT impact the current runtime legacy data or consumers.
 

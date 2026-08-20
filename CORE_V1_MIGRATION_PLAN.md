@@ -37,17 +37,17 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **VALIDATION MANIFEST**: Produzione report finale count e sample checksum.
 
 ## M5: SPLIT PUNTI DI CONSEGNA DNR
-**LEGACY_DNR_CODE_SPLIT_RULE**: INVALIDATED. I record NON vengono più splittati. (1:1 mapping mapping per location fisica).
-**GENERIC_SUBCODE_MODEL**: Introdotto attributo opzionale `sottocodice` (es. 'FRUTTA', 'LATTE') per marcare la tipologia logistica nel tenant DNR, configurabile per altri tenant. (Applies only if kept in single document as arrays/flags).
-**TENANT_SCOPED_SEQUENCE_CODE**: Ogni nuovo punto riceve un codice sequenziale logico (es. `DP000001`) isolato per tenant, gestito tramite counter atomico.
-**DNR_TRANSFORMATION_AWARE_COUNT_VALIDATION**: La validazione M5 si aspetta count 1:1, `TARGET_COUNT = 453`.
+**LEGACY_DNR_CODE_SPLIT_RULE**: I record con doppio codice (Frutta e Latte) vengono splittati in due target distinti (`punto_id` separati). I dati fisici vengono duplicati (COPY_TO_BOTH) ma con target indipendenti e un `association_group_id` comune.
+**GENERIC_SUBCODE_MODEL**: Utilizzo di `sottocodice` ('FRUTTA', 'LATTE') per marcare il source channel operativo.
+**TENANT_SCOPED_SEQUENCE_CODE**: Ogni nuovo punto riceve un codice sequenziale logico (es. `DP000001` - `DP000609`) isolato per tenant.
+**DNR_TRANSFORMATION_AWARE_COUNT_VALIDATION**: La validazione M5 non si aspetta count 1:1, ma `TARGET_COUNT = 609`.
 
 ## M5: APPROVAZIONE GEO E FINESTRE TEMPORALI
 **DELIVERY_TIME_WINDOWS_MODEL**: ARRAY_0_N. Eliminata dipendenza strutturale da mattina/pomeriggio. Array di `{da, a}`.
 **GEO_APPROVAL_MODEL**: OPERATOR_VERIFIED. Un punto geolocalizzato non e' approvato finche `stato_verifica` non e' 'OK'.
 **DNR_LEGACY_GEO_MIGRATION_POLICY**: CONFIRMED_DATASET. I 453 record DNR consolidati avranno `stato_verifica='OK'` e `fonte='LEGACY_CONFIRMED_DATASET'`, eccetto gli 8 con esplicito `stato='ok'` (fonte `LEGACY_EXPLICIT`).
-**DNR_M5_TARGET_COUNT**: 453. (The previous expected target count of 609 was INVALIDATED. Frutta and Latte delivery flags do not duplicate canonical points, resulting in a physical 1:1 mapping of locations).
-**LEGACY_NOISE**: Campi come `tipo`, `tipologia_grado` ignorati/classificati LEGACY_ONLY. Valori `False`, `NaN`, vuoti negli orari normalizzati a null/scartati.
+**DNR_M5_TARGET_COUNT**: 609. Derivante da 453 legacy (236 FRUTTA_ONLY + 61 LATTE_ONLY + 156 FRUTTA_AND_LATTE * 2). (453_TO_453_MODEL is SUPERSEDED, 609_INVALIDATION was REVERTED).
+**LEGACY_NOISE**: Campi come `tipo`, `tipologia_grado` ignorati. Valori `False`, `NaN`, vuoti negli orari normalizzati a null/scartati.
 
 ## M5 DRY-RUN DESIGN
 **DRY_RUN_OUTPUT_FILES**: Vengono generati summary, preview dei target, preview del registry e record da revisionare in JSON locale.

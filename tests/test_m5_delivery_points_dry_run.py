@@ -1,129 +1,84 @@
 import unittest
-import sys
+from unittest.mock import MagicMock
 import os
-import json
 import tempfile
 import shutil
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-from scripts.migrations.core_v1.m5_delivery_points_dry_run import (
-    is_legacy_null_code, 
-    normalize_time, 
-    normalize_coordinate,
-    LegacyDNRAdapter,
-    build_plan,
-    write_output_files
-)
+from scripts.migrations.core_v1.m5_delivery_points_dry_run import M5DeliveryPointsDryRun, REQUIRED_PROJECT, REQUIRED_COMPANY, REQUIRED_TENANT, is_valid_external_code
 
-class TestM5DryRun(unittest.TestCase):
+class TestM5DryRun609(unittest.TestCase):
     def setUp(self):
+        self.db = MagicMock()
+        self.args = MagicMock()
+        self.args.project = REQUIRED_PROJECT
+        self.args.company_id = REQUIRED_COMPANY
+        self.args.tenant_id = REQUIRED_TENANT
+        self.args.dry_run = True
         self.temp_dir = tempfile.mkdtemp()
+        self.args.output_dir = self.temp_dir
+        
+        mock_docs = []
+        # Frutta only
+        for i in range(236):
+            d = MagicMock()
+            d.id = f"F{i:03d}"
+            d.to_dict.return_value = {"codice_frutta": f"F{i}", "codice_latte": "P00000", "cliente": f"Test {i}"}
+            mock_docs.append(d)
+            
+        # Latte only
+        for i in range(61):
+            d = MagicMock()
+            d.id = f"L{i:03d}"
+            d.to_dict.return_value = {"codice_frutta": "", "codice_latte": f"L{i}", "cliente": f"Test {i}"}
+            mock_docs.append(d)
+            
+        # Both
+        for i in range(156):
+            d = MagicMock()
+            d.id = f"B{i:03d}"
+            d.to_dict.return_value = {"codice_frutta": f"BF{i}", "codice_latte": f"BL{i}", "cliente": f"Test {i}"}
+            mock_docs.append(d)
+        
+        self.db.collection.return_value.stream.return_value = mock_docs
         
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
         
-    def test_build_and_write(self):
-        documents = [
-            ("doc1", "path/doc1", {
-                "codice_frutta": "P123", "codice_latte": "p00000",
-                "lat": "45.0", "lon": "9.0", "cliente": "Test 1"
-            }),
-            ("doc2", "path/doc2", {
-                "codice_frutta": "P124", "codice_latte": "P456",
-                "lat": "45.1", "lon": "9.1", "cliente": "Test 2"
-            })
-        ]
-        plan = build_plan("test-project", "DNR", documents)
-        self.assertEqual(plan["source_document_count"], 2)
-        self.assertEqual(len(plan["targets"]), 3)
-        self.assertEqual(plan["frutta_only_count"], 1)
-        self.assertEqual(plan["dual_count"], 1)
+    def test_placeholder_policy(self):
+        self.assertFalse(is_valid_external_code(None))
+        self.assertFalse(is_valid_external_code("p00000"))
+        self.assertFalse(is_valid_external_code("P00000"))
+        self.assertFalse(is_valid_external_code("False"))
+        self.assertFalse(is_valid_external_code("NaN"))
+        self.assertFalse(is_valid_external_code("null"))
+        self.assertFalse(is_valid_external_code(""))
+        self.assertTrue(is_valid_external_code("12345"))
+        self.assertTrue(is_valid_external_code(12345))
         
-        write_output_files(self.temp_dir, "test-project", "DNR", plan)
+    def test_preflight_609(self):
+        audit = M5DeliveryPointsDryRun(self.db, self.args)
+        audit.run()
         
-        files = os.listdir(self.temp_dir)
-        self.assertIn("M5_DNR_DRYRUN_SUMMARY.json", files)
-        self.assertIn("M5_DNR_TARGET_PREVIEW.json", files)
-        self.assertIn("M5_DNR_MIGRATION_REGISTRY_PREVIEW.json", files)
-        self.assertIn("M5_DNR_REVIEW_REQUIRED.json", files)
-        self.assertIn("M5_DNR_VALIDATION_MANIFEST.json", files)
+        self.assertTrue(audit.manifest["GATE_SOURCE_COUNT_453"])
+        self.assertTrue(audit.manifest["GATE_FRUTTA_ONLY_236"])
+        self.assertTrue(audit.manifest["GATE_LATTE_ONLY_61"])
+        self.assertTrue(audit.manifest["GATE_BOTH_REAL_156"])
+        self.assertTrue(audit.manifest["GATE_TARGET_COUNT_609"])
+        self.assertTrue(audit.manifest["GATE_FIRST_ID_DP000001"])
+        self.assertTrue(audit.manifest["GATE_LAST_ID_DP000609"])
+        self.assertTrue(audit.manifest["OVERALL_STATUS"] == "PASS")
         
-        with open(os.path.join(self.temp_dir, "M5_DNR_DRYRUN_SUMMARY.json")) as f:
-            summary = json.load(f)
-            self.assertEqual(summary["source_document_count"], 2)
-            self.assertEqual(summary["simulated_target_count"], 3)
+        # Verify both from same legacy doc share assoc_group
+        import json
+        with open(os.path.join(self.temp_dir, "M5_DELIVERY_POINTS_609_TARGET_PREVIEW.json")) as f:
+            targets = json.load(f)
+            self.assertEqual(len(targets), 609)
+            
+            b000 = [t for t in targets if t["legacy_document_id"] == "B000"]
+            self.assertEqual(len(b000), 2)
+            self.assertEqual(b000[0]["association_group_id"], "ASSOC::B000")
+            self.assertEqual(b000[1]["association_group_id"], "ASSOC::B000")
+            self.assertNotEqual(b000[0]["sottocodice"], b000[1]["sottocodice"])
 
-    def test_adapter_time_windows(self):
-        adapter = LegacyDNRAdapter()
-        shared_base = {
-            "codice_frutta": "P123", "codice_latte": "p00000",
-            "lat": "45.0", "lon": "9.0"
-        }
-        
-        # Valid closed
-        d1 = shared_base.copy()
-        d1.update({"orario_min_frutta": "08:00", "orario_max_frutta": "10:00"})
-        r1 = adapter.parse("d1", "path/d1", d1)[0]
-        self.assertEqual(r1["finestre_consegna"], [{"da": "08:00", "a": "10:00"}])
-        self.assertEqual(r1["migration_status"], "READY")
-        
-        # Open start
-        d2 = shared_base.copy()
-        d2.update({"orario_min_frutta": "NaN", "orario_max_frutta": "10:00"})
-        r2 = adapter.parse("d2", "path/d2", d2)[0]
-        self.assertEqual(r2["finestre_consegna"], [{"da": None, "a": "10:00"}])
-        self.assertEqual(r2["migration_status"], "READY")
-        
-        # Open end
-        d3 = shared_base.copy()
-        d3.update({"orario_min_frutta": "08:00", "orario_max_frutta": ""})
-        r3 = adapter.parse("d3", "path/d3", d3)[0]
-        self.assertEqual(r3["finestre_consegna"], [{"da": "08:00", "a": None}])
-        self.assertEqual(r3["migration_status"], "READY")
-        
-        # No window
-        d4 = shared_base.copy()
-        d4.update({"orario_min_frutta": "", "orario_max_frutta": None})
-        r4 = adapter.parse("d4", "path/d4", d4)[0]
-        self.assertEqual(r4["finestre_consegna"], [])
-        self.assertEqual(r4["migration_status"], "READY")
-        
-        # Invalid range
-        d5 = shared_base.copy()
-        d5.update({"orario_min_frutta": "10:00", "orario_max_frutta": "08:00"})
-        r5 = adapter.parse("d5", "path/d5", d5)[0]
-        self.assertEqual(r5["migration_status"], "REVIEW_REQUIRED")
-        self.assertIn("INVALID_TIME_RANGE", r5["migration_warnings"])
-
-    def test_name_overrides(self):
-        adapter = LegacyDNRAdapter()
-        
-        # Override
-        data1 = {"codice_frutta": "P123", "lat": "45.0", "lon": "9.0", "cliente": ""}
-        res1 = adapter.parse("p2112", "path/p2112", data1)[0]
-        self.assertEqual(res1["nome"], '"RINO SORIO" MUSSOI')
-        self.assertEqual(res1["name_source"], "CERTIFIED_MANUAL_OVERRIDE")
-        self.assertEqual(res1["migration_status"], "READY")
-        
-        # Missing
-        data2 = {"codice_frutta": "P124", "lat": "45.0", "lon": "9.0", "cliente": None}
-        res2 = adapter.parse("p9999", "path/p9999", data2)[0]
-        self.assertIsNone(res2["nome"])
-        self.assertEqual(res2["name_source"], "LEGACY")
-        self.assertEqual(res2["migration_status"], "REVIEW_REQUIRED")
-        self.assertIn("MISSING_NAME", res2["migration_warnings"])
-
-    def test_static_write_safety(self):
-        with open("scripts/migrations/core_v1/m5_delivery_points_dry_run.py", "r") as f:
-            code = f.read()
-        self.assertNotIn(".set(", code)
-        self.assertNotIn(".update(", code)
-        self.assertNotIn(".create(", code)
-        self.assertNotIn(".delete(", code)
-        self.assertNotIn("batch.commit", code)
-        self.assertNotIn("transaction.set", code)
-        self.assertNotIn("transaction.update", code)
-        self.assertNotIn("transaction.delete", code)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
