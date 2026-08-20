@@ -1,0 +1,68 @@
+# M0 / M1 LIVE SHADOW WRITE CERTIFICATION
+
+## 1. EXECUTION CONTEXT
+- **DATE**: August 2026
+- **ENVIRONMENT**: Live Execution
+- **PROJECT**: log-solutions-cantiere
+- **MODE**: EXECUTE
+- **PRE_STATE**: CLEAN_START
+
+## 2. METRICS & VALIDATION
+- **M0_M1_SHADOW_WRITE_EXECUTED**: TRUE
+- **M0_M1_SHADOW_WRITE_VALIDATED**: TRUE
+- **COMPANY_EXISTS**: TRUE
+- **TENANT_COUNT_4**: TRUE
+- **TENANT_NAMES_CORRECT**: TRUE
+- **DNR_CONFIG_CORRECT**: TRUE
+- **DAC_ABSENT**: TRUE
+- **HASH_MATCH**: TRUE
+- **REGISTRY_COMPLETE**: TRUE
+- **OVERALL_STATUS**: PASS
+- **RUNTIME_IMPACT**: NONE
+- **LEGACY_WRITE_COUNT**: 0
+- **PUNTI_CONSEGNA_WRITE_COUNT**: 0
+
+## 3. REAL COMPANY
+- **COMPANY_NAME**: "LogiDesk Demo"
+- **COMPANY_ID**: `NzXaCgyXxZWWehw1tSlo`
+- **COMPANY_PATH**: `aziende/NzXaCgyXxZWWehw1tSlo`
+- **COMPANY_IDEMPOTENCY_KEY**: `CORE_V1::COMPANY::PRIMARY`
+- **COMPANY_FINGERPRINT**: `e3e0eff57a5cfe3a4f2b1e768470dc1b9c39cd52f5ecea1d1aca756bd5dfe5a7`
+
+## 4. REAL TENANT MAPPING
+- **DNR**: `AgvcnbuUMu7YhzSuUKTY` (path: `aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY`)
+  - Fingerprint: `151d78ee71b809cef283ec995a5f967cc85eb4a5050ef26d6ae1979a9ad5f263`
+- **CATTEL**: `bSomOWB7pieGNej2KdJA` (path: `aziende/NzXaCgyXxZWWehw1tSlo/tenants/bSomOWB7pieGNej2KdJA`)
+  - Fingerprint: `0f3a5a354b23e4f29319836e61bcfe781dda0fc3a2788c48489dcba838ff32fb`
+- **GRAN CHEF**: `UZC65YbnIbXsei88xNBX` (path: `aziende/NzXaCgyXxZWWehw1tSlo/tenants/UZC65YbnIbXsei88xNBX`)
+  - Fingerprint: `8cad73a86bc0ced8e12944d30e9eaff855ceb21e00d8ba47f55932b9b33ea6dc`
+- **BAUER**: `bXOveycf4bEXv2aCkyMU` (path: `aziende/NzXaCgyXxZWWehw1tSlo/tenants/bXOveycf4bEXv2aCkyMU`)
+  - Fingerprint: `b2caa5c071085e42480b512a5c73c9ad40c8732e229c74a771116073a9d34899`
+
+## 5. DAC
+- **DAC_STATUS**: PENDING_RECONCILIATION
+- **DAC_TENANT_ID**: NONE
+- **DAC_CREATED**: FALSE
+
+## 6. MIGRATION REGISTRY
+- **REGISTRY_PATH**: `system_migrations/core_v1_m0_m1`
+- **STATUS**: COMPLETE
+- *Note: This registry is now the technical SOURCE OF TRUTH for the M0/M1 mapping.*
+
+## 7. CREATED PATHS
+- **BUSINESS_CREATED_PATHS**: 5 (1 company, 4 tenants)
+- **TECHNICAL_CREATED_PATHS**: 1 (registry)
+- **TOTAL_CREATED_DOCUMENT_COUNT**: 6
+
+## 8. ROLLBACK STATUS
+- **ROLLBACK_AVAILABLE_BY_DESIGN**: TRUE
+- **AUTOMATIC_ROLLBACK**: FALSE
+- **ROLLBACK_REQUIRES_FINGERPRINT_MATCH**: TRUE
+
+## 9. HARDCODE RULES
+- PREVIEW IDS (e.g., `COMPANY_ID_LOGIDESK_001`) are now **DEPRECATED_FOR_EXECUTION**.
+- `REAL_IDS_ALLOWED_IN_RUNTIME_CONSTANTS`: FALSE. Runtime generic code must not hardcode real Firestore IDs.
+
+## 10. NEXT CORE MIGRATION
+- **NEXT_CORE_MIGRATION**: M2 (mezzi)
+- **M5_WRITE_EXECUTED**: FALSE (M5 WRITE remains suspended).

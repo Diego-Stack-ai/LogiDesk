@@ -4,7 +4,7 @@ Ultimo aggiornamento: Agosto 2026
 ## 1. RADICE MULTI-AZIENDA (M0)
 Tutto il dominio LogiDesk e racchiuso sotto la root:
 `/aziende/{azienda_id}`
-- **Strategia ID**: AUTO_ID generato da Firestore.
+- **Strategia ID**: AUTO_ID generato da Firestore. (Demo ID: `NzXaCgyXxZWWehw1tSlo`)
 - **Campi Base**: `nome`, `attiva`, `schema_version`
 
 ## 2. ASSET AZIENDALI (COMPANY_SCOPED)
@@ -45,7 +45,7 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 
 ## 3. DOMINIO TENANT (TENANT_SCOPED) (M1)
 `/aziende/{azienda_id}/tenants/{tenant_id}`
-- **ID**: AUTO_ID
+- **ID**: AUTO_ID (e.g. DNR: `AgvcnbuUMu7YhzSuUKTY`)
 - **Campi Base**: `nome`, `legacy_name`, `attivo`, `schema_version`
 - **Configurazione Codici**: `{ sottocodice_attivo: bool, valori_ammessi: [...] }`
 - **Capabilities (Embedded Map)**: Configurable per tenant

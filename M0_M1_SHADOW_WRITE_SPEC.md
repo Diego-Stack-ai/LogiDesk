@@ -94,7 +94,8 @@ The write execution will produce local reporting:
 - `M0_M1_POST_WRITE_VALIDATION.json`
 ## 12. EXECUTION STATUS
 - **SCRIPT IMPLEMENTED**: YES (`scripts/migrations/core_v1/m0_m1_foundation_write.py`)
-- **LIVE WRITE AUTHORIZED**: NO
+- **LIVE WRITE AUTHORIZED**: YES (EXECUTED)
+- **CERTIFICATION**: See `M0_M1_LIVE_WRITE_CERTIFICATION.md`
 
 **Preflight Command (Cloud Shell / ADC):**
 ```bash

@@ -66,4 +66,5 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **DEPLOYMENT_METADATA_NOT_IN_BUSINESS_DOMAIN**: TRUE. (e.g. `tipo_ambiente` is kept in migration registry only, not in canonical payloads).
 
 ## WRITE STATUS
-- **M0_M1_SHADOW_WRITE**: DESIGN ONLY. WRITE NOT YET IMPLEMENTED. WRITE NOT YET AUTHORIZED.
+- **M0_M1_SHADOW_WRITE**: EXECUTED and CERTIFIED (`NzXaCgyXxZWWehw1tSlo`).
+- **NEXT_CORE_MIGRATION**: M2
