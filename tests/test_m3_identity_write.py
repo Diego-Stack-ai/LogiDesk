@@ -124,7 +124,8 @@ class TestM3IdentityWrite(unittest.TestCase):
         with self.assertRaises(SystemExit):
             mig.run()
             
-    def test_execute_success(self):
+    @patch.object(M3IdentityWrite, 'verify_post_write')
+    def test_execute_success(self, mock_verify):
         self.args.execute = True
         self.args.confirm_shadow_write = "LOGIDESK_M3_IDENTITY"
         

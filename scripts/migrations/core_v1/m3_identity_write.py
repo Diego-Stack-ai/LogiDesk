@@ -15,7 +15,7 @@ except ImportError:
     get_app = None
 
 def generate_fingerprint(payload):
-    sorted_json = json.dumps(payload, sort_keys=True)
+    sorted_json = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(sorted_json.encode('utf-8')).hexdigest()
 
 class M3IdentityWrite:
@@ -25,15 +25,17 @@ class M3IdentityWrite:
         self.auth = auth_client
         self.status = "PLANNED"
         self.gates = {}
-        
-        # We use the dry_run class to avoid duplicating transform logic
-        self.dry_run = M3IdentityDryRun(db, args, auth_client)
-        self.dry_run.args.output_dir = os.path.join(args.output_dir, "temp_dry_run")
-        
+
+        # Prevent args mutation from affecting output_dir
+        dry_run_args = copy.copy(args)
+        dry_run_args.output_dir = os.path.join(args.output_dir, "temp_dry_run")
+        self.dry_run = M3IdentityDryRun(db, dry_run_args, auth_client)
+
         self.target_state = "UNKNOWN"
         self.write_plan = []
         self.rollback_manifest = {}
-        
+        self.post_write_results = {}
+
     def initialize_firebase_admin(self):
         if self.db is None and initialize_app:
             try:
@@ -48,48 +50,47 @@ class M3IdentityWrite:
     def verify_dependencies(self):
         self.gates["GATE_PROJECT"] = self.args.project == "log-solutions-cantiere"
         self.gates["GATE_COMPANY"] = self.args.company_id == REQUIRED_COMPANY_ID
-        
+
         if not self.gates["GATE_PROJECT"] or not self.gates["GATE_COMPANY"]:
             raise SystemExit("HARD STOP: Project or Company ID mismatch")
-            
+
         m0_doc = self.db.document("system_migrations/core_v1_m0_m1").get() if self.db else None
         m2_doc = self.db.document("system_migrations/core_v1_m2_vehicles").get() if self.db else None
         comp_doc = self.db.document(f"aziende/{REQUIRED_COMPANY_ID}").get() if self.db else None
-        
+
         self.gates["GATE_M0_M1_COMPLETE"] = (m0_doc and m0_doc.exists and m0_doc.to_dict().get("status") == "COMPLETE")
         self.gates["GATE_M2_COMPLETE"] = (m2_doc and m2_doc.exists and m2_doc.to_dict().get("status") == "COMPLETE")
-        
-        # M3 Dry Run Certified is a hardcoded logical dependency. We just verify the other docs
+
         self.gates["GATE_M3_DRY_RUN_CERTIFIED"] = True
         self.gates["GATE_COMPANY_EXISTS"] = (comp_doc and comp_doc.exists)
-        
+
         if not all([self.gates["GATE_M0_M1_COMPLETE"], self.gates["GATE_M2_COMPLETE"], self.gates["GATE_COMPANY_EXISTS"]]):
             raise SystemExit("STOP: Dependencies not met")
 
     def load_and_transform(self):
         self.dry_run.load_data()
         self.dry_run.transform_and_validate()
-        
-        # Re-verify baseline counts
+
         self.gates["GATE_SOURCE_COUNT_26"] = len(self.dry_run.legacy_employees) == 26
         self.gates["GATE_AUTH_TOTAL_24"] = len(self.dry_run.auth_users) == 24
-        
+
         excluded_ids = [r["id"] for r in self.dry_run.registry["excluded_records"]]
         self.gates["GATE_TEST_EXCLUDED_1"] = TEST_RECORD_ID in excluded_ids and len(excluded_ids) == 1
-        
+
         if not (self.gates["GATE_SOURCE_COUNT_26"] and self.gates["GATE_AUTH_TOTAL_24"] and self.gates["GATE_TEST_EXCLUDED_1"]):
             raise SystemExit("STOP: Source baseline mismatch, requires new dry-run")
-            
+
         self.gates["GATE_EMPLOYEE_TARGET_25"] = len(self.dry_run.employees_target) == 25
         self.gates["GATE_USER_TARGET_23"] = len(self.dry_run.users_target) == 23
-        
-        auth_emps = sum(1 for c in self.dry_run.diagnostic_classifications if not c["test_excluded"] and c["uid_found_in_auth"])
-        emp_only = sum(1 for c in self.dry_run.diagnostic_classifications if not c["test_excluded"] and not c["uid_found_in_auth"])
-        
+
+        # Determine counts securely from target output payload
+        auth_emps = len([t for t in self.dry_run.employees_target if t["legacy_id"] in [u["payload"]["dipendente_id"] for u in self.dry_run.users_target]])
+        emp_only = len(self.dry_run.employees_target) - auth_emps
+
         self.gates["GATE_AUTHENTICATED_23"] = auth_emps == 23
         self.gates["GATE_EMPLOYEE_ONLY_2"] = emp_only == 2
         self.gates["GATE_USER_ONLY_0"] = True
-        
+
         if not (self.gates["GATE_EMPLOYEE_TARGET_25"] and self.gates["GATE_USER_TARGET_23"]):
             raise SystemExit("STOP: Target canonical counts mismatch")
 
@@ -98,17 +99,15 @@ class M3IdentityWrite:
         self.gates["GATE_UNKNOWN_FIELD_ZERO"] = len(self.dry_run.unknown_fields) == 0
 
     def discover_target_state(self):
-        reg_doc = self.db.document("system_migrations/core_v1_m3_identity").get() if self.db else None
+        if not self.db:
+            raise SystemExit("STOP: DB missing during state discovery")
+
+        reg_doc = self.db.document("system_migrations/core_v1_m3_identity").get()
         has_reg = reg_doc and reg_doc.exists
-        
-        emp_target_count = 0
-        if self.db:
-            emp_target_count = sum(1 for _ in self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/dipendenti").stream())
-            
-        usr_target_count = 0
-        if self.db:
-            usr_target_count = sum(1 for _ in self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/utenti").stream())
-        
+
+        emp_target_count = sum(1 for _ in self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/dipendenti").stream())
+        usr_target_count = sum(1 for _ in self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/utenti").stream())
+
         if not has_reg and emp_target_count == 0 and usr_target_count == 0:
             self.target_state = "CLEAN_START"
         elif has_reg and reg_doc.to_dict().get("status") == "COMPLETE" and emp_target_count == 25 and usr_target_count == 23:
@@ -117,47 +116,46 @@ class M3IdentityWrite:
             self.target_state = "CONFLICT" if has_reg else "PARTIAL_STATE"
         else:
             self.target_state = "UNKNOWN"
-            
+
         self.gates["GATE_PRE_STATE_CLEAN"] = self.target_state == "CLEAN_START"
-        
+
         if self.target_state in ["PARTIAL_STATE", "CONFLICT"]:
             raise SystemExit(f"STOP: Found target state {self.target_state}")
 
     def build_write_plan(self):
         if self.target_state != "CLEAN_START":
-            return
-            
+            raise SystemExit(f"STOP: Cannot build write plan. target_state={self.target_state}")
+
         for t in self.dry_run.employees_target:
             self.write_plan.append({"path": t["target_path"], "payload": t["payload"], "type": "employee"})
-            
+
         for t in self.dry_run.users_target:
             self.write_plan.append({"path": t["target_path"], "payload": t["payload"], "type": "user"})
-            
+
         registry_payload = copy.deepcopy(self.dry_run.registry)
         registry_payload["status"] = "COMPLETE" if self.args.execute else "PLANNED"
         registry_payload["executed_at"] = datetime.now().isoformat()
         registry_payload["business_created_paths"] = 48
         registry_payload["technical_created_paths"] = 1
         registry_payload["all_created_paths"] = 49
-        
+
         self.write_plan.append({"path": "system_migrations/core_v1_m3_identity", "payload": registry_payload, "type": "registry"})
-        
+
         self.gates["GATE_ATOMIC_PLAN_49"] = len(self.write_plan) == 49
-        
-        # Verify passwords and deferred fields are not in payload
+        if not self.gates["GATE_ATOMIC_PLAN_49"]:
+            raise SystemExit(f"STOP: Write plan must be exactly 49, found {len(self.write_plan)}")
+
         for w in self.write_plan:
             if "password" in w["payload"]:
                 self.gates["GATE_PASSWORD_WRITE_ZERO"] = False
-                break
-        else:
-            self.gates["GATE_PASSWORD_WRITE_ZERO"] = True
+                raise SystemExit("STOP: Password found in payload")
+        self.gates["GATE_PASSWORD_WRITE_ZERO"] = True
 
         self.gates["GATE_AUTH_WRITE_ZERO"] = True
         self.gates["GATE_LEGACY_WRITE_ZERO"] = True
         self.gates["GATE_STORAGE_WRITE_ZERO"] = True
         self.gates["GATE_M5_WRITE_ZERO"] = True
-        
-        # Security constraints
+
         for w in self.write_plan:
             path = w["path"]
             is_valid = (
@@ -187,7 +185,6 @@ class M3IdentityWrite:
         self.gates["GATE_ROLLBACK_MANIFEST_READY"] = True
 
     def validate_write_plan(self):
-        # We perform static safety checks on the plan before execution
         if not all(self.gates.values()):
             failed_gates = [k for k, v in self.gates.items() if not v]
             raise SystemExit(f"STOP: Not all gates passed. Failed: {failed_gates}")
@@ -195,31 +192,64 @@ class M3IdentityWrite:
     def execute_atomic_write(self):
         if not self.args.execute:
             return
-            
+
         if self.args.confirm_shadow_write != "LOGIDESK_M3_IDENTITY":
             raise SystemExit("STOP: Wrong confirmation token")
 
         if self.target_state != "CLEAN_START":
-            return
-            
+            raise SystemExit(f"STOP: target_state={self.target_state} but execution requested")
+
         if self.db is None:
-            return
-            
+            raise SystemExit("STOP: DB missing during execute")
+
         batch = self.db.batch()
         for w in self.write_plan:
             ref = self.db.document(w["path"])
-            # Create-only (if exists, will fail)
             batch.create(ref, w["payload"])
-            
+
         batch.commit()
         self.status = "EXECUTED"
 
     def verify_post_write(self):
         if self.status != "EXECUTED":
             return
-            
-        # Post-write validation checks
-        pass
+
+        emp_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/dipendenti").stream())
+        usr_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/utenti").stream())
+        reg_doc = self.db.document("system_migrations/core_v1_m3_identity").get()
+
+        legacy_count = sum(1 for _ in self.db.collection("dipendenti").stream())
+
+        self.post_write_results = {
+            "registry_exists": reg_doc.exists,
+            "registry_status_complete": reg_doc.to_dict().get("status") == "COMPLETE" if reg_doc.exists else False,
+            "employee_target_count_25": len(emp_targets) == 25,
+            "user_target_count_23": len(usr_targets) == 23,
+            "test_record_absent": all(e.id != TEST_RECORD_ID for e in emp_targets) and all(u.id != TEST_RECORD_ID for u in usr_targets),
+            "password_absent": all("password" not in e.to_dict() for e in emp_targets) and all("password" not in u.to_dict() for u in usr_targets),
+            "legacy_unchanged": legacy_count == 26
+        }
+
+        # Verify fingerprints
+        emp_match = 0
+        for e in emp_targets:
+            fp = generate_fingerprint(e.to_dict())
+            if fp in self.dry_run.registry["employee_fingerprints"]:
+                emp_match += 1
+
+        usr_match = 0
+        for u in usr_targets:
+            fp = generate_fingerprint(u.to_dict())
+            if fp in self.dry_run.registry["user_fingerprints"]:
+                usr_match += 1
+
+        self.post_write_results["employee_fingerprint_parity"] = emp_match == 25
+        self.post_write_results["user_fingerprint_parity"] = usr_match == 23
+
+        passed = all(self.post_write_results.values())
+        if not passed:
+            self.status = "FAILED_POST_WRITE_VALIDATION"
+            raise SystemExit(f"STOP: Post write validation failed: {self.post_write_results}")
 
     def write_reports(self):
         os.makedirs(self.args.output_dir, exist_ok=True)
@@ -229,26 +259,36 @@ class M3IdentityWrite:
             "plan_length": len(self.write_plan),
             "status": self.status
         }
+
+        reg_payload = [w["payload"] for w in self.write_plan if w["type"] == "registry"][0] if self.write_plan else {}
+
+        with open(os.path.join(self.args.output_dir, "M3_IDENTITY_WRITE_SUMMARY.json"), "w") as f:
+            json.dump(summary, f, indent=2)
+
+        with open(os.path.join(self.args.output_dir, "M3_IDENTITY_WRITE_REGISTRY.json"), "w") as f:
+            json.dump(reg_payload, f, indent=2)
+
+        with open(os.path.join(self.args.output_dir, "M3_IDENTITY_ROLLBACK_MANIFEST.json"), "w") as f:
+            json.dump(self.rollback_manifest, f, indent=2)
+
         if self.args.execute:
-            with open(os.path.join(self.args.output_dir, "M3_IDENTITY_WRITE_SUMMARY.json"), "w") as f:
-                json.dump(summary, f, indent=2)
-            with open(os.path.join(self.args.output_dir, "M3_IDENTITY_WRITE_REGISTRY.json"), "w") as f:
-                reg_payload = [w["payload"] for w in self.write_plan if w["type"] == "registry"][0] if self.write_plan else {}
-                json.dump(reg_payload, f, indent=2)
             with open(os.path.join(self.args.output_dir, "M3_IDENTITY_POST_WRITE_VALIDATION.json"), "w") as f:
-                json.dump({"post_write_validation_passed": True}, f, indent=2) # simplified mock
-            with open(os.path.join(self.args.output_dir, "M3_IDENTITY_ROLLBACK_MANIFEST.json"), "w") as f:
-                json.dump(self.rollback_manifest, f, indent=2)
+                json.dump({"post_write_validation_passed": self.status == "EXECUTED", "details": self.post_write_results}, f, indent=2)
         else:
-            with open(os.path.join(self.args.output_dir, "M3_IDENTITY_WRITE_SUMMARY.json"), "w") as f:
-                json.dump(summary, f, indent=2)
+            preflight_valid = all(self.gates.values()) and self.target_state == "CLEAN_START" and len(self.write_plan) == 49
+            failed_gates = [k for k, v in self.gates.items() if not v]
+            preflight_doc = {
+                "preflight_valid": preflight_valid,
+                "target_state": self.target_state,
+                "write_plan_count": len(self.write_plan),
+                "employee_write_count": len([w for w in self.write_plan if w["type"] == "employee"]),
+                "user_write_count": len([w for w in self.write_plan if w["type"] == "user"]),
+                "registry_write_count": len([w for w in self.write_plan if w["type"] == "registry"]),
+                "failed_gates": failed_gates,
+                "gates": self.gates
+            }
             with open(os.path.join(self.args.output_dir, "M3_IDENTITY_PREFLIGHT_VALIDATION.json"), "w") as f:
-                json.dump({"preflight_valid": True}, f, indent=2)
-            with open(os.path.join(self.args.output_dir, "M3_IDENTITY_WRITE_REGISTRY.json"), "w") as f:
-                reg_payload = [w["payload"] for w in self.write_plan if w["type"] == "registry"][0] if self.write_plan else {}
-                json.dump(reg_payload, f, indent=2)
-            with open(os.path.join(self.args.output_dir, "M3_IDENTITY_ROLLBACK_MANIFEST.json"), "w") as f:
-                json.dump(self.rollback_manifest, f, indent=2)
+                json.dump(preflight_doc, f, indent=2)
 
     def run(self):
         self.initialize_firebase_admin()
@@ -270,11 +310,11 @@ def main():
     parser.add_argument("--confirm-shadow-write", default="")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--mock-auth", action="store_true")
-    
+
     args = parser.parse_args()
-    
+
     db = firestore.Client(project=args.project) if firestore else None
-    
+
     mig = M3IdentityWrite(db, args, auth)
     mig.run()
 
