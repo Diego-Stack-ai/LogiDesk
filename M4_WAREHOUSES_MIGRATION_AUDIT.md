@@ -1,51 +1,28 @@
-# M4 WAREHOUSES MIGRATION AUDIT
+# M4 WAREHOUSES MIGRATION AUDIT (UPDATED: RECONCILIATION)
 
 ## 1. M4 SCOPE
 - **M4_ID**: M4
 - **M4_NAME**: Magazzini
-- **Source**: `root/magazzini_sedi`, `clienti/{tenant}/magazzini_sedi`
-- **Target**: `aziende/{azienda_id}/magazzini/{id}`, `aziende/{azienda_id}/tenants/{tenant_id}/magazzini/{id}`
+- **Source Assumption**: `root/magazzini_sedi`, `clienti/{tenant}/magazzini_sedi`
+- **Real Live Source Found**: `clienti/DNR/fatturazione_magazzini_sedi` and various `clienti/DNR/fatturazione_navette_*` collections.
+- **Dataset Nature**: Configuration strings for UI dropdowns, NOT Canonical Warehouse Entities.
 
 ## 2. DISCOVERY LIVE FIRESTORE
-*(PENDING LIVE AUDIT - ADC Credentials missing in execution context)*
-- **root/magazzini_sedi exists**: TBD
-- **root/magazzini_sedi count**: TBD
-- **Tenant warehouses**: TBD
+- The original assumed collections (`root/magazzini_sedi`) do not exist or are empty.
+- The actual data feeding the UI (e.g. `window.appData.lista_magazzini_sedi`) is sourced dynamically from `clienti/DNR/fatturazione_magazzini_sedi`.
 
-## 3. TENANT RECONCILIATION
-- M0/M1 canonical tenants: DNR, CATTEL, GRAN CHEF, BAUER
-- **Ownership Classification**: TBD (requires live data evaluation)
+## 3. DATA STRUCTURE
+- Documents in `fatturazione_magazzini_sedi` contain a single primary field: `{ nome: "..." }`.
+- They are UI/billing configuration values managed directly from `fatturazione_clienti.html` via `aggiungiNuovaAnagrafica` and `eliminaAnagrafica`.
 
-## 4. FIELD AUDIT
-*(PENDING LIVE AUDIT)*
-- **Fields Discovered**: TBD
+## 4. CROSS REFERENCES & LIVE RECONCILIATION
+- `lista_magazzini_sedi` appears in 18 codebase references (primarily as an in-memory array for UI population).
+- `fatturazione_magazzini_sedi` appears in 6 references (Firestore collection path).
+- All 20 "live reference samples" observed previously were merely reading/writing these string values for the UI or attaching them as text to other documents.
 
-## 5. CANONICAL MODEL CANDIDATE
-*(PENDING LIVE AUDIT)*
-- TBD
-
-## 6. ID STRATEGY AUDIT
-*(PENDING LIVE AUDIT)*
-- Legacy IDs: TBD
-- Recommended Strategy: PRESERVE_ID / AUTO_ID / MIXED (Pending data review)
-
-## 7. CROSS REFERENCES
-*(Based on codebase search)*
-- `lista_magazzini_sedi` is heavily referenced in frontend (`pianificazione.html`, `presenze.html`, `script.js`).
-- `fatturazione_magazzini_sedi` is used in Sync scripts.
-
-## 8. DUPLICATES & INVALID RECORDS
-*(PENDING LIVE AUDIT)*
-- Duplicates: TBD
-- Invalid: TBD
-
-## 9. M4 DEPENDENCIES
-- **M0_M1_COMPLETE**: TRUE
-- **M2, M3**: No direct business dependency, M3 for identity/audit only.
-- **M4_REAL_DEPENDENCIES**: M0, M1
-
-## 10. RUNTIME IMPACT
-- **M4_RUNTIME_IMPACT**: NONE_SHADOW (Must remain shadow, frontend currently reads from legacy global/tenant appData).
-
-## 11. M5 RELATION
-- **M5_DEPENDS_ON_M4**: TBD (Pending confirmation of Punti Consegna referencing magazzini).
+## 5. M4 NECESSITY & RELATION TO M5
+- **M4 Dataset Status**: `CONFIGURATION_ONLY`
+- There are no genuine "Warehouse" business entities (with addresses, coordinates, configurations) in the legacy system.
+- Therefore, there is NO canonical warehouse dataset to migrate.
+- **M4 Migration**: `NOT REQUIRED` (Autonomy as a migration phase is unjustified, this data should be handled during M5 Punti Consegna or left as UI Config).
+- **M5 Relation**: M5 (Punti Consegna) may or may not depend on these strings, but it does NOT depend on a discrete M4 Warehouse entity. `M5_DEPENDS_ON_M4 = FALSE`.

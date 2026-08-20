@@ -18,8 +18,8 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 - **M2**: Legacy Customers (Clienti) - **[COMPLETE]**
 - **M3**: Identity (Dipendenti/Utenti) - **[COMPLETE]**
   - **M3_TEST_IDENTITY_CLEANUP**: **[COMPLETE]**
-- **M4**: Warehouses (Magazzini) - **[NEXT RECOMMENDED MIGRATION]**
-- **M5**: Delivery Points (Punti di Consegna) - **[BLOCKED / NOT AUTHORIZED]**
+- **M4**: Warehouses (Magazzini) - **[SKIPPED / NOT REQUIRED]**
+- **M5**: Delivery Points (Punti di Consegna) - **[NEXT RECOMMENDED MIGRATION / BLOCKED / NOT AUTHORIZED]**
 - **M6**: Vehicles (Mezzi di Trasporto) - **[PENDING]**
 - **M7**: Travel Records (Viaggi/DDT) - **[PENDING]**
 - **M8**: Invoices (Fatturazione) - **[PENDING]**
