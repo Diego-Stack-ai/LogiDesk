@@ -102,6 +102,15 @@ class M3IdentityDryRun:
             for d in docs:
                 self.legacy_employees.append({"id": d.id, "data": d.to_dict()})
         
+        if firebase_admin and self.auth:
+            try:
+                app = firebase_admin.get_app()
+                if app.project_id and app.project_id != self.args.project:
+                    print(f"FATAL ERROR: Firebase app initialized with wrong project {app.project_id}")
+                    sys.exit(1)
+            except ValueError:
+                app = firebase_admin.initialize_app(options={"projectId": self.args.project})
+        
         if self.auth and hasattr(self.auth, 'list_users'):
             try:
                 for u in self.auth.list_users().iterate_all():
@@ -113,7 +122,7 @@ class M3IdentityDryRun:
                 print(f"FATAL ERROR: Failed to read Firebase Auth: {e}")
                 sys.exit(1)
         else:
-            if not self.args.mock_auth:
+            if not getattr(self.args, 'mock_auth', False):
                 print("FATAL ERROR: Firebase Auth API not available and not mocked.")
                 sys.exit(1)
                 
