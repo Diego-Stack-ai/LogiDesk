@@ -23,7 +23,7 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 ### 2.3 DIPENDENTI
 `/aziende/{azienda_id}/dipendenti/{legacy_document_id}`
 - **ID**: PRESERVED LEGACY DOC ID
-- **Campi Base**: `nome`, `cognome`, `telefono`, `attivo`, `schema_version`
+- **Campi Base**: `nome`, `cognome`, `telefono`, `cellulare`, `attivo`, `schema_version`
 
 
 

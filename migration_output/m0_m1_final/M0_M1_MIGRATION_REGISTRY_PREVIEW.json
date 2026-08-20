@@ -1,0 +1,62 @@
+[
+  {
+    "migration_version": "1.0",
+    "entity_type": "tenant",
+    "legacy_identifier": "DNR",
+    "legacy_name": "DNR",
+    "target_preview_id": "TENANT_ID_DNR",
+    "future_target_id": null,
+    "target_path_preview": "aziende/COMPANY_ID_LOGIDESK_001/tenants/TENANT_ID_DNR",
+    "status": "READY",
+    "idempotency_key": "CORE_V1::TENANT::DNR",
+    "fingerprint": "29b37fe98efb429a5c396deb96cba74cbebed5065441b3c7fc606c56bb6d0b46"
+  },
+  {
+    "migration_version": "1.0",
+    "entity_type": "tenant",
+    "legacy_identifier": "CATTEL",
+    "legacy_name": "CATTEL",
+    "target_preview_id": "TENANT_ID_CATTEL",
+    "future_target_id": null,
+    "target_path_preview": "aziende/COMPANY_ID_LOGIDESK_001/tenants/TENANT_ID_CATTEL",
+    "status": "READY",
+    "idempotency_key": "CORE_V1::TENANT::CATTEL",
+    "fingerprint": "f2074a9df46065f6821a5d226512565e08bab0aaf2b0a7cb7ec67bc363682d74"
+  },
+  {
+    "migration_version": "1.0",
+    "entity_type": "tenant",
+    "legacy_identifier": "GRAN CHEF",
+    "legacy_name": "GRAN CHEF",
+    "target_preview_id": "TENANT_ID_GRAN_CHEF",
+    "future_target_id": null,
+    "target_path_preview": "aziende/COMPANY_ID_LOGIDESK_001/tenants/TENANT_ID_GRAN_CHEF",
+    "status": "READY",
+    "idempotency_key": "CORE_V1::TENANT::GRAN_CHEF",
+    "fingerprint": "d60e02f2eba92b6f1237ccc8528e123d60afcd8932ab1e7be6f604aef1bfdfdd"
+  },
+  {
+    "migration_version": "1.0",
+    "entity_type": "tenant",
+    "legacy_identifier": "BAUER",
+    "legacy_name": "BAUER",
+    "target_preview_id": "TENANT_ID_BAUER",
+    "future_target_id": null,
+    "target_path_preview": "aziende/COMPANY_ID_LOGIDESK_001/tenants/TENANT_ID_BAUER",
+    "status": "READY",
+    "idempotency_key": "CORE_V1::TENANT::BAUER",
+    "fingerprint": "b1ae8884798ab1abdb0590440fd3ba3ba8f70d152b774b00adba65d5c45eadbc"
+  },
+  {
+    "migration_version": "1.0",
+    "entity_type": "tenant",
+    "legacy_identifier": "DAC",
+    "legacy_name": "DAC",
+    "target_preview_id": null,
+    "future_target_id": null,
+    "target_path_preview": null,
+    "status": "PENDING_RECONCILIATION",
+    "idempotency_key": "CORE_V1::TENANT::DAC",
+    "fingerprint": "7f9bfe98d0f11e8c0b5e3a491581ede49d18d7f7433ccb7d104bcbe370078bf6"
+  }
+]
