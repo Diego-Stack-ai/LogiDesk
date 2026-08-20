@@ -169,13 +169,6 @@ class M3IdentityDryRun:
                 })
                 continue
                 
-            # Duplicate review
-            if doc_id in DUPLICATES:
-                identity_review_items.append({
-                    "ids": [doc_id],
-                    "identity_review_status": "POSSIBLE_DUPLICATE_UNRESOLVED"
-                })
-                
             # Active semantics
             legacy_attivo = data.get("attivo")
             if legacy_attivo is False:
@@ -273,6 +266,40 @@ class M3IdentityDryRun:
                     "canonical_employee_id": doc_id
                 }
 
+        identity_review_items.append({
+            "review_type": "POSSIBLE_DUPLICATE_UNRESOLVED",
+            "record_ids": DUPLICATES,
+            "blocking": False,
+            "migration_policy": "PRESERVE_BOTH"
+        })
+
+        firestore_only_ids = []
+        auth_only_ids = []
+        intersection_count = 0
+        
+        auth_uids = set(self.auth_dict.keys())
+        doc_ids = set([e["id"] for e in self.legacy_employees])
+        
+        for u in auth_uids:
+            if u not in doc_ids:
+                auth_only_ids.append(u)
+        
+        for e in doc_ids:
+            if e in auth_uids:
+                intersection_count += 1
+            else:
+                firestore_only_ids.append(e)
+                
+        self.auth_set_reconciliation = {
+            "firestore_document_count": len(self.legacy_employees),
+            "auth_uid_count": len(self.auth_users),
+            "intersection_count": intersection_count,
+            "firestore_only_ids": firestore_only_ids,
+            "auth_only_ids": auth_only_ids,
+            "test_record_id": TEST_RECORD_ID,
+            "test_record_in_auth": TEST_RECORD_ID in auth_uids
+        }
+
         if len(self.unknown_fields) > 0:
             self.review_required.append(f"Unknown fields: {list(self.unknown_fields)}")
             
@@ -345,10 +372,11 @@ class M3IdentityDryRun:
             "authenticated_employee_count": sum(1 for c in self.diagnostic_classifications if not c["test_excluded"] and c["uid_found_in_auth"]),
             "employee_only_count": sum(1 for c in self.diagnostic_classifications if not c["test_excluded"] and not c["uid_found_in_auth"]),
             "user_only_count": 0,
-            "doc_id_uid_match_count": sum(1 for c in self.diagnostic_classifications if c["doc_id_equals_uid"]),
-            "doc_id_uid_mismatch_count": sum(1 for c in self.diagnostic_classifications if not c["doc_id_equals_uid"] and not c["test_excluded"]),
-            "identity_review_case_count": 1 if any(i.get("identity_review_status") for i in self.registry["identity_review_items"]) else 0,
-            "identity_review_record_count": sum(len(i["ids"]) for i in self.registry["identity_review_items"]),
+            "doc_id_uid_match_all_employee_targets_with_uid": sum(1 for c in self.diagnostic_classifications if not c["test_excluded"] and c["uid_present"] and c["doc_id_equals_uid"]),
+            "doc_id_uid_match_authenticated_employees": sum(1 for c in self.diagnostic_classifications if not c["test_excluded"] and c["uid_found_in_auth"] and c["doc_id_equals_uid"]),
+            "doc_id_uid_mismatch_count": sum(1 for c in self.diagnostic_classifications if not c["test_excluded"] and c["uid_present"] and not c["doc_id_equals_uid"]),
+            "identity_review_case_count": len(self.registry["identity_review_items"]),
+            "identity_review_record_count": sum(len(i["record_ids"]) for i in self.registry["identity_review_items"]),
             "unknown_unclassified_field_count": len(self.unknown_fields),
             "error_count": len(self.review_required),
             "firestore_write_operations": False,
@@ -371,7 +399,7 @@ class M3IdentityDryRun:
             json.dump(self.registry, f, indent=2)
             
         with open(os.path.join(self.args.output_dir, "M3_IDENTITY_REVIEW_REQUIRED.json"), "w") as f:
-            json.dump(self.review_required, f, indent=2)
+            json.dump(self.registry["identity_review_items"] + [{"review_type": "ERROR", "blocking": True, "error": r} for r in self.review_required], f, indent=2)
             
         with open(os.path.join(self.args.output_dir, "M3_IDENTITY_FIELD_COVERAGE.json"), "w") as f:
             json.dump({"KNOWN_FIELDS": {k: list(v) for k, v in FIELD_CLASSIFICATION.items()}, "UNKNOWN_FIELDS": list(self.unknown_fields)}, f, indent=2)
@@ -381,6 +409,9 @@ class M3IdentityDryRun:
             
         with open(os.path.join(self.args.output_dir, "M3_AUTH_CLASSIFICATION_DIAGNOSTIC.json"), "w") as f:
             json.dump(self.diagnostic_classifications, f, indent=2)
+
+        with open(os.path.join(self.args.output_dir, "M3_AUTH_SET_RECONCILIATION.json"), "w") as f:
+            json.dump(self.auth_set_reconciliation, f, indent=2)
 
 
 def main():
