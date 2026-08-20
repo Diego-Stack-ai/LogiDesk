@@ -17,7 +17,7 @@ except ImportError:
     auth = None
 
 REQUIRED_COMPANY_ID = "NzXaCgyXxZWWehw1tSlo"
-TEST_RECORD_ID = "qtQWKWaJRMZNv0UzhOETC0t2"
+TEST_RECORD_ID = "qtQWKWaJRMZNv0UzhOETC0t2hdU2"
 DUPLICATES = ["Ws6G1rYXMpPPHEydxa3VkgJ4Weg2", "jDA7dUlEYEQ3XGDlGPh0gvm3vHb2"]
 
 KNOWN_ROLES = {"autista", "impiegata", "fornitore", "soel", "amministratore"}
