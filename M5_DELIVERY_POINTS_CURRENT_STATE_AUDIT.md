@@ -18,7 +18,8 @@
 
 ## 3. COUNTS & TRANSFORMATIONS
 - **M5_CURRENT_SOURCE_COUNT**: 453 (from legacy DNR dataset `raccolta clienti`)
-- **M5_CURRENT_TARGET_COUNT_EXPECTED**: 609 (After split logic for Frutta/Latte/Dual)
+- **M5_CURRENT_TARGET_COUNT_EXPECTED**: 453 (1:1 mapping)
+  - *Note: The previous expected target count of 609 was INVALIDATED. It was based on a stale assumption that points needed duplication for Frutta and Latte separately. A physical delivery point is a single location.*
 
 ## 4. VERIFIER RECONCILIATION (`verificato_da`)
 *Note: Pending live ADC to verify UID -> Canonical User mapping against `system_migrations/core_v1_m3_identity`.*

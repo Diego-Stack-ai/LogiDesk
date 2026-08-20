@@ -3,8 +3,8 @@
 ## 1. SOURCE RECONCILIATION
 - **Legacy Source**: `clienti/DNR/raccolta clienti`
 - **Expected Legacy Source Count**: 453
-- **Expected Canonical Target Count**: 609
-- **Expansion Logic**: Target count exceeds source count deterministically due to dual-type legacy records (e.g., both "Frutta" and "Latte" checked), which spawn distinct, tenant-isolated Canonical Delivery Points (e.g. `SIM::{id}::FRUTTA` and `SIM::{id}::LATTE`).
+- **Expected Canonical Target Count**: 453
+- **Expansion Logic**: The previous expected target count of 609 was INVALIDATED. It was based on a stale assumption that points needed duplication for Frutta and Latte separately. In reality, a physical delivery point is a single location (1:1 mapping).
 
 ## 2. M3 VERIFIER BRIDGE (verificato_da)
 A live audit script has been designed to resolve legacy `verificato_da` strings via the `system_migrations/core_v1_m3_identity` registry.

@@ -44,8 +44,8 @@ class TestM5LiveAudit(unittest.TestCase):
         audit.run()
         
         self.assertEqual(audit.stats["source_count"], 2)
-        # Doc 1 -> 1 target. Doc 2 -> Dual -> 2 targets. Total = 3.
-        self.assertEqual(audit.stats["target_expected_count"], 3)
+        # 1:1 mapping now. Total = 2.
+        self.assertEqual(audit.stats["target_expected_count"], 2)
         self.assertTrue(audit.manifest["GATE_SOURCE_DISCOVERED"])
         self.assertTrue(audit.manifest["GATE_VERIFIER_MAPPING_COMPLETE"])
 

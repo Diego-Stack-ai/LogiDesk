@@ -46,7 +46,7 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 **DELIVERY_TIME_WINDOWS_MODEL**: ARRAY_0_N. Eliminata dipendenza strutturale da mattina/pomeriggio. Array di `{da, a}`.
 **GEO_APPROVAL_MODEL**: OPERATOR_VERIFIED. Un punto geolocalizzato non e' approvato finche `stato_verifica` non e' 'OK'.
 **DNR_LEGACY_GEO_MIGRATION_POLICY**: CONFIRMED_DATASET. I 453 record DNR consolidati avranno `stato_verifica='OK'` e `fonte='LEGACY_CONFIRMED_DATASET'`, eccetto gli 8 con esplicito `stato='ok'` (fonte `LEGACY_EXPLICIT`).
-**DNR_M5_TARGET_COUNT**: 609. Derivante da 453 legacy (236 FRUTTA_ONLY + 61 LATTE_ONLY + 156 FRUTTA_AND_LATTE * 2).
+**DNR_M5_TARGET_COUNT**: 453. (The previous expected target count of 609 was INVALIDATED. It was based on a stale assumption that points needed duplication for Frutta and Latte separately. In reality, a physical delivery point is a single location, resulting in a 1:1 mapping).
 **LEGACY_NOISE**: Campi come `tipo`, `tipologia_grado` ignorati. Valori `False`, `NaN`, vuoti negli orari normalizzati a null/scartati.
 
 ## M5 DRY-RUN DESIGN

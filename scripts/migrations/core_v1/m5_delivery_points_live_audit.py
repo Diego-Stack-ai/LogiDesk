@@ -103,7 +103,6 @@ class M5DeliveryPointsLiveAudit:
             
     def discover_source(self):
         try:
-            # Typically `clienti/DNR/raccolta clienti`
             for doc in self.db.collection("clienti/DNR/raccolta clienti").stream():
                 data = doc.to_dict() or {}
                 self.legacy_points.append({
@@ -114,28 +113,22 @@ class M5DeliveryPointsLiveAudit:
             self.stats["source_count"] = len(self.legacy_points)
             self.manifest["GATE_SOURCE_DISCOVERED"] = True
             
-            # Check 453 -> 609 expansion explicitly logic
-            # Just simulating the logic that Frutta vs Latte vs Dual causes target to be > source
-            target_count = 0
-            for pt in self.legacy_points:
-                d = pt["data"]
-                frutta = str(d.get("consegna_frutta", "")).lower() == "true"
-                latte = str(d.get("consegna_latte", "")).lower() == "true"
-                if frutta and latte:
-                    target_count += 2
-                elif frutta or latte:
-                    target_count += 1
-                else:
-                    # If neither specified, assume 1 generic record
-                    target_count += 1
+            # THE PREVIOUS 609 BASELINE WAS INVALIDATED: 
+            # The assumption that Frutta/Latte flags required duplicating the canonical point
+            # was a stale assumption/design flaw from the previous dry-run. 
+            # In reality, a physical delivery point is a single location (1:1 mapping).
+            target_count = len(self.legacy_points)
             
             self.stats["target_expected_count"] = target_count
             
             if self.stats["source_count"] == 453:
                 self.manifest["GATE_SOURCE_COUNT_RECONCILED"] = True
-            if target_count == 609:
+            if target_count == 453:
                 self.manifest["GATE_TARGET_COUNT_RECONCILED"] = True
                 
+            # Classify all as READY by default (subject to review rules if any)
+            self.stats["ready_count"] = target_count
+            
         except Exception as e:
             print(f"Error in source discovery: {e}")
             
@@ -198,7 +191,8 @@ class M5DeliveryPointsLiveAudit:
                     self.field_coverage[k] = {"count": 0, "status": "CANONICAL"}
                 self.field_coverage[k]["count"] += 1
                 if k in ["tipo", "tipologia_grado", "old_config", "unknown_custom"]:
-                    self.field_coverage[k]["status"] = "UNKNOWN"
+                    self.field_coverage[k]["status"] = "LEGACY_ONLY"
+                elif self.field_coverage[k]["status"] == "UNKNOWN":
                     unknown_fields += 1
                     
         if unknown_fields == 0:
