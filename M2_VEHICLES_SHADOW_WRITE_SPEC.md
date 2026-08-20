@@ -85,6 +85,6 @@ Post-write validations must confirm:
 `system_migrations/core_v1_m2_vehicles` becomes the technical source of truth for resolving `legacy_document_id` -> `vehicle_id`.
 
 ## 12. STATUS
-- DESIGN ONLY.
-- WRITE NOT IMPLEMENTED.
-- WRITE NOT AUTHORIZED.
+- SCRIPT IMPLEMENTED.
+- LIVE PREFLIGHT NOT YET EXECUTED.
+- LIVE WRITE NOT AUTHORIZED.
