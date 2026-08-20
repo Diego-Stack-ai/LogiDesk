@@ -80,6 +80,8 @@ class M2VehiclesDryRun:
 
     def audit_fields(self):
         for item in self.legacy_data:
+            if item["legacy_document_id"] in CONFIGURATION_DOCUMENT_IDS:
+                continue
             data = item["legacy_data"]
             for key, value in data.items():
                 if key not in self.field_audit:
@@ -93,7 +95,17 @@ class M2VehiclesDryRun:
                 val_type = type(value).__name__
                 self.field_audit[key]["TYPES"].add(val_type)
 
-                val_str = str(value)
+                # REDACTION for storage fields
+                if key in ["fotoUrls", "documentiUrls", "copertinaUrl"]:
+                    if isinstance(value, list):
+                        val_str = "[REDACTED_URL_LIST]"
+                    elif value:
+                        val_str = "[REDACTED_URL]"
+                    else:
+                        val_str = str(value)
+                else:
+                    val_str = str(value)
+
                 if val_str not in self.field_audit[key]["VALUES"]:
                     self.field_audit[key]["VALUES"][val_str] = 0
                 self.field_audit[key]["VALUES"][val_str] += 1
@@ -174,7 +186,12 @@ class M2VehiclesDryRun:
             if "patente" in data:
                 canonical_payload["patente_richiesta"] = data["patente"]
 
-            canonical_fields = ["modello", "immatricolazione", "note", "scadenza_revisione", "scadenza_atp", "scadenza_assicurazione", "scadenza_tachigrafo", "tessera_carburante", "storico_manutenzioni", "proprietario", "assicurazione", "inUso", "stato", "fotoUrls", "documentiUrls", "copertinaUrl"]
+            canonical_fields = [
+                "modello", "immatricolazione", "note", "scadenza_revisione",
+                "scadenza_atp", "scadenza_assicurazione", "scadenza_tachigrafo",
+                "tessera_carburante", "pin_tessera", "storico_manutenzioni",
+                "proprietario", "assicurazione", "inUso", "stato"
+            ]
 
             for f in canonical_fields:
                 if f in data:
@@ -268,12 +285,27 @@ class M2VehiclesDryRun:
         with open(os.path.join(self.args.output_dir, "M2_VEHICLES_REVIEW_REQUIRED.json"), "w") as f:
             json.dump(self.review_required, f, indent=2)
 
+        known_fields = {
+            "targa", "attivo", "modello", "immatricolazione", "note", "scadenza_revisione",
+            "scadenza_atp", "scadenza_assicurazione", "scadenza_tachigrafo", "tessera_carburante",
+            "pin_tessera", "storico_manutenzioni", "proprietario", "assicurazione", "inUso", "stato",
+            "tipologia", "patente",
+            "fotoUrls", "documentiUrls", "copertinaUrl"
+        }
+
+        unknown_fields = set()
+        for key in self.field_audit.keys():
+            if key not in known_fields and not any(key in c for c in CONFIGURATION_DOCUMENT_IDS):
+                unknown_fields.add(key)
+
         manifest = {
             "source_count": self.stats["real_vehicle_source_count"],
             "target_preview_count": self.stats["simulated_target_count"],
             "unique_simulated_ids": len(set([x["simulated_target_vehicle_id"] for x in self.registry_preview])) == len(self.registry_preview),
             "unique_idempotency_keys": len(set([x["idempotency_key"] for x in self.registry_preview])) == len(self.registry_preview),
             "fingerprints_present": all(["fingerprint" in x for x in self.registry_preview]),
+            "unknown_unclassified_field_count": len(unknown_fields),
+            "unknown_fields": list(unknown_fields),
             "zero_write": True,
             "overall_status": overall_status
         }
