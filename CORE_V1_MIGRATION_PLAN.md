@@ -67,4 +67,4 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 
 ## WRITE STATUS
 - **M0_M1_SHADOW_WRITE**: EXECUTED and CERTIFIED (`NzXaCgyXxZWWehw1tSlo`).
-- **NEXT_CORE_MIGRATION**: M2
+- **NEXT_CORE_MIGRATION**: M2 (DESIGN COMPLETED, IMPLEMENTATION PENDING)

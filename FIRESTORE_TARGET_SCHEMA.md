@@ -8,20 +8,23 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 - **Campi Base**: `nome`, `attiva`, `schema_version`
 
 ## 2. ASSET AZIENDALI (COMPANY_SCOPED)
-### 2.1 UTENTI
+### 2.1 MEZZI (M2)
+`/aziende/{azienda_id}/mezzi/{mezzo_id}`
+- **ID**: AUTO_ID
+- **Campi Base**: `targa`, `attivo`, `schema_version`, `tipo`, `marca`, `modello`, `portata`, `patente_richiesta`, `temperatura`, `note`
+- **Owner**: Azienda (Non tenant)
+
+### 2.2 UTENTI
 `/aziende/{azienda_id}/utenti/{uid}`
 - **ID**: Firebase Auth uid
 - **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
 
-### 2.2 DIPENDENTI
+### 2.3 DIPENDENTI
 `/aziende/{azienda_id}/dipendenti/{dipendente_id}`
 - **ID**: AUTO_ID
 - **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
 
-### 2.3 MEZZI
-`/aziende/{azienda_id}/mezzi/{mezzo_id}`
-- **ID**: AUTO_ID (La targa puo cambiare)
-- **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+
 
 ### 2.4 MAGAZZINI AZIENDALI
 `/aziende/{azienda_id}/magazzini/{magazzino_id}`
