@@ -29,11 +29,11 @@ class TestM3IdentityDryRun(unittest.TestCase):
         self.db.document.side_effect = doc_side_effect
         self.auth = MagicMock()
 
-    def create_mock_employees(self, num_auth=24, num_emp_only=1, include_test=True, extra_fields=None, auth_fail=False):
+    def create_mock_employees(self, num_auth_canonical=23, num_emp_only=2, include_test_auth=True, extra_fields=None, auth_fail=False):
         employees = []
         auth_users = []
         
-        for i in range(num_auth):
+        for i in range(num_auth_canonical):
             uid = f"auth_uid_{i}"
             if i == 0: uid = DUPLICATES[0]
             if i == 1: uid = DUPLICATES[1]
@@ -50,8 +50,12 @@ class TestM3IdentityDryRun(unittest.TestCase):
         for i in range(num_emp_only):
             employees.append({"id": f"emp_{i}", "data": {"nome": f"Emp Only {i}", "attivo": False, "ruolo": "impiegata"}})
             
-        if include_test:
-            employees.append({"id": TEST_RECORD_ID, "data": {"nome": "Diego Test", "attivo": False}})
+        employees.append({"id": TEST_RECORD_ID, "data": {"nome": "Diego Test", "attivo": False}})
+        if include_test_auth:
+            user_mock = MagicMock()
+            user_mock.uid = TEST_RECORD_ID
+            user_mock.email = "test@test.com"
+            auth_users.append(user_mock)
             
         def stream_mock():
             for e in employees:
@@ -75,7 +79,7 @@ class TestM3IdentityDryRun(unittest.TestCase):
         mig.transform_and_validate()
         
         self.assertEqual(len(mig.employees_target), 25)
-        self.assertEqual(len(mig.users_target), 24)
+        self.assertEqual(len(mig.users_target), 23)
         self.assertEqual(mig.status, "PASS_WITH_IDENTITY_REVIEW")
         
     def test_auth_exception_fails(self):
@@ -94,12 +98,12 @@ class TestM3IdentityDryRun(unittest.TestCase):
         self.assertTrue(any("Unexpected active value" in r for r in mig.review_required))
         
     def test_auth_count_zero(self):
-        self.create_mock_employees(num_auth=0, num_emp_only=25)
+        self.create_mock_employees(num_auth_canonical=0, num_emp_only=25, include_test_auth=False)
         mig = M3IdentityDryRun(self.db, self.args, self.auth)
         mig.load_data()
         mig.transform_and_validate()
         self.assertEqual(mig.status, "FAIL")
-        self.assertFalse(mig.validation_manifest["AUTH_COUNT_24"])
+        self.assertFalse(mig.validation_manifest["AUTH_TOTAL_COUNT_24"])
         
     def test_unknown_fields(self):
         self.create_mock_employees(extra_fields={"some_new_field": 123})
