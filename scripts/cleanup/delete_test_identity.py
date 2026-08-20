@@ -11,7 +11,7 @@ except ImportError:
     auth = None
     initialize_app = None
     get_app = None
-    
+
     class UserNotFoundError(Exception):
         pass
 
@@ -30,45 +30,47 @@ class TestIdentityCleanup:
         self.post_validation = {}
         self.auth_deleted = False
         self.firestore_deleted = False
-        
+
     def initialize(self):
         if self.db is None and initialize_app:
             try:
-                get_app()
+                app = get_app()
+                if app.project_id and app.project_id != self.args.project:
+                    raise SystemExit(f"STOP: Existing Firebase app points to {app.project_id}, expected {self.args.project}")
             except ValueError:
-                initialize_app()
+                app = initialize_app(options={"projectId": self.args.project})
             self.db = firestore.client()
             self.auth = auth
-            
+
     def check_gates(self):
         self.gates["GATE_PROJECT"] = self.args.project == REQUIRED_PROJECT
         self.gates["GATE_UID"] = self.args.uid == REQUIRED_UID
-        
+
         if not self.gates["GATE_PROJECT"]:
             raise SystemExit("STOP: Invalid project")
         if not self.gates["GATE_UID"]:
             raise SystemExit("STOP: Invalid UID")
-            
+
     def preflight_revalidation(self):
         # M3 Status
         reg = self.db.document("system_migrations/core_v1_m3_identity").get()
         self.gates["GATE_M3_COMPLETE"] = reg.exists and reg.to_dict().get("status") == "COMPLETE"
-        
+
         # Canonical counts
         emp_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY}/dipendenti").stream())
         usr_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY}/utenti").stream())
-        
+
         self.gates["GATE_EMP_COUNT_25"] = len(emp_targets) == 25
         self.gates["GATE_USR_COUNT_23"] = len(usr_targets) == 23
-        
+
         # Test presence in Canonical
         self.gates["GATE_EMP_ABSENT"] = all(e.id != REQUIRED_UID for e in emp_targets)
         self.gates["GATE_USR_ABSENT"] = all(u.id != REQUIRED_UID for u in usr_targets)
-        
+
         # Legacy existence
         legacy_doc = self.db.document(f"dipendenti/{REQUIRED_UID}").get()
         self.gates["GATE_LEGACY_EXISTS"] = legacy_doc.exists
-        
+
         # Auth existence
         try:
             self.auth.get_user(REQUIRED_UID)
@@ -77,8 +79,8 @@ class TestIdentityCleanup:
             if type(e).__name__ == "UserNotFoundError" or (isinstance(e, Exception) and "UserNotFoundError" in str(type(e))):
                 self.gates["GATE_AUTH_EXISTS"] = False
             else:
-                self.gates["GATE_AUTH_EXISTS"] = False
-            
+                raise SystemExit(f"STOP: Auth read error fatal: {str(e)}")
+
         # Ref counts
         collections_to_audit = ["presenze", "viaggi", "pianificazione", "costi_personale", "turni", "report", "fatturazione", "assenze", "ferie", "assegnazioni"]
         ref_count = 0
@@ -88,26 +90,27 @@ class TestIdentityCleanup:
                 for k, v in d.items():
                     if v == REQUIRED_UID or (isinstance(v, list) and REQUIRED_UID in v) or (isinstance(v, dict) and REQUIRED_UID in v.values()):
                         ref_count += 1
-                        
+
         self.gates["GATE_REFS_0"] = ref_count == 0
-        
-        if not all(self.gates.values()):
-            raise SystemExit(f"STOP: Preflight validation failed: {self.gates}")
-            
+
+        self.preflight_passed = all(self.gates.values())
+        if not self.preflight_passed:
+            self.status = "PREFLIGHT_FAILED"
+
     def execute_delete(self):
         if not self.args.execute:
             return
-            
+
         if self.args.confirm_delete != CONFIRM_TOKEN:
             raise SystemExit("STOP: Invalid confirmation token")
-            
+
         # 1. Firebase Auth Delete
         try:
             self.auth.delete_user(REQUIRED_UID)
             self.auth_deleted = True
         except Exception as e:
             raise SystemExit(f"STOP: Auth delete failed: {str(e)}")
-            
+
         # 2. Firestore Legacy Delete
         try:
             self.db.document(f"dipendenti/{REQUIRED_UID}").delete()
@@ -115,13 +118,13 @@ class TestIdentityCleanup:
         except Exception as e:
             self.status = "PARTIAL_CLEANUP"
             raise SystemExit(f"STOP: Firestore delete failed: {str(e)}")
-            
+
         self.status = "EXECUTED"
-        
+
     def post_delete_validation(self):
         if self.status != "EXECUTED":
             return
-            
+
         try:
             self.auth.get_user(REQUIRED_UID)
             auth_absent = False
@@ -130,16 +133,16 @@ class TestIdentityCleanup:
                 auth_absent = True
             else:
                 auth_absent = True
-            
+
         legacy_doc = self.db.document(f"dipendenti/{REQUIRED_UID}").get()
         legacy_absent = not legacy_doc.exists
-        
+
         emp_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY}/dipendenti").stream())
         usr_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY}/utenti").stream())
-        
+
         reg = self.db.document("system_migrations/core_v1_m3_identity").get()
         m3_complete = reg.exists and reg.to_dict().get("status") == "COMPLETE"
-        
+
         self.post_validation = {
             "auth_absent": auth_absent,
             "legacy_doc_absent": legacy_absent,
@@ -148,37 +151,49 @@ class TestIdentityCleanup:
             "m3_registry_complete": m3_complete,
             "overall_status": "CLEANUP_SUCCESS" if (auth_absent and legacy_absent) else "CLEANUP_FAILED"
         }
-        
+
     def write_reports(self):
         os.makedirs(self.args.output_dir, exist_ok=True)
-        
+
         summary = {
             "project": self.args.project,
             "uid": self.args.uid,
             "mode": "EXECUTE" if self.args.execute else "PREFLIGHT",
+            "auth_exists": getattr(self, "gates", {}).get("GATE_AUTH_EXISTS", False),
+            "legacy_doc_exists": getattr(self, "gates", {}).get("GATE_LEGACY_EXISTS", False),
+            "reference_total": 0 if getattr(self, "gates", {}).get("GATE_REFS_0", False) else -1,
+            "delete_eligibility": "PASS" if getattr(self, "preflight_passed", False) else "BLOCKED",
+            "failed_gates": [k for k, v in self.gates.items() if not v],
             "auth_delete_executed": self.auth_deleted,
             "firestore_delete_executed": self.firestore_deleted,
             "partial_cleanup": self.status == "PARTIAL_CLEANUP",
             "executed_at": datetime.now().isoformat(),
             "gates": self.gates
         }
-        
+
         with open(os.path.join(self.args.output_dir, "TEST_IDENTITY_DELETE_SUMMARY.json"), "w") as f:
             json.dump(summary, f, indent=2)
-            
-        if self.args.execute:
+
+        if self.args.execute and getattr(self, "preflight_passed", False):
             with open(os.path.join(self.args.output_dir, "TEST_IDENTITY_POST_DELETE_VALIDATION.json"), "w") as f:
                 json.dump(self.post_validation, f, indent=2)
+        else:
+            with open(os.path.join(self.args.output_dir, "TEST_IDENTITY_PREDELETE_VALIDATION.json"), "w") as f:
+                json.dump({"preflight_valid": getattr(self, "preflight_passed", False), "gates": self.gates}, f, indent=2)
 
     def run(self):
         self.initialize()
         self.check_gates()
         self.preflight_revalidation()
         try:
-            self.execute_delete()
-            self.post_delete_validation()
+            if getattr(self, "preflight_passed", False):
+                self.execute_delete()
+                self.post_delete_validation()
         finally:
             self.write_reports()
+
+        if not getattr(self, "preflight_passed", False):
+            raise SystemExit(f"STOP: Preflight validation failed: {self.gates}")
 
 
 def main():
@@ -189,9 +204,9 @@ def main():
     parser.add_argument("--confirm-delete", default="")
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
-    
+
     db = firestore.Client(project=args.project) if firestore else None
-    
+
     mig = TestIdentityCleanup(db, args, auth)
     mig.run()
 

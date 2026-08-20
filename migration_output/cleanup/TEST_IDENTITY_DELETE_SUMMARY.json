@@ -1,0 +1,26 @@
+{
+  "project": "log-solutions-cantiere",
+  "uid": "qtQWKWaJRMZNv0UzhOETC0t2hdU2",
+  "mode": "EXECUTE",
+  "auth_exists": true,
+  "legacy_doc_exists": true,
+  "reference_total": 0,
+  "delete_eligibility": "PASS",
+  "failed_gates": [],
+  "auth_delete_executed": false,
+  "firestore_delete_executed": false,
+  "partial_cleanup": false,
+  "executed_at": "2026-08-20T18:32:35.858011",
+  "gates": {
+    "GATE_PROJECT": true,
+    "GATE_UID": true,
+    "GATE_M3_COMPLETE": true,
+    "GATE_EMP_COUNT_25": true,
+    "GATE_USR_COUNT_23": true,
+    "GATE_EMP_ABSENT": true,
+    "GATE_USR_ABSENT": true,
+    "GATE_LEGACY_EXISTS": true,
+    "GATE_AUTH_EXISTS": true,
+    "GATE_REFS_0": true
+  }
+}

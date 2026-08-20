@@ -1,0 +1,15 @@
+{
+  "preflight_valid": false,
+  "gates": {
+    "GATE_PROJECT": true,
+    "GATE_UID": true,
+    "GATE_M3_COMPLETE": true,
+    "GATE_EMP_COUNT_25": true,
+    "GATE_USR_COUNT_23": true,
+    "GATE_EMP_ABSENT": true,
+    "GATE_USR_ABSENT": true,
+    "GATE_LEGACY_EXISTS": true,
+    "GATE_AUTH_EXISTS": true,
+    "GATE_REFS_0": false
+  }
+}
