@@ -11,7 +11,7 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 ### 2.1 MEZZI (M2)
 `/aziende/{azienda_id}/mezzi/{mezzo_id}`
 - **ID**: AUTO_ID
-- **Campi Base**: `targa`, `attivo`, `schema_version`, `tipo`, `marca`, `modello`, `portata`, `patente_richiesta`, `temperatura`, `note`
+- **Campi Base**: `targa`, `attivo`, `schema_version`, `tipo`, `marca`, `modello`, `portata`, `patente_richiesta`, `temperatura`, `note`, `immatricolazione`, `scadenza_revisione`, `scadenza_atp`, `scadenza_assicurazione`, `scadenza_tachigrafo`, `tessera_carburante`, `storico_manutenzioni`, `proprietario`, `assicurazione`, `inUso`, `stato`, `fotoUrls`, `documentiUrls`, `copertinaUrl`
 - **Owner**: Azienda (Non tenant)
 
 ### 2.2 UTENTI

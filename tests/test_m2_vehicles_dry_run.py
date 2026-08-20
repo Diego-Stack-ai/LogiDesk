@@ -39,28 +39,38 @@ class TestM2VehiclesDryRun(unittest.TestCase):
         args.company_id = "NzXaCgyXxZWWehw1tSlo"
         args.output_dir = self.output_dir
         args.dry_run = True
-        
+
         mig = M2VehiclesDryRun(db_mock, args)
         mig.legacy_data = [
-            {"legacy_document_id": "v1", "legacy_data": {"targa": "AB123CD", "attivo": True, "tipo": "Furgone"}},
+            {"legacy_document_id": "v1", "legacy_data": {"targa": "AB123CD", "attivo": True, "tipologia": "Furgone", "patente": "B"}},
+            {"legacy_document_id": "_patenti", "legacy_data": {"B": True}}, # Config doc
+            {"legacy_document_id": "_tipologie", "legacy_data": {"Furgone": True}}, # Config doc
             {"legacy_document_id": "v2", "legacy_data": {"attivo": True}}, # Missing targa
             {"legacy_document_id": "v3", "legacy_data": {"targa": "ab123cd", "attivo": True}}, # Duplicate norm
             {"legacy_document_id": "v4", "legacy_data": {"targa": "XYZ999", "note": "..."}} # Missing attivo
         ]
-        
+
         mig.audit_fields()
         mig.process_vehicles()
         mig.write_outputs()
-        
-        self.assertEqual(mig.stats["empty_targa_count"], 1)
+
+        self.assertEqual(mig.stats["configuration_document_count"], 2)
+        self.assertEqual(mig.stats["real_vehicle_source_count"], 4)
+        self.assertEqual(mig.stats["simulated_target_count"], 4)
+        self.assertEqual(mig.stats["empty_targa_real_vehicle_count"], 1)
         self.assertEqual(mig.stats["duplicate_targa_normalized_count"], 2)
-        
+
+        # Check canonical mapping
+        canonical = mig.target_preview[0]["payload"]
+        self.assertEqual(canonical["tipo"], "Furgone")
+        self.assertEqual(canonical["patente_richiesta"], "B")
+
         with open(os.path.join(self.output_dir, "M2_VEHICLES_VALIDATION_MANIFEST.json")) as f:
             manifest = json.load(f)
-            
+
         self.assertEqual(manifest["overall_status"], "PASS_WITH_REVIEW")
         self.assertTrue(manifest["zero_write"])
-        
+
     def test_static_write_safety(self):
         with open(self.script_path, 'r') as f:
             content = f.read()

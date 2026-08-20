@@ -16,17 +16,21 @@ This document outlines the design for the M2 migration of vehicles from the lega
 - **M2_REQUIRES_M0_M1_COMPLETE**: TRUE (Depends on the real company ID from M0/M1 execution: `NzXaCgyXxZWWehw1tSlo`).
 - `system_migrations/core_v1_m0_m1` status must be `COMPLETE`.
 
-## 3. DATASET AUDIT (VIRTUAL)
-- **LEGACY_VEHICLE_REFERENCE_MODEL**: Mixed, but mostly `targa` in operational tables like `presenze`.
+## 3. DATASET AUDIT (LIVE RECONCILED)
+- **LEGACY_VEHICLE_REFERENCE_MODEL**: Mixed, mostly `targa` in operational tables like `presenze`.
 - **LEGACY_VEHICLE_ID_USED_BY_RUNTIME**: Partially, likely for simple references.
 - **LEGACY_TARGA_USED_BY_RUNTIME**: YES (`presenze` uses `targa`).
-- **LEGACY_VEHICLE_FIELDS_DISCOVERED**: `targa`, `attivo`, `tipo`, `marca`, `modello`, `portata`, `patente_richiesta`, `temperatura`, `note`.
+- **LEGACY_VEHICLE_FIELDS_DISCOVERED**: `targa`, `attivo`, `tipologia`, `patente`, `modello`, `immatricolazione`, `note`, `scadenza_revisione`, `scadenza_atp`, `scadenza_assicurazione`, `scadenza_tachigrafo`, `tessera_carburante`, `storico_manutenzioni`, `proprietario`, `assicurazione`, `inUso`, `stato`, `fotoUrls`, `documentiUrls`, `copertinaUrl`.
 - **DUPLICATE_AUDIT_REQUIRED**: TRUE. Need to measure missing/duplicate `targa` before writing.
+- **CONFIGURATION DOCUMENTS**: `_patenti`, `_tipologie` (EXCLUDED from target).
 
 ## 4. CANONICAL VEHICLE MODEL & TARGA
 **VEHICLE_ID_STRATEGY**: AUTO_ID
 
-**CANONICAL_VEHICLE_MODEL_CANDIDATE**:
+**CANONICAL_VEHICLE_MODEL**:
+- `tipologia` -> `tipo`
+- `patente` -> `patente_richiesta`
+- Storage fields (`fotoUrls`, `documentiUrls`, `copertinaUrl`) -> Migrated directly, deferred media resolution.
 ```json
 {
   "targa": "AB123CD",
@@ -38,7 +42,21 @@ This document outlines the design for the M2 migration of vehicles from the lega
   "portata": 3500,
   "patente_richiesta": "B",
   "temperatura": "REFRIGERATO",
-  "note": "..."
+  "note": "...",
+  "immatricolazione": "...",
+  "scadenza_revisione": "...",
+  "scadenza_atp": "...",
+  "scadenza_assicurazione": "...",
+  "scadenza_tachigrafo": "...",
+  "tessera_carburante": "...",
+  "storico_manutenzioni": [...],
+  "proprietario": "...",
+  "assicurazione": "...",
+  "inUso": true,
+  "stato": "...",
+  "fotoUrls": [...],
+  "documentiUrls": [...],
+  "copertinaUrl": "..."
 }
 ```
 **TARGA_NORMALIZATION_MODEL**: Uppercase, stripped string. `legacy_targa_raw` stored in registry if different.
