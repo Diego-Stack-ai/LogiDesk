@@ -79,6 +79,15 @@ This document outlines the design for the M2 migration of vehicles from the lega
 - `DISMISSED_VEHICLES`
 
 ## 10. EXECUTION STATUS
-- **SAFE_TO_IMPLEMENT_M2_DRY_RUN**: TRUE
-- **SAFE_TO_EXECUTE_M2_WRITE**: FALSE
-- **SAFE_TO_EXECUTE_M5_WRITE**: FALSE
+- **SCRIPT IMPLEMENTED**: YES (`scripts/migrations/core_v1/m2_vehicles_dry_run.py`)
+- **LIVE DRY RUN NOT YET EXECUTED**
+- **WRITE NOT AUTHORIZED**
+
+**Dry Run Command (Cloud Shell / ADC):**
+```bash
+python scripts/migrations/core_v1/m2_vehicles_dry_run.py \
+  --project log-solutions-cantiere \
+  --company-id NzXaCgyXxZWWehw1tSlo \
+  --dry-run \
+  --output-dir ./migration_output/m2_dry_run
+```
