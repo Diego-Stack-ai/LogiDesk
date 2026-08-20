@@ -32,14 +32,16 @@ class TestIdentityCleanup:
         self.firestore_deleted = False
 
     def initialize(self):
-        if self.db is None and initialize_app:
+        if self.db is None:
+            raise SystemExit("STOP: Firestore client is required")
+
+        if initialize_app:
             try:
                 app = get_app()
                 if app.project_id and app.project_id != self.args.project:
                     raise SystemExit(f"STOP: Existing Firebase app points to {app.project_id}, expected {self.args.project}")
             except ValueError:
                 app = initialize_app(options={"projectId": self.args.project})
-            self.db = firestore.client()
             self.auth = auth
 
     def check_gates(self):
@@ -132,7 +134,7 @@ class TestIdentityCleanup:
             if type(e).__name__ == "UserNotFoundError" or (isinstance(e, Exception) and "UserNotFoundError" in str(type(e))):
                 auth_absent = True
             else:
-                auth_absent = True
+                raise SystemExit(f"STOP: Post-delete Auth verification failed: {str(e)}")
 
         legacy_doc = self.db.document(f"dipendenti/{REQUIRED_UID}").get()
         legacy_absent = not legacy_doc.exists
@@ -164,8 +166,8 @@ class TestIdentityCleanup:
             "reference_total": 0 if getattr(self, "gates", {}).get("GATE_REFS_0", False) else -1,
             "delete_eligibility": "PASS" if getattr(self, "preflight_passed", False) else "BLOCKED",
             "failed_gates": [k for k, v in self.gates.items() if not v],
-            "auth_delete_executed": self.auth_deleted,
-            "firestore_delete_executed": self.firestore_deleted,
+            "auth_delete_executed": getattr(self, "auth_deleted", False),
+            "firestore_delete_executed": getattr(self, "firestore_deleted", False),
             "partial_cleanup": self.status == "PARTIAL_CLEANUP",
             "executed_at": datetime.now().isoformat(),
             "gates": self.gates
@@ -182,10 +184,10 @@ class TestIdentityCleanup:
                 json.dump({"preflight_valid": getattr(self, "preflight_passed", False), "gates": self.gates}, f, indent=2)
 
     def run(self):
-        self.initialize()
-        self.check_gates()
-        self.preflight_revalidation()
         try:
+            self.initialize()
+            self.check_gates()
+            self.preflight_revalidation()
             if getattr(self, "preflight_passed", False):
                 self.execute_delete()
                 self.post_delete_validation()

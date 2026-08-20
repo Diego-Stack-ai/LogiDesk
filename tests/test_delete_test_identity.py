@@ -175,13 +175,12 @@ class TestDeleteTestIdentity(unittest.TestCase):
 
     @patch('scripts.cleanup.delete_test_identity.initialize_app', create=True)
     def test_existing_app_correct_project(self, mock_init_app):
-        with patch('scripts.cleanup.delete_test_identity.get_app') as mock_get_app, patch('scripts.cleanup.delete_test_identity.firestore') as mock_fs, patch('scripts.cleanup.delete_test_identity.auth') as mock_auth:
+        with patch('scripts.cleanup.delete_test_identity.get_app') as mock_get_app, patch('scripts.cleanup.delete_test_identity.auth') as mock_auth:
             mock_app = MagicMock()
             mock_app.project_id = REQUIRED_PROJECT
             mock_get_app.return_value = mock_app
 
-            mig = TestIdentityCleanup(None, self.args, self.auth)
-            mock_fs.client.return_value = self.db
+            mig = TestIdentityCleanup(self.db, self.args, self.auth)
             mock_auth.get_user = self.auth.get_user
             mig.run()
             self.assertTrue(mig.preflight_passed)
@@ -193,7 +192,7 @@ class TestDeleteTestIdentity(unittest.TestCase):
             mock_app.project_id = "wrong-project-id"
             mock_get_app.return_value = mock_app
 
-            mig = TestIdentityCleanup(None, self.args, self.auth)
+            mig = TestIdentityCleanup(self.db, self.args, self.auth)
             with self.assertRaises(SystemExit) as cm:
                 mig.run()
             self.assertIn("Existing Firebase app points to wrong-project-id", str(cm.exception))
@@ -207,6 +206,44 @@ class TestDeleteTestIdentity(unittest.TestCase):
                 mig.run()
             mock_open.assert_any_call(os.path.join(self.args.output_dir, "TEST_IDENTITY_DELETE_SUMMARY.json"), 'w')
             mock_open.assert_any_call(os.path.join(self.args.output_dir, "TEST_IDENTITY_PREDELETE_VALIDATION.json"), 'w')
+
+    @patch('scripts.cleanup.delete_test_identity.initialize_app', create=True)
+    def test_firestore_client_exists_app_missing(self, mock_init_app):
+        # Firestore exists, get_app raises ValueError
+        with patch('scripts.cleanup.delete_test_identity.get_app') as mock_get_app, patch('scripts.cleanup.delete_test_identity.auth') as mock_auth:
+            mock_get_app.side_effect = ValueError("Default app not found")
+            mig = TestIdentityCleanup(self.db, self.args, self.auth)
+            mock_auth.get_user = self.auth.get_user
+            mig.run()
+            mock_init_app.assert_called_once_with(options={"projectId": REQUIRED_PROJECT})
+
+    def test_firestore_db_none_stop(self):
+        mig = TestIdentityCleanup(None, self.args, self.auth)
+        with self.assertRaises(SystemExit) as cm:
+            mig.run()
+        self.assertIn("Firestore client is required", str(cm.exception))
+
+    def test_generic_get_user_error_hard_stop(self):
+        self.auth.get_user.side_effect = Exception("Generic Firebase Auth Exception")
+        mig = TestIdentityCleanup(self.db, self.args, self.auth)
+        with self.assertRaises(SystemExit) as cm:
+            mig.run()
+        self.assertIn("Auth read error fatal", str(cm.exception))
+
+    def test_post_delete_generic_auth_exception(self):
+        self.args.execute = True
+        self.args.confirm_delete = CONFIRM_TOKEN
+
+        def auth_get_user_side_effect(uid):
+            if getattr(mig, "status", None) == "EXECUTED":
+                raise Exception("Generic error during post-validation")
+            return MagicMock()
+        self.auth.get_user.side_effect = auth_get_user_side_effect
+
+        mig = TestIdentityCleanup(self.db, self.args, self.auth)
+        with self.assertRaises(SystemExit) as cm:
+            mig.run()
+        self.assertIn("Post-delete Auth verification failed", str(cm.exception))
 
 if __name__ == '__main__':
     unittest.main()
