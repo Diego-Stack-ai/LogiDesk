@@ -17,16 +17,9 @@
     "GATE_EMPLOYEE_IDS_PRESERVED": true,
     "GATE_AUTH_LINK_23_OF_23": true,
     "GATE_UNKNOWN_FIELD_ZERO": true,
-    "GATE_PRE_STATE_CLEAN": true,
-    "GATE_ATOMIC_PLAN_49": true,
-    "GATE_PASSWORD_WRITE_ZERO": true,
-    "GATE_AUTH_WRITE_ZERO": true,
-    "GATE_LEGACY_WRITE_ZERO": true,
-    "GATE_STORAGE_WRITE_ZERO": true,
-    "GATE_M5_WRITE_ZERO": true,
-    "GATE_ROLLBACK_MANIFEST_READY": true
+    "GATE_PRE_STATE_CLEAN": false
   },
-  "target_state": "CLEAN_START",
-  "plan_length": 49,
-  "status": "PLANNED"
+  "target_state": "CONFLICT",
+  "plan_length": 0,
+  "status": "FAILED_POST_WRITE_VALIDATION"
 }

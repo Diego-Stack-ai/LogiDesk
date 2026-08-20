@@ -119,7 +119,7 @@ class M3IdentityWrite:
 
         self.gates["GATE_PRE_STATE_CLEAN"] = self.target_state == "CLEAN_START"
 
-        if self.target_state in ["PARTIAL_STATE", "CONFLICT"]:
+        if self.target_state in ["PARTIAL_STATE", "CONFLICT"] and not getattr(self.args, "verify_existing", False):
             raise SystemExit(f"STOP: Found target state {self.target_state}")
 
     def build_write_plan(self):
@@ -211,7 +211,7 @@ class M3IdentityWrite:
         self.status = "EXECUTED"
 
     def verify_post_write(self):
-        if self.status != "EXECUTED":
+        if self.status != "EXECUTED" and not getattr(self.args, "verify_existing", False):
             return
 
         emp_targets = list(self.db.collection(f"aziende/{REQUIRED_COMPANY_ID}/dipendenti").stream())
@@ -230,26 +230,68 @@ class M3IdentityWrite:
             "legacy_unchanged": legacy_count == 26
         }
 
+        self.diagnostic_report = []
+
         # Verify fingerprints
         emp_match = 0
+        emp_exact = 0
         for e in emp_targets:
-            fp = generate_fingerprint(e.to_dict())
-            if fp in self.dry_run.registry["employee_fingerprints"]:
+            actual_payload = e.to_dict()
+            fp = generate_fingerprint(actual_payload)
+            expected_fp = self.dry_run.registry["employee_fingerprints"].get(e.id)
+
+            # Semantic check
+            expected_payload = next((t["payload"] for t in self.dry_run.employees_target if t["legacy_id"] == e.id), None)
+            payload_equal = expected_payload == actual_payload
+
+            if fp == expected_fp:
                 emp_match += 1
+            if payload_equal:
+                emp_exact += 1
+
+            self.diagnostic_report.append({
+                "type": "employee",
+                "id": e.id,
+                "expected_fingerprint": expected_fp,
+                "actual_fingerprint": fp,
+                "fingerprint_match": fp == expected_fp,
+                "payload_equal": payload_equal,
+                "differing_fields": list(set(expected_payload.keys()) ^ set(actual_payload.keys())) if expected_payload else ["MISSING_EXPECTED"]
+            })
 
         usr_match = 0
+        usr_exact = 0
         for u in usr_targets:
-            fp = generate_fingerprint(u.to_dict())
-            if fp in self.dry_run.registry["user_fingerprints"]:
+            actual_payload = u.to_dict()
+            fp = generate_fingerprint(actual_payload)
+            expected_fp = self.dry_run.registry["user_fingerprints"].get(u.id)
+
+            expected_payload = next((t["payload"] for t in self.dry_run.users_target if t["firebase_uid"] == u.id), None)
+            payload_equal = expected_payload == actual_payload
+
+            if fp == expected_fp:
                 usr_match += 1
+            if payload_equal:
+                usr_exact += 1
+
+            self.diagnostic_report.append({
+                "type": "user",
+                "id": u.id,
+                "expected_fingerprint": expected_fp,
+                "actual_fingerprint": fp,
+                "fingerprint_match": fp == expected_fp,
+                "payload_equal": payload_equal,
+                "differing_fields": list(set(expected_payload.keys()) ^ set(actual_payload.keys())) if expected_payload else ["MISSING_EXPECTED"]
+            })
 
         self.post_write_results["employee_fingerprint_parity"] = emp_match == 25
         self.post_write_results["user_fingerprint_parity"] = usr_match == 23
+        self.post_write_results["employee_field_parity"] = emp_exact == 25
+        self.post_write_results["user_field_parity"] = usr_exact == 23
 
         passed = all(self.post_write_results.values())
         if not passed:
             self.status = "FAILED_POST_WRITE_VALIDATION"
-            raise SystemExit(f"STOP: Post write validation failed: {self.post_write_results}")
 
     def write_reports(self):
         os.makedirs(self.args.output_dir, exist_ok=True)
@@ -271,9 +313,9 @@ class M3IdentityWrite:
         with open(os.path.join(self.args.output_dir, "M3_IDENTITY_ROLLBACK_MANIFEST.json"), "w") as f:
             json.dump(self.rollback_manifest, f, indent=2)
 
-        if self.args.execute:
+        if self.args.execute or getattr(self.args, "verify_existing", False):
             with open(os.path.join(self.args.output_dir, "M3_IDENTITY_POST_WRITE_VALIDATION.json"), "w") as f:
-                json.dump({"post_write_validation_passed": self.status == "EXECUTED", "details": self.post_write_results}, f, indent=2)
+                json.dump({"post_write_validation_passed": self.status != "FAILED_POST_WRITE_VALIDATION", "details": getattr(self, "post_write_results", {})}, f, indent=2)
         else:
             preflight_valid = all(self.gates.values()) and self.target_state == "CLEAN_START" and len(self.write_plan) == 49
             failed_gates = [k for k, v in self.gates.items() if not v]
@@ -290,14 +332,22 @@ class M3IdentityWrite:
             with open(os.path.join(self.args.output_dir, "M3_IDENTITY_PREFLIGHT_VALIDATION.json"), "w") as f:
                 json.dump(preflight_doc, f, indent=2)
 
+        if getattr(self, "diagnostic_report", None):
+            with open(os.path.join(self.args.output_dir, "M3_POST_WRITE_FINGERPRINT_DIAGNOSTIC.json"), "w") as f:
+                json.dump(self.diagnostic_report, f, indent=2)
+
+        if self.status == "FAILED_POST_WRITE_VALIDATION":
+            raise SystemExit(f"STOP: Post write validation failed: {self.post_write_results}")
+
     def run(self):
         self.initialize_firebase_admin()
         self.verify_dependencies()
         self.load_and_transform()
         self.discover_target_state()
-        self.build_write_plan()
-        self.validate_write_plan()
-        self.execute_atomic_write()
+        if not getattr(self.args, "verify_existing", False):
+            self.build_write_plan()
+            self.validate_write_plan()
+            self.execute_atomic_write()
         self.verify_post_write()
         self.write_reports()
 
@@ -310,6 +360,7 @@ def main():
     parser.add_argument("--confirm-shadow-write", default="")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--mock-auth", action="store_true")
+    parser.add_argument("--verify-existing", action="store_true")
 
     args = parser.parse_args()
 
