@@ -181,9 +181,16 @@ class M5DeliveryPointsDryRun:
             raise SystemExit("STOP: Invalid targets")
 
     def load_source(self):
-        for doc in self.db.collection(f"clienti/{REQUIRED_TENANT}/raccolta clienti").stream():
-            self.legacy_points.append({"id": doc.id, "data": doc.to_dict() or {}})
+        try:
+            for doc in self.db.collection("clienti/DNR/raccolta clienti").stream():
+                self.legacy_points.append({"id": doc.id, "data": doc.to_dict() or {}})
+        except Exception as e:
+            print(f"FATAL: Firestore read failed: {e}")
+            sys.exit(1)
             
+        if not self.legacy_points:
+            print("FATAL: Source collection empty.")
+            sys.exit(1)
         if len(self.legacy_points) == 453:
             self.manifest["GATE_SOURCE_COUNT_453"] = True
             
@@ -299,6 +306,26 @@ class M5DeliveryPointsDryRun:
             
         with open(os.path.join(self.args.output_dir, "M5_DELIVERY_POINTS_609_VALIDATION_MANIFEST.json"), "w") as f:
             json.dump(self.manifest, f, indent=2)
+            
+        with open(os.path.join(self.args.output_dir, "M5_DELIVERY_POINTS_609_SPLIT_ANALYSIS.json"), "w") as f:
+            json.dump({
+                "FRUTTA_ONLY": plan["frutta_only_count"],
+                "LATTE_ONLY": plan["latte_only_count"],
+                "BOTH_REAL_DIFFERENT": plan["dual_count"],
+                "SAME_VALID_CODE_BOTH_FIELDS": plan["same_code_count"],
+                "NO_VALID_CODE": plan["no_valid_code_count"],
+                "SOURCE_TOTAL": plan["source_count"],
+                "TARGET_TOTAL": len(plan["targets"])
+            }, f, indent=2)
+            
+        with open(os.path.join(self.args.output_dir, "M5_DELIVERY_POINTS_609_REVIEW_REQUIRED.json"), "w") as f:
+            json.dump(plan["errors"], f, indent=2)
+            
+        with open(os.path.join(self.args.output_dir, "M5_DELIVERY_POINTS_609_FIELD_COVERAGE.json"), "w") as f:
+            fields = set()
+            for t in plan["targets"]:
+                fields |= set(t.keys())
+            json.dump({"canonical_fields_present": sorted(list(fields))}, f, indent=2)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -323,6 +350,9 @@ def main():
     db = firestore.client()
     audit = M5DeliveryPointsDryRun(db, args)
     audit.run()
+    
+    if audit.manifest.get("OVERALL_STATUS") != "PASS":
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

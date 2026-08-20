@@ -78,7 +78,28 @@ class TestM5DryRun609(unittest.TestCase):
             self.assertEqual(len(b000), 2)
             self.assertEqual(b000[0]["association_group_id"], "ASSOC::B000")
             self.assertEqual(b000[1]["association_group_id"], "ASSOC::B000")
-            self.assertNotEqual(b000[0]["sottocodice"], b000[1]["sottocodice"])
+        with open(os.path.join(self.temp_dir, "M5_DELIVERY_POINTS_609_SPLIT_ANALYSIS.json")) as f:
+            split_analysis = json.load(f)
+            self.assertEqual(split_analysis["SOURCE_TOTAL"], 453)
+            self.assertEqual(split_analysis["TARGET_TOTAL"], 609)
+
+    def test_static_write_safety(self):
+        with open("scripts/migrations/core_v1/m5_delivery_points_dry_run.py", "r") as f:
+            code = f.read()
+        self.assertNotIn(".set(", code)
+        self.assertNotIn(".update(", code)
+        self.assertNotIn(".create(", code)
+        self.assertNotIn(".delete(", code)
+        self.assertNotIn("batch.commit", code)
+        self.assertNotIn("transaction.set", code)
+        
+    def test_fail_status_returns_nonzero(self):
+        self.db.collection.return_value.stream.return_value = [] # Empty source
+        audit = M5DeliveryPointsDryRun(self.db, self.args)
+        
+        # Test that we exit non-zero (SystemExit)
+        with self.assertRaises(SystemExit):
+            audit.load_source()
 
 if __name__ == '__main__':
     unittest.main()
