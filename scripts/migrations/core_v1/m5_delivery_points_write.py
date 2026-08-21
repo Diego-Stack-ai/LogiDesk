@@ -203,13 +203,34 @@ class M5DeliveryPointsWrite:
         if not all([self.manifest["GATE_PROJECT"], self.manifest["GATE_COMPANY"], self.manifest["GATE_TENANT"]]):
             raise SystemExit("STOP: Invalid targets")
 
-        m0_m1 = self.db.document("system_migrations/core_v1_m0_m1_shadow_foundation").get()
-        if m0_m1.exists and m0_m1.to_dict().get("status") == "COMPLETE":
-            self.manifest["GATE_M0_M1_COMPLETE"] = True
+        try:
+            m0_m1 = self.db.document("system_migrations/core_v1_m0_m1").get()
+            if m0_m1.exists:
+                data = m0_m1.to_dict() or {}
+                if data.get("status") == "COMPLETE":
+                    if data.get("company_id") != REQUIRED_COMPANY:
+                        print("FATAL: M0_M1 registry company_id mismatch.")
+                        sys.exit(1)
+                    if "project_id" in data and data.get("project_id") != REQUIRED_PROJECT:
+                        print("FATAL: M0_M1 registry project_id mismatch.")
+                        sys.exit(1)
+                    self.manifest["GATE_M0_M1_COMPLETE"] = True
+        except Exception as e:
+            print(f"FATAL: Could not read M0_M1 registry. {e}")
+            sys.exit(1)
             
-        m3 = self.db.document("system_migrations/core_v1_m3_identity").get()
-        if m3.exists and m3.to_dict().get("status") == "COMPLETE":
-            self.manifest["GATE_M3_COMPLETE"] = True
+        try:
+            m3 = self.db.document("system_migrations/core_v1_m3_identity").get()
+            if m3.exists:
+                data = m3.to_dict() or {}
+                if data.get("status") == "COMPLETE":
+                    if data.get("company_id") and data.get("company_id") != REQUIRED_COMPANY:
+                        print("FATAL: M3 registry company_id mismatch.")
+                        sys.exit(1)
+                    self.manifest["GATE_M3_COMPLETE"] = True
+        except Exception as e:
+            print(f"FATAL: Could not read M3 registry. {e}")
+            sys.exit(1)
 
     def load_source(self):
         try:
@@ -370,6 +391,11 @@ class M5DeliveryPointsWrite:
                 json.dump([t for t in self.target_payloads], f, indent=2)
                 
             rollback = {
+                "summary": {
+                    "rollback_target_count": len(self.target_payloads),
+                    "rollback_registry_count": 1,
+                    "rollback_unique_document_count": len(self.target_payloads) + 1
+                },
                 "registry": REGISTRY_PATH,
                 "targets": [{"path": t["target_path"], "fingerprint": t["fingerprint"]} for t in self.target_payloads]
             }

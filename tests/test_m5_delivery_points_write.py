@@ -25,7 +25,11 @@ class TestM5Write609(unittest.TestCase):
                 doc.get.return_value.exists = False
             else:
                 doc.get.return_value.exists = True
-                doc.get.return_value.to_dict.return_value = {"status": "COMPLETE"}
+                doc.get.return_value.to_dict.return_value = {
+                    "status": "COMPLETE",
+                    "company_id": REQUIRED_COMPANY,
+                    "project_id": REQUIRED_PROJECT
+                }
             return doc
             
         self.db.document.side_effect = mock_doc
