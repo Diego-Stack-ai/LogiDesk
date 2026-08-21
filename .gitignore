@@ -152,3 +152,15 @@ M3_*.json
 audit_data_*.json
 scratch_*.json
 inventory.json
+
+# LogiDesk App Requirements
+.env.*
+*serviceAccount*.json
+*service-account*.json
+credentials*.json
+secrets/
+.venv/
+dist/
+build/
+coverage/
+.pytest_cache/
