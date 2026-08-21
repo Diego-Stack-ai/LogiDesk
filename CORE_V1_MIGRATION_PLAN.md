@@ -78,3 +78,8 @@ Necessario un meccanismo (collection o JSON offline) per tenere traccia del mapp
 **M6A_CORE_SETTINGS**: Limitato a 47 documenti deterministici. permessi_dashboard, system_status, mail_settings, 3 listini tenant (illing) e 41 import_mappings (codici articoli per DNR). STATUS: SCOPE_CERTIFIED, DESIGN_READY.
 **M6B_CLIENTI_FATTURAZIONE**: 14 record legacy in clienti_fatturazione posticipati a causa di ownership non deterministica e duplicati. STATUS: DEFERRED_REVIEW_REQUIRED.
 **M7_DRIVER_HR**: L'audit ha confermato che M3 Identity non migra i campi operativi autisti (ruolo, turno, patente, ecc.) a causa del Foundation Schema. Necessaria una migrazione M7 dedicata. STATUS: REVIEW_PENDING.
+## M6A WRITE DESIGN
+**M6A_LIVE_DRY_RUN_CERTIFIED**: TRUE
+**M6A_WRITE_DESIGNED**: TRUE
+**M6A_WRITE_EXECUTED**: FALSE
+**M6B_STATUS**: DEFERRED_REVIEW_REQUIRED
