@@ -5,6 +5,7 @@ import argparse
 from datetime import datetime
 import hashlib
 import re
+from .m5_fingerprint import compute_delivery_point_fingerprint
 
 try:
     import firebase_admin
@@ -126,21 +127,6 @@ class LegacyDNRAdapter:
             
         return [target]
 
-def hash_target(target):
-    core_data = {
-        "legacy_document_id": target["legacy_document_id"],
-        "codice_esterno": target.get("codice_esterno"),
-        "sottocodice": target.get("sottocodice"),
-        "nome": target.get("nome"),
-        "indirizzo": target.get("indirizzo"),
-        "finestre_consegna": target.get("finestre_consegna"),
-        "association_group_id": target.get("association_group_id")
-    }
-    if target.get("geolocalizzazione"):
-        core_data["lat"] = target["geolocalizzazione"]["lat"]
-        core_data["lon"] = target["geolocalizzazione"]["lon"]
-    s = json.dumps(core_data, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
 class M5DeliveryPointsDryRun:
     def __init__(self, db, args):
@@ -241,7 +227,7 @@ class M5DeliveryPointsDryRun:
         registry = []
         for i, t in enumerate(plan["targets"]):
             t["codice_punto"] = f"DP{(i+1):06d}"
-            t["fingerprint"] = hash_target(t)
+            t["fingerprint"] = compute_delivery_point_fingerprint(t)
             t["idempotency_key"] = f"CORE_V1::DELIVERY_POINT::DNR::{t['legacy_document_id']}::{t['sottocodice']}"
             t["target_path"] = f"aziende/{REQUIRED_COMPANY}/tenants/{REQUIRED_TENANT}/punti_consegna/{t['codice_punto']}"
             

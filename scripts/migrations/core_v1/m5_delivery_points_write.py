@@ -5,6 +5,7 @@ import argparse
 from datetime import datetime
 import hashlib
 import re
+from .m5_fingerprint import compute_delivery_point_fingerprint
 
 try:
     import firebase_admin
@@ -129,27 +130,12 @@ class LegacyDNRAdapter:
             
         return [target]
 
-def hash_target(target):
-    core_data = {
-        "legacy_document_id": target.get("legacy_document_id"),
-        "codice_esterno": target.get("codice_esterno"),
-        "sottocodice": target.get("sottocodice"),
-        "nome": target.get("nome"),
-        "indirizzo": target.get("indirizzo"),
-        "finestre_consegna": target.get("finestre_consegna"),
-        "association_group_id": target.get("association_group_id")
-    }
-    if target.get("geolocalizzazione"):
-        core_data["lat"] = target["geolocalizzazione"]["lat"]
-        core_data["lon"] = target["geolocalizzazione"]["lon"]
-    s = json.dumps(core_data, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
 def hash_source_manifest(legacy_points):
     s = json.dumps(sorted([p["id"] for p in legacy_points]), sort_keys=True)
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
-def hash_target_manifest(targets):
+def compute_delivery_point_fingerprint_manifest(targets):
     s = json.dumps(sorted([t["codice_punto"] + ":" + t["fingerprint"] for t in targets]), sort_keys=True)
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
@@ -317,7 +303,7 @@ class M5DeliveryPointsWrite:
                 "codice_punto": canon["codice_punto"],
                 "sottocodice": canon.get("sottocodice"),
                 "codice_esterno": canon.get("codice_esterno"),
-                "fingerprint": hash_target({"legacy_document_id": legacy_id, **payload}),
+                "fingerprint": compute_delivery_point_fingerprint({"legacy_document_id": legacy_id, **payload}),
                 "target_path": f"aziende/{REQUIRED_COMPANY}/tenants/{REQUIRED_TENANT}/punti_consegna/{canon['codice_punto']}",
                 "idempotency_key": f"CORE_V1::DELIVERY_POINT::DNR::{legacy_id}::{canon.get('sottocodice')}"
             }
@@ -459,7 +445,7 @@ class M5DeliveryPointsWrite:
                     "source_count": 453,
                     "target_count": 609,
                     "source_manifest_hash": hash_source_manifest(self.legacy_points),
-                    "target_manifest_hash": hash_target_manifest(self.target_payloads),
+                    "target_manifest_hash": compute_delivery_point_fingerprint_manifest(self.target_payloads),
                     "created_at": firestore.SERVER_TIMESTAMP if firestore else "SERVER_TIMESTAMP"
                 })
             except Exception as e:
@@ -585,12 +571,20 @@ class M5DeliveryPointsWrite:
             if match:
                 field_parity_count += 1
                 
-            canonical_doc_payload = {k: v for k, v in doc_data.items() if k in expected_payload}
-            live_fingerprint = hashlib.sha256(json.dumps(canonical_doc_payload, sort_keys=True).encode("utf-8")).hexdigest()
+            # Create canonical doc payload, being careful to pass legacy_document_id which is needed by the fingerprint function
+            # but might not be in the live doc if it wasn't written. Wait, legacy_document_id IS NOT written to live targets!
+            # The original hash_target in dry_run took `target`, which included `legacy_document_id`.
+            # Live target doesn't have it. We must get it from the expected payload/metadata.
+            canonical_doc_payload = {k: v for k, v in doc_data.items()}
+            # Inject legacy_document_id from expected payload if not present
+            if "legacy_document_id" not in canonical_doc_payload:
+                canonical_doc_payload["legacy_document_id"] = expected.get("legacy_document_id") or expected_payload.get("legacy_document_id")
+            
+            live_fingerprint = compute_delivery_point_fingerprint(canonical_doc_payload)
             if live_fingerprint == expected_fingerprint:
                 fingerprint_parity_count += 1
             else:
-                diagnostic.append(f"{d_id} fingerprint mismatch")
+                diagnostic.append({"codice_punto": d_id, "fingerprint_match": False, "field_match": match})
                 
             if any(k in doc_data for k in ["codice_frutta", "codice_latte", "tipo", "tipologia_grado"]):
                 forbidden_count += 1
