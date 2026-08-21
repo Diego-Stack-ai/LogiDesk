@@ -16,7 +16,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Log Solutions">
+    <meta name="apple-mobile-web-app-title" content="LogiDesk">
     <link rel="apple-touch-icon" href="img/logo.png">
     <meta name="theme-color" content="#4f46e5">
     <style>
@@ -473,7 +473,7 @@
         
         const nuoveTipologie = [...window.appData.lista_tipologie_mezzi, { id: Date.now().toString(), nome: nome }];
         try {
-            await setDoc(doc(db, "mezzi", "_tipologie"), { valori: nuoveTipologie }, { merge: true });
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_tipologie"), { valori: nuoveTipologie }, { merge: true });
             input.value = '';
         } catch (e) {
             console.error("Errore aggiunta tipologia:", e);
@@ -495,7 +495,7 @@
 
         const nuoveTipologie = window.appData.lista_tipologie_mezzi.filter(t => t.id !== id);
         try {
-            await setDoc(doc(db, "mezzi", "_tipologie"), { valori: nuoveTipologie }, { merge: true });
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_tipologie"), { valori: nuoveTipologie }, { merge: true });
         } catch (e) {
             console.error("Errore eliminazione tipologia:", e);
             alert("Errore durante l'eliminazione: " + e.message);
@@ -521,7 +521,7 @@
 
         const nuoveTipologie = window.appData.lista_tipologie_mezzi.map(t => t.id === id ? { ...t, nome: nomeTrim } : t);
         try {
-            await setDoc(doc(db, "mezzi", "_tipologie"), { valori: nuoveTipologie }, { merge: true });
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_tipologie"), { valori: nuoveTipologie }, { merge: true });
         } catch (e) {
             console.error("Errore modifica tipologia:", e);
             alert("Errore durante la modifica: " + e.message);
@@ -629,7 +629,7 @@
         
         const nuovePatenti = [...window.appData.lista_patenti_mezzi, { id: Date.now().toString(), nome: nome }];
         try {
-            await setDoc(doc(db, "mezzi", "_patenti"), { valori: nuovePatenti }, { merge: true });
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_patenti"), { valori: nuovePatenti }, { merge: true });
             input.value = '';
         } catch (e) {
             console.error("Errore aggiunta patente:", e);
@@ -651,7 +651,7 @@
 
         const nuovePatenti = window.appData.lista_patenti_mezzi.filter(p => p.id !== id);
         try {
-            await setDoc(doc(db, "mezzi", "_patenti"), { valori: nuovePatenti }, { merge: true });
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_patenti"), { valori: nuovePatenti }, { merge: true });
         } catch (e) {
             console.error("Errore eliminazione patente:", e);
             alert("Errore durante l'eliminazione: " + e.message);
@@ -677,7 +677,7 @@
 
         const nuovePatenti = window.appData.lista_patenti_mezzi.map(p => p.id === id ? { ...p, nome: nomeTrim } : p);
         try {
-            await setDoc(doc(db, "mezzi", "_patenti"), { valori: nuovePatenti }, { merge: true });
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_patenti"), { valori: nuovePatenti }, { merge: true });
         } catch (e) {
             console.error("Errore modifica patente:", e);
             alert("Errore durante la modifica: " + e.message);
@@ -754,7 +754,7 @@
 
     // Listener realtime sul documento speciale /mezzi/_tipologie
     try {
-        const docRef = doc(db, "mezzi", "_tipologie");
+        const docRef = doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_tipologie");
         onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             let list = [];
             if (docSnap.exists()) {
@@ -782,7 +782,7 @@
 
     // Listener realtime sul documento speciale /mezzi/_patenti
     try {
-        const docPatRef = doc(db, "mezzi", "_patenti");
+        const docPatRef = doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi", "_patenti");
         onSnapshot(docPatRef, { includeMetadataChanges: true }, (docSnap) => {
             let list = [];
             if (docSnap.exists()) {
@@ -1577,7 +1577,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (confirm('Eliminare definitivamente ' + m.targa + '? (I file su Storage non verranno eliminati automaticamente)')) {
                 try {
                     if (window.deleteFromFirebase && m.id) {
-                        await window.deleteFromFirebase("mezzi", m.id);
+                        await window.deleteFromFirebase("aziende/NzXaCgyXxZWWehw1tSlo/mezzi", m.id);
                     }
                     alert("Mezzo eliminato dal Cloud!");
                 } catch (e) {

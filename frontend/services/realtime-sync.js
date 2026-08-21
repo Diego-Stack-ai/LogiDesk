@@ -50,7 +50,7 @@ function startRealtimeSync(isAdmin) {
     // Listener per Autisti/Utenti
     // Se Admin scarica tutti, altrimenti NON scarica nulla (o solo se stesso, già  fatto in Auth)
     if (isAdmin) {
-        const unsubUsers = onSnapshot(collection(db, "dipendenti"), { includeMetadataChanges: true }, (snapshot) => {
+        const unsubUsers = onSnapshot(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti"), { includeMetadataChanges: true }, (snapshot) => {
             const tuttiDipendenti = [];
             snapshot.forEach((d) => {
                 tuttiDipendenti.push({ id: d.id, ...d.data() });
@@ -71,7 +71,7 @@ function startRealtimeSync(isAdmin) {
     }
 
     // Listener per Mezzi (mezzi)
-    const unsubMezzi = onSnapshot(collection(db, "mezzi"), { includeMetadataChanges: true }, (snapshot) => {
+    const unsubMezzi = onSnapshot(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi"), { includeMetadataChanges: true }, (snapshot) => {
         const mezzi = [];
         snapshot.forEach((d) => {
             if (!d.id.startsWith('_')) {
@@ -334,7 +334,7 @@ window.updateUser = async function(id, data) {
     try {
         const { id: _, ruolo, canElevate, email, createdAt, uid, ...updateData } = data;
         if (id) {
-            const docRef = doc(db, "dipendenti", id);
+            const docRef = doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", id);
             await updateDoc(docRef, updateData);
         } else {
             console.warn("La creazione di nuovi account richiede l'uso della console Firebase Auth o Cloud Functions.");
@@ -357,7 +357,7 @@ window.registerNewUserCloud = async function(email, password, nome, cognome, ruo
         const uid = userCredential.user.uid;
 
         // Salva il documento profilo in Firestore nella collezione "dipendenti"
-        await setDoc(doc(db, "dipendenti", uid), {
+        await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", uid), {
             uid: uid,
             nome: nome,
             cognome: cognome,

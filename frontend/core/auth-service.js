@@ -118,7 +118,7 @@ onAuthStateChanged(auth, async (user) => {
             if (isOffline) {
                 console.log("Auth: Rilevato stato offline. Carico il profilo dipendente direttamente da cache...");
                 try {
-                    userDoc = await getDocFromCache(doc(db, "dipendenti", user.uid));
+                    userDoc = await getDocFromCache(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", user.uid));
                     console.log("Auth: Profilo caricato correttamente da cache offline.");
                 } catch (cacheErr) {
                     console.error("Auth: Profilo dipendente non trovato in cache locale offline.", cacheErr);
@@ -127,12 +127,12 @@ onAuthStateChanged(auth, async (user) => {
             } else {
                 try {
                     // Tenta prima il recupero online del profilo con timeout di 2 secondi
-                    userDoc = await getDocWithTimeout(doc(db, "dipendenti", user.uid), 2000);
+                    userDoc = await getDocWithTimeout(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", user.uid), 2000);
                     console.log("Auth: Profilo caricato online con successo.");
                 } catch (fetchErr) {
                     console.warn("Auth: Connessione fallita o timeout sul server. Provo a caricare il profilo dipendente dalla cache locale...", fetchErr);
                     try {
-                        userDoc = await getDocFromCache(doc(db, "dipendenti", user.uid));
+                        userDoc = await getDocFromCache(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", user.uid));
                         console.log("Auth: Profilo caricato correttamente dalla cache offline.");
                     } catch (cacheErr) {
                         console.error("Auth: Profilo dipendente non trovato in cache locale.", cacheErr);
@@ -150,7 +150,7 @@ onAuthStateChanged(auth, async (user) => {
                     if (newPassword && newPassword.length >= 6) {
                         try {
                             await updatePassword(user, newPassword);
-                            await updateDoc(doc(db, "dipendenti", user.uid), { needsPasswordChange: false });
+                            await updateDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", user.uid), { needsPasswordChange: false });
                             alert("Password aggiornata con successo! Benvenuto nel sistema.");
                         } catch (e) {
                             alert("Errore durante l'aggiornamento della password: " + e.message + "\nEffettua nuovamente il login.");
@@ -182,7 +182,7 @@ onAuthStateChanged(auth, async (user) => {
                 let permessiDoc = null;
                 if (isOffline) {
                     try {
-                        permessiDoc = await getDocFromCache(doc(db, "config", "permessi_dashboard"));
+                        permessiDoc = await getDocFromCache(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "permissions"));
                         console.log("Auth: Permessi dashboard caricati da cache offline.");
                     } catch (e) {
                         console.warn("Auth: Permessi dashboard non trovati in cache offline", e);
@@ -190,12 +190,12 @@ onAuthStateChanged(auth, async (user) => {
                 } else {
                     try {
                         // Tenta recupero online con timeout di 1.5 secondi
-                        permessiDoc = await getDocWithTimeout(doc(db, "config", "permessi_dashboard"), 1500);
+                        permessiDoc = await getDocWithTimeout(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "permissions"), 1500);
                         console.log("Auth: Permessi dashboard caricati online.");
                     } catch(e) {
                         console.warn("Auth: Impossibile scaricare permessi dashboard online (errore o timeout), provo da cache...", e);
                         try {
-                            permessiDoc = await getDocFromCache(doc(db, "config", "permessi_dashboard"));
+                            permessiDoc = await getDocFromCache(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "permissions"));
                             console.log("Auth: Permessi dashboard caricati da cache offline.");
                         } catch (cacheErr) {
                             console.warn("Auth: Permessi dashboard non disponibili offline", cacheErr);
@@ -341,7 +341,7 @@ onAuthStateChanged(auth, async (user) => {
                             ruolo: "amministratore",
                             needsPasswordChange: false
                         };
-                        await setDoc(doc(db, "dipendenti", user.uid), newUserData);
+                        await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", user.uid), newUserData);
                         alert("Profilo ricreato con successo! Ora ricaricheremo la pagina per farti entrare.");
                         window.location.reload();
                         return;

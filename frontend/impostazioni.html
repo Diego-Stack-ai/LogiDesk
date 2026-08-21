@@ -13,7 +13,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Log Solutions">
+    <meta name="apple-mobile-web-app-title" content="LogiDesk">
     <link rel="apple-touch-icon" href="img/logo.png">
     <meta name="theme-color" content="#4f46e5">
     <style>
@@ -984,7 +984,7 @@
             if (confirm('Eliminare ' + a.nome + '? Questa operazione rimuove il profilo Firestore ma NON l\'utente da Firebase Auth.')) {
                 try {
                     if (window.deleteFromFirebase && a.id) {
-                        await window.deleteFromFirebase("dipendenti", a.id);
+                        await window.deleteFromFirebase("aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", a.id);
                         alert("Profilo eliminato!");
                     }
                 } catch (e) {
@@ -1490,7 +1490,7 @@ const functions = getFunctions(app, "europe-west1");
     }
 
     // Caricamento dei dati email realtime da Firestore
-    onSnapshot(doc(db, "config", "email_settings"), { includeMetadataChanges: true }, (docSnap) => {
+    onSnapshot(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "email"), { includeMetadataChanges: true }, (docSnap) => {
         if (docSnap.exists()) {
             const d = docSnap.data();
             document.getElementById('emailSmtpHost').value = d.smtp_host || '';
@@ -1528,7 +1528,7 @@ const functions = getFunctions(app, "europe-west1");
             });
 
             try {
-                await setDoc(doc(db, "config", "email_settings"), {
+                await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "email"), {
                     smtp_host,
                     smtp_port,
                     imap_host,
@@ -1628,7 +1628,7 @@ const functions = getFunctions(app, "europe-west1");
             });
 
             // 4. Carica la configurazione da Firestore
-            const permessiDoc = await getDoc(doc(db, "config", "permessi_dashboard"));
+            const permessiDoc = await getDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "permissions"));
             window.appData.permessiDashboard = permessiDoc.exists() ? permessiDoc.data() : {};
 
             // 5. Costruisci la tabella
@@ -1803,7 +1803,7 @@ const functions = getFunctions(app, "europe-west1");
                     }
                 });
 
-                const docRef = doc(db, "config", "permessi_dashboard");
+                const docRef = doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/settings", "permissions");
                 const currentSnap = await getDoc(docRef);
                 const currentPermessi = currentSnap.exists() ? currentSnap.data() : {};
 

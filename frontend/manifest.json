@@ -1,6 +1,6 @@
 {
-  "name": "Log Solutions",
-  "short_name": "Log Solutions",
+  "name": "LogiDesk",
+  "short_name": "LogiDesk",
   "description": "Sistema professionale per la gestione trasporti e consegne",
   "start_url": "./index.html",
   "scope": "./",
