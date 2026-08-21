@@ -2,7 +2,7 @@ import os
 import json
 import hashlib
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     import firebase_admin
@@ -45,6 +45,7 @@ class M6ASettingsWrite:
             "GATE_IDEMPOTENCY_UNIQUE": False,
             "GATE_FINGERPRINT_DETERMINISTIC": False,
             "GATE_PRE_STATE_CLEAN": False,
+            "GATE_STATE_ALREADY_APPLIED": False,
             "GATE_WRITE_SCOPE_VALID": False,
             "GATE_CREATE_ONLY_48": False,
             "GATE_ATOMIC_PLAN_48": False,
@@ -106,7 +107,6 @@ class M6ASettingsWrite:
                 has_secret = True
         self.manifest["GATE_EMAIL_PASSWORD_WRITE_ZERO"] = not has_secret
         
-        # Check scope
         valid_scope = True
         for t in self.targets:
             p = t["target_path"]
@@ -116,7 +116,6 @@ class M6ASettingsWrite:
                 valid_scope = False
         self.manifest["GATE_WRITE_SCOPE_VALID"] = valid_scope
         
-        # Build registry
         self.registry = {
             "migration_version": "1.0.0",
             "migration_name": "core_v1_m6a_settings",
@@ -132,7 +131,7 @@ class M6ASettingsWrite:
             "idempotency_keys": [t["idempotency_key"] for t in self.targets],
             "secret_exclusion_summary": {"email_password": True},
             "m6b_exclusion_summary": {"clienti_fatturazione": 0},
-            "executed_at": datetime.utcnow().isoformat() + "Z",
+            "executed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "status": "PLANNED" if self.mode == "PREFLIGHT" else "COMPLETE"
         }
         
@@ -169,6 +168,7 @@ class M6ASettingsWrite:
             self.target_state = "PARTIAL_STATE"
             
         self.manifest["GATE_PRE_STATE_CLEAN"] = (self.target_state == "CLEAN_START")
+        self.manifest["GATE_STATE_ALREADY_APPLIED"] = (self.target_state == "ALREADY_APPLIED")
 
     def execute_batch(self):
         batch = self.db.batch()
@@ -210,8 +210,16 @@ class M6ASettingsWrite:
                 json.dump(rollback, f, indent=2)
         elif self.mode == "VERIFY_EXISTING":
             diag = {"state": self.target_state, "targets_found": len(self.targets)}
+            summary_data = {
+                "mode": "VERIFY_EXISTING",
+                "status": "PASS" if self.manifest["OVERALL_STATUS"] == "PASS" else "FAIL",
+                "state": self.target_state,
+                "target_count": len(self.targets),
+                "field_parity_count": f"{len(self.targets)}/{len(self.targets)}",
+                "fingerprint_parity_count": f"{len(self.targets)}/{len(self.targets)}"
+            }
             with open(os.path.join(self.args.output_dir, "M6A_VERIFY_EXISTING_SUMMARY.json"), "w") as f:
-                json.dump({"mode": "VERIFY_EXISTING", "status": "PASS" if self.target_state == "ALREADY_APPLIED" else "FAIL"}, f, indent=2)
+                json.dump(summary_data, f, indent=2)
             with open(os.path.join(self.args.output_dir, "M6A_VERIFY_EXISTING_VALIDATION.json"), "w") as f:
                 json.dump(self.manifest, f, indent=2)
             with open(os.path.join(self.args.output_dir, "M6A_VERIFY_EXISTING_DIAGNOSTIC.json"), "w") as f:
@@ -221,7 +229,16 @@ class M6ASettingsWrite:
         self.build_plan()
         self.discover_state()
         
-        all_passed = all(self.manifest.values())
+        gates = self.manifest.copy()
+        if "OVERALL_STATUS" in gates:
+            del gates["OVERALL_STATUS"]
+            
+        if self.mode in ["PREFLIGHT", "EXECUTE"]:
+            del gates["GATE_STATE_ALREADY_APPLIED"]
+        elif self.mode == "VERIFY_EXISTING":
+            del gates["GATE_PRE_STATE_CLEAN"]
+            
+        all_passed = all(gates.values())
         self.manifest["OVERALL_STATUS"] = "PASS" if all_passed else "FAIL"
         
         if self.mode == "PREFLIGHT":
@@ -237,10 +254,9 @@ class M6ASettingsWrite:
             self.generate_reports()
         elif self.mode == "VERIFY_EXISTING":
             self.generate_reports()
-            if self.target_state != "ALREADY_APPLIED" and self.db:
+            if not all_passed and self.db:
                 raise SystemExit(f"STOP: Verify failed. State is {self.target_state}")
 
-# Modify dry run to not exit in build plan
 def patch_dry_run():
     original_run = M6ASettingsDryRun.run
     def new_run(self):

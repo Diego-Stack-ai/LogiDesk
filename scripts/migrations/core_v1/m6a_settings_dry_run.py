@@ -2,7 +2,7 @@ import os
 import json
 import hashlib
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     import firebase_admin
