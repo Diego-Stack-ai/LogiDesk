@@ -4,7 +4,7 @@
  * Logica di persistenza spostata su firestore-service.js
  */
 
-const APP_VERSION = "6.429";
+const APP_VERSION = "6.430";
 
 // Esposta su window per lettura globale (es. da qualsiasi pagina o modulo)
 window.APP_VERSION = APP_VERSION;
@@ -59,7 +59,7 @@ window.togglePasswordVisibility = function() {
     const passwordInput = document.getElementById('password');
     const toggleIcon = document.getElementById('toggleIcon');
     if (!passwordInput || !toggleIcon) return;
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         toggleIcon.textContent = 'visibility_off';
@@ -101,7 +101,7 @@ function updateStepUI() {
         else if (i === currentStep) { dot.classList.add('active'); dot.classList.remove('completed'); dot.innerHTML = i; }
         else { dot.classList.remove('active', 'completed'); dot.innerHTML = i; }
     }
-    
+
     // Disabilita campi step precedenti
     if (currentStep > 1) {
         document.querySelectorAll('#step-1 input, #step-1 select').forEach(el => {
@@ -180,10 +180,10 @@ window.resumeDraft = () => {
     });
     if (typeof window.updateNomeGiorno === 'function') window.updateNomeGiorno();
     if (document.getElementById('clienteSelect')?.value) window.updateViaggi();
-    
+
     if (typeof window.renderAttivitaRows === 'function') window.renderAttivitaRows();
     if (typeof window.aggiornaVisibilitaAttivita === 'function') window.aggiornaVisibilitaAttivita();
-    
+
     // Ripristina Tracking se necessario
     if (window.recoverGPSTracking) window.recoverGPSTracking();
 
@@ -203,7 +203,7 @@ window.renderMezziInserimento = function() {
     if (!select) return;
     const mezzi = window.appData.lista_mezzi || [];
     const currentVal = select.value;
-    
+
     select.innerHTML = '<option value="">Seleziona targa...</option>';
     mezzi.sort((a,b) => a.targa.localeCompare(b.targa)).forEach(m => {
         const opt = document.createElement('option');
@@ -256,13 +256,13 @@ window.updateNomeGiorno = function() {
     const dataInput = document.getElementById('data');
     const nomeGiornoEl = document.getElementById('nomeGiorno');
     if (!dataInput || !nomeGiornoEl) return;
-    
+
     const dateVal = dataInput.value;
     if (!dateVal) {
         nomeGiornoEl.textContent = "";
         return;
     }
-    
+
     const parts = dateVal.split('-');
     const date = new Date(parts[0], parts[1] - 1, parts[2]);
     if (isNaN(date.getTime())) {
@@ -319,10 +319,10 @@ window.updateViaggi = async function() {
     if (clienteNome.toUpperCase() === 'MAGAZZINO') {
         // Nascondi i campi navetta
         if (navettaContainer) { navettaContainer.style.display = 'none'; }
-        
+
         // Ripristina e popola il select viaggio (sedi magazzino)
         if (viaggioWrapper) viaggioWrapper.style.display = '';
-        if (viaggioSelect) { 
+        if (viaggioSelect) {
             viaggioSelect.innerHTML = '<option value="">Seleziona sede magazzino</option>';
             const sedi = window.appData.lista_magazzini_sedi || [];
             sedi.sort((a,b) => (a.nome||'').localeCompare(b.nome||'')).forEach(sede => {
@@ -348,7 +348,7 @@ window.updateViaggi = async function() {
     viaggioSelect.disabled = true;
 
     const selectedDate = document.getElementById("data")?.value;
-    
+
     // Trova il progetto su Firestore (lista_progetti) per ottenere i viaggi configurati
     const progetto = (window.appData.lista_progetti || []).find(
         p => (p.nome || '').toUpperCase() === clienteNome.toUpperCase()
@@ -380,19 +380,19 @@ window.updateViaggi = async function() {
                 if (response.ok) {
                     const data = await response.json();
                     const links = data.links || [];
-                    
+
                     // Salva la mappa dei link
                     links.forEach(l => {
                         if (l.v_id && l.url) {
                             window.viaggiLinksMap[l.v_id.toUpperCase()] = l.url;
                         }
                     });
-                    
+
                     // Filtra dal manifest solo i viaggi configurati nelle impostazioni per questo cliente
                     options = links
                         .map(l => l.v_id)
                         .filter(v_id => v_id && viaggiConfigurati.includes(v_id.toUpperCase()));
-                    
+
                     if (options.length > 0) {
                         loadedFromManifest = true;
                         console.log(`[updateViaggi] Caricati ${options.length} viaggi dal manifest di Storage per ${formattedDate}.`);
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 0. Aggiorna dinamicamente il badge di versione della UI (Frontend)
     document.querySelectorAll('.app-version-badge').forEach(el => {
         el.textContent = 'App v' + APP_VERSION;
-        
+
         // Creiamo il secondo badge per l'API se non esiste già
         if (!el.nextElementSibling || !el.nextElementSibling.classList.contains('api-version-badge')) {
             const apiBadge = document.createElement('span');
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stile simile a quello dell'app, ma leggermente diverso (colore secondario o verde) per distinguerli
             apiBadge.style.cssText = "font-size: 11px; background: rgba(16, 185, 129, 0.1); color: #10B981; padding: 2px 8px; border-radius: 20px; margin-left: 8px; font-weight: 600; vertical-align: middle;";
             // Inizialmente invisibile o vuoto finché non arriva il dato
-            apiBadge.style.display = 'none'; 
+            apiBadge.style.display = 'none';
             el.parentNode.insertBefore(apiBadge, el.nextSibling);
         }
     });
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (email) {
                 // Rimuove caratteri invisibili
                 email = email.replace(/[\u200B-\u200D\uFEFF]/g, '');
-                
+
                 if (!email.includes('@')) {
                     // Trasforma gli spazi in punti (es. "ayoub berradia" -> "ayoub.berradia")
                     email = email.replace(/\s+/g, '.');
@@ -554,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     document.getElementById('clienteSelect')?.addEventListener('change', window.updateViaggi);
     document.getElementById('kmArrivo')?.addEventListener('input', calcolaTutto);
-    
+
     const dataInput = document.getElementById('data');
     if (dataInput && !dataInput.value) {
         dataInput.value = new Date().toISOString().split('T')[0];
@@ -668,9 +668,9 @@ function showUpdateToast(reg) {
 window.onUserProfileLoaded = (user) => {
     const autistaEl = document.getElementById('autistaNome');
     if (autistaEl) autistaEl.value = user.nome || '';
-    
+
     const role = (user.ruolo || 'autista').toLowerCase();
-    
+
     // Gestione pulsante Dashboard / Home
     const dashBtn = document.getElementById('dashboardBtn');
     if (dashBtn) {
@@ -727,7 +727,7 @@ window.caricaFotoDDT = async function(inputEl, index) {
 
     if (!isOnline) {
         console.log("[Offline Inserimento] Connessione assente. Salvataggio locale della foto DDT in corso...");
-        
+
         // Genera URL locale per la visualizzazione immediata
         const localUrl = URL.createObjectURL(file);
         window.attivitaAggiuntive[index].fotoUrl = localUrl;
@@ -764,11 +764,11 @@ window.caricaFotoDDT = async function(inputEl, index) {
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
         const formattedDate = `${yyyy}-${mm}-${dd}`;
-        
+
         const timestamp = Date.now();
         const username = window.appData?.currentUser?.nome || 'sconosciuto';
         const safeUsername = username.replace(/\s+/g, '_').toLowerCase();
-        
+
         const path = `DDT_NAVETTE/${formattedDate}/DDT_${safeUsername}_${timestamp}.jpg`;
         const fileRef = sRef(storage, path);
 
@@ -788,7 +788,7 @@ window.caricaFotoDDT = async function(inputEl, index) {
 
         // Salva in bozza
         if (typeof window.saveDraft === 'function') window.saveDraft();
-        
+
     } catch (e) {
         console.error("Errore caricamento foto DDT:", e);
         alert("Errore durante il caricamento della foto: " + e.message);
@@ -799,7 +799,7 @@ window.caricaFotoDDT = async function(inputEl, index) {
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         const { connectivityService } = await import("./core/connectivity-service.js");
-        
+
         let offlineBanner = null;
 
         connectivityService.addEventListener((status) => {
@@ -813,7 +813,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.body.style.paddingBottom = "45px"; // Evita sovrapposizione
                 } else {
                     offlineBanner.style.backgroundColor = status === 'unstable' ? '#ef4444' : '#f59e0b';
-                    offlineBanner.innerHTML = status === 'unstable' 
+                    offlineBanner.innerHTML = status === 'unstable'
                         ? `<span class="material-icons-round" style="font-size: 18px;">signal_cellular_connected_no_internet_4g</span> Connessione instabile. Possibili ritardi di sincronizzazione.`
                         : `<span class="material-icons-round" style="font-size: 18px;">cloud_off</span> Sei offline. Le modifiche verranno salvate sul dispositivo e sincronizzate appena torna la connessione.`;
                 }
@@ -822,7 +822,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     offlineBanner.remove();
                     offlineBanner = null;
                     document.body.style.paddingBottom = "0px";
-                    
+
                     // Mostra toast di successo
                     showToastNotification("Connessione ripristinata. Sincronizzazione in corso...", "#10b981");
                 }
@@ -832,7 +832,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.addEventListener('sync-completed', () => {
             showToastNotification("Sincronizzazione completata! Dati allineati in cloud.", "#10b981");
         });
-        
+
         window.addEventListener('sync-error', (e) => {
             showToastNotification(`Errore sincronizzazione: ${e.detail.error}`, "#ef4444");
         });
@@ -867,3 +867,19 @@ function showToastNotification(message, bgColor) {
         setTimeout(() => toast.remove(), 300);
     }, 4000);
 }
+
+
+// --- ENVIRONMENT BADGE (LOGIDESK) ---
+// Disattivare in produzione impostando ENABLE_ENV_BADGE = false;
+document.addEventListener("DOMContentLoaded", () => {
+    const ENABLE_ENV_BADGE = true;
+    const hostname = window.location.hostname;
+
+    if (ENABLE_ENV_BADGE && (hostname.includes('cantiere') || hostname.includes('localhost') || hostname.includes('127.0.0.1'))) {
+        const devBadge = document.createElement("div");
+        devBadge.id = "env-badge";
+        devBadge.innerText = "CANTIERE";
+        devBadge.style.cssText = "position: fixed; bottom: 10px; right: 10px; background-color: #f59e0b; color: white; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; z-index: 9999; opacity: 0.8; pointer-events: none; letter-spacing: 1px;";
+        document.body.appendChild(devBadge);
+    }
+});

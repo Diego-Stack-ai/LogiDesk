@@ -1,4 +1,4 @@
-const CACHE_NAME = 'log-solution-v6.429';
+const CACHE_NAME = 'log-solution-v6.430';
 
 const IMMUTABLE_FIREBASE_CDN_ASSETS = new Set([
     'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js',
@@ -22,7 +22,7 @@ const CRITICAL_ASSETS = [
     './services/realtime-sync.js',
     './services/crud-service.js',
     './manifest.json',
-    './img/logo.png',
+    './assets/brand/logidesk-mark.svg',
     'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js',
     'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js',
     'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js'

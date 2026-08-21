@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.429">
+    <link rel="stylesheet" href="styles.css?v=6.430">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="theme-color" content="#4f46e5">
@@ -69,7 +69,7 @@
                 style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
                 <span class="material-icons-round">arrow_back</span>
             </button>
-            <img src="img/logo.png" alt="LS" style="height: 32px; width: auto; margin-right: 8px;">
+            <img src="assets/brand/logidesk-mark.svg" alt="LS" style="height: 32px; width: auto; margin-right: 8px;">
             <div class="nav-title" style="flex: 1;">Centrale Resi</div>
         </div>
     </nav>
@@ -194,8 +194,8 @@
         </div>
     </div>
 
-    <script src="script.js?v=6.429"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.429"></script>
+    <script src="script.js?v=6.430"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.430"></script>
     <script type="module">
         import { db, app } from "./core/firebase-init.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -578,7 +578,7 @@
                 const formattedSignature = (emailSettings.firma || "").replace(/\n/g, "<br>");
                 
                 // Fetch Logo
-                let logoBase64 = await fetchBase64('img/logo.png');
+                let logoBase64 = await fetchBase64('assets/brand/logidesk-mark.svg');
 
                 // Costruisci Body
                 let bodyHtml = `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
