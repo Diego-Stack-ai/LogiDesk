@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.431">
+    <link rel="stylesheet" href="styles.css?v=6.432">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="LogiDesk">
-    <link rel="apple-touch-icon" href="assets/brand/logidesk-mark.svg">
-    <meta name="theme-color" content="#4f46e5">
+        <meta name="theme-color" content="#4f46e5">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="assets/brand/logidesk-mark.svg">
+    <link rel="apple-touch-icon" href="assets/brand/logidesk-mark.png">
 </head>
 
 <style>
@@ -134,6 +136,9 @@
         }
     }
 </style>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="assets/brand/logidesk-mark.svg">
+    <link rel="apple-touch-icon" href="assets/brand/logidesk-mark.png">
 </head>
 
 <body>
@@ -477,12 +482,12 @@
         </div>
     </div>
 
-    <script src="script.js?v=6.431"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.431"></script>
+    <script src="script.js?v=6.432"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.432"></script>
     <script type="module">
-        import { saveTrip, checkPendingTrip, closeTripWithAnomaly, deleteTrip } from "./firestore-service.js?v=6.431";
-        import { auth } from "./firestore-service.js?v=6.431";
-        import "./gps-tracker.js?v=6.431";
+        import { saveTrip, checkPendingTrip, closeTripWithAnomaly, deleteTrip } from "./firestore-service.js?v=6.432";
+        import { auth } from "./firestore-service.js?v=6.432";
+        import "./gps-tracker.js?v=6.432";
 
         const presenzeForm = document.getElementById('presenzeForm');
         const btnStartTrip = document.getElementById('btnStartTrip');
@@ -882,7 +887,7 @@
                 // Se ci sono foto offline da caricare, le accodiamo in SyncManager
                 if (tripId && window.offlinePhotoBlobs && Object.keys(window.offlinePhotoBlobs).length > 0) {
                     try {
-                        const { syncManager } = await import("./core/sync-manager.js?v=6.431");
+                        const { syncManager } = await import("./core/sync-manager.js?v=6.432");
                         for (const index in window.offlinePhotoBlobs) {
                             const fileBlob = window.offlinePhotoBlobs[index];
                             const photoId = `foto_ddt_${tripId}_${index}`;
