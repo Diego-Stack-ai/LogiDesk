@@ -98,7 +98,7 @@ service cloud.firestore {
 
     // Funzione helper per verificare se utente e' amministratore in Core V1
     function isCoreAdmin(company_id) {
-      let userData = get(/databases//documents/aziende//utenti/).data;
+      let userData = get(/databases/$(database)/documents/aziende/$(company_id)/utenti/$(request.auth.uid)).data;
       return userData.ruolo == 'amministratore';
     }
 
