@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiDesk - Punti di Consegna</title>
+    <link rel="stylesheet" href="styles.css?v=6.432">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .list-container { 
+            display: grid; gap: 16px; margin-top:20px; 
+            max-height: 70vh; overflow-y: auto; padding-right: 12px;
+        }
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        .list-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .data-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px;}
+        .data-card.active-true { border-left: 5px solid #10b981; }
+        .data-card.active-false { border-left: 5px solid #ef4444; opacity: 0.7; }
+        
+        .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white;}
+        .badge.frutta { background-color: #f59e0b; }
+        .badge.latte { background-color: #3b82f6; }
+        
+        .association-group { font-size: 11px; color: #64748b; margin-top: 4px; }
+    </style>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="assets/brand/logidesk-mark.svg">
+</head>
+<body>
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <button onclick="window.history.back()" class="logout-btn" style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
+                <span class="material-icons-round">arrow_back</span>
+            </button>
+            <div class="nav-title" style="flex: 1;">Punti di Consegna</div>
+            <a href="#" onclick="window.logoutFirebase(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="Cerca per nome, codice o indirizzo..." onkeyup="renderList()" style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <select id="typeFilter" onchange="renderList()" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+                <option value="ALL">Tutti (Frutta & Latte)</option>
+                <option value="FRUTTA">Frutta</option>
+                <option value="LATTE">Latte</option>
+            </select>
+            <select id="statusFilter" onchange="renderList()" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+                <option value="ALL">Tutti gli stati</option>
+                <option value="ATTIVI">Attivi</option>
+                <option value="INATTIVI">Inattivi</option>
+            </select>
+        </div>
+        
+        <div id="stats" style="margin-bottom: 16px; font-weight: 500; color: #475569;">Caricamento in corso...</div>
+
+        <div id="listContainer" class="list-container">
+            <!-- Items rendered via JS -->
+        </div>
+    </main>
+
+    <script type="module">
+        import { db } from './core/firebase-init.js';
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { AuthService } from './core/auth-service.js';
+        import { CompanyContext } from './core/CompanyContext.js';
+
+        let fullData = [];
+
+        window.logoutFirebase = async function() {
+            await AuthService.logout();
+        };
+
+        async function init() {
+            const user = await AuthService.requireAuth();
+            if(!user) return;
+            
+            const tenantId = localStorage.getItem('activeTenant') || 'DNR'; 
+            
+            const path = CompanyContext.getDeliveryPointsPath(tenantId);
+            console.log("[Punti di Consegna] Leggendo da:", path);
+            
+            try {
+                const snapshot = await getDocs(collection(db, path));
+                fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log(`[Punti di Consegna] Letti ${fullData.length} record.`);
+                renderList();
+            } catch (err) {
+                console.error("[Punti di Consegna] Errore lettura:", err);
+                document.getElementById('stats').innerText = "Errore di caricamento: " + err.message;
+            }
+        }
+        
+        window.renderList = function() {
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const typeF = document.getElementById('typeFilter').value;
+            const statusF = document.getElementById('statusFilter').value;
+            
+            let filtered = fullData;
+            
+            if (search) {
+                filtered = filtered.filter(d => 
+                    (d.nome && d.nome.toLowerCase().includes(search)) ||
+                    (d.indirizzo && d.indirizzo.toLowerCase().includes(search)) ||
+                    (d.codice_esterno && String(d.codice_esterno).toLowerCase().includes(search)) ||
+                    (d.sottocodice && String(d.sottocodice).toLowerCase().includes(search)) ||
+                    (d.codice_punto && String(d.codice_punto).toLowerCase().includes(search))
+                );
+            }
+            
+            if (typeF === 'FRUTTA') {
+                filtered = filtered.filter(d => !d.sottocodice || d.sottocodice.trim() === '');
+            } else if (typeF === 'LATTE') {
+                filtered = filtered.filter(d => d.sottocodice && d.sottocodice.trim() !== '');
+            }
+            
+            if (statusF === 'ATTIVI') {
+                filtered = filtered.filter(d => d.attivo !== false);
+            } else if (statusF === 'INATTIVI') {
+                filtered = filtered.filter(d => d.attivo === false);
+            }
+            
+            const fruttaCount = fullData.filter(d => !d.sottocodice || d.sottocodice.trim() === '').length;
+            const latteCount = fullData.filter(d => d.sottocodice && d.sottocodice.trim() !== '').length;
+            
+            document.getElementById('stats').innerText = `Trovati ${filtered.length} record su ${fullData.length} (Frutta: ${fruttaCount}, Latte: ${latteCount})`;
+            
+            const container = document.getElementById('listContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = "<p>Nessun punto di consegna trovato.</p>";
+                return;
+            }
+            
+            container.innerHTML = filtered.map(d => {
+                const isActive = d.attivo !== false;
+                const isLatte = d.sottocodice && d.sottocodice.trim() !== '';
+                const typeBadge = isLatte ? '<span class="badge latte">LATTE</span>' : '<span class="badge frutta">FRUTTA</span>';
+                
+                const codeDisplay = d.sottocodice ? `${d.codice_esterno} / ${d.sottocodice}` : (d.codice_esterno || d.codice_punto || 'N/D');
+                
+                let assocHTML = '';
+                if (d.association_group_id) {
+                    assocHTML = `<div class="association-group"><span class="material-icons-round" style="font-size:12px; vertical-align:middle;">link</span> Gruppo Associazione: ${d.association_group_id}</div>`;
+                }
+                
+                const windows = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(', ') : d.finestre_consegna) : '';
+                
+                return `
+                    <div class="data-card active-${isActive}">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div style="font-weight:bold; font-size:16px; color:#1e293b;">${d.nome || 'Senza Nome'}</div>
+                            ${typeBadge}
+                        </div>
+                        <div style="font-size:14px; color:#475569;">
+                            <strong>Codice:</strong> ${codeDisplay} | <strong>Zona:</strong> ${d.codice_zona || 'N/D'}
+                        </div>
+                        <div style="font-size:14px; color:#475569;">
+                            <span class="material-icons-round" style="font-size:14px; vertical-align:middle;">location_on</span>
+                            ${d.indirizzo || ''}, ${d.cap || ''} ${d.citta || ''} ${d.provincia ? '('+d.provincia+')' : ''}
+                        </div>
+                        ${windows ? `<div style="font-size:13px; color:#64748b;"><strong>Finestre Consegna:</strong> ${windows}</div>` : ''}
+                        ${assocHTML}
+                    </div>
+                `;
+            }).join('');
+        };
+        
+        window.onload = init;
+    </script>
+    <script src="script.js?v=6.432"></script>
+</body>
+</html>

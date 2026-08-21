@@ -32,6 +32,7 @@ const OPTIONAL_ASSETS = [
     './inserimento.html',
     './presenze.html',
     './gestione.html',
+    './punti_consegna.html',
     './elaborazione.html',
     './link_viaggi.html',
     './centrale_resi.html',
