@@ -4,11 +4,11 @@
  * Logica di persistenza spostata su firestore-service.js
  */
 
-const APP_VERSION = "6.428";
+const APP_VERSION = "6.429";
 
 // Esposta su window per lettura globale (es. da qualsiasi pagina o modulo)
 window.APP_VERSION = APP_VERSION;
-console.log("%c[App] Log Solution PWA - versione " + APP_VERSION, "color: #4f46e5; font-weight: bold; font-size: 12px;");
+console.log("%c[App] LogiDesk - versione " + APP_VERSION, "color: #4f46e5; font-weight: bold; font-size: 12px;");
 
 // --- SENTRY ERROR MONITORING ---
 window.addEventListener("load", () => {

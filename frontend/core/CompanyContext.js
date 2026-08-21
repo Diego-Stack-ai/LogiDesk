@@ -2,23 +2,23 @@
 export const CompanyContext = {
     COMPANY_ID: "NzXaCgyXxZWWehw1tSlo",
     
-    getCompanyPath: () => ziende/,
+    getCompanyPath: function() { return `aziende/${this.COMPANY_ID}`; },
     
-    getTenantPath: (tenantId) => ziende//tenants/,
+    getTenantPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}`; },
     
-    getSettingsPath: (domain) => ziende//settings/,
+    getSettingsPath: function(domain) { return `aziende/${this.COMPANY_ID}/settings/${domain}`; },
     
-    getTenantSettingsPath: (tenantId, domain) => ziende//tenants//settings/,
+    getTenantSettingsPath: function(tenantId, domain) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/settings/${domain}`; },
     
-    getEmployeesPath: () => ziende//dipendenti,
+    getEmployeesPath: function() { return `aziende/${this.COMPANY_ID}/dipendenti`; },
     
-    getUsersPath: () => ziende//utenti,
+    getUsersPath: function() { return `aziende/${this.COMPANY_ID}/utenti`; },
     
-    getVehiclesPath: () => ziende//mezzi,
+    getVehiclesPath: function() { return `aziende/${this.COMPANY_ID}/mezzi`; },
     
-    getDeliveryPointsPath: (tenantId) => ziende//tenants//punti_consegna,
+    getDeliveryPointsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/punti_consegna`; },
     
-    getImportMappingsPath: (tenantId) => ziende//tenants//import_mappings
+    getImportMappingsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/import_mappings`; }
 };
 
 export default CompanyContext;
