@@ -142,3 +142,13 @@ frontend/mappe_autisti/*
 Pianificazione _ InTime_files/
 
 backup/
+
+# Migration Outputs
+migration_output/
+M5_609_*.json
+M3_*.json
+
+# Local Audit Data
+audit_data_*.json
+scratch_*.json
+inventory.json
