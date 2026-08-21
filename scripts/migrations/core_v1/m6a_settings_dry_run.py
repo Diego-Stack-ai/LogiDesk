@@ -310,13 +310,23 @@ def main():
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
     
+    if args.project != REQUIRED_PROJECT:
+        raise SystemExit(f"STOP: Project must be {REQUIRED_PROJECT}")
+
     if firebase_admin:
         try:
             app = firebase_admin.get_app()
+            if app.project_id and app.project_id != args.project:
+                raise SystemExit(f"STOP: Existing Firebase app points to {app.project_id}")
         except ValueError:
-            cred = credentials.Certificate('H:/Il mio Drive/App/AppLogSolutionsWeb/cantiere_key.json')
-            app = firebase_admin.initialize_app(cred, options={"projectId": args.project})
-        db = firestore.client()
+            try:
+                app = firebase_admin.initialize_app(options={"projectId": args.project})
+            except Exception as e:
+                raise SystemExit(f"STOP: Failed to initialize firebase_admin with ADC: {e}")
+        try:
+            db = firestore.client(app=app)
+        except Exception as e:
+            raise SystemExit(f"STOP: Failed to initialize firestore: {e}")
     else:
         db = None
         

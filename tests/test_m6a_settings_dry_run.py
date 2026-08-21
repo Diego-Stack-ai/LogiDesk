@@ -61,5 +61,14 @@ class TestM6ADryRun(unittest.TestCase):
         self.assertEqual(len(self.dry_run.targets), 47)
         self.assertEqual(len(self.dry_run.secret_audit["secret_fields_excluded"]), 1)
 
+    def test_firebase_init_safety(self):
+        with open('scripts/migrations/core_v1/m6a_settings_dry_run.py', 'r') as f:
+            content = f.read()
+        self.assertNotIn('credentials.Certificate', content)
+        self.assertNotIn('AppLogSolutionsWeb', content)
+        self.assertNotIn('cantiere_key.json', content)
+        self.assertIn('firebase_admin.initialize_app(options={"projectId": args.project})', content)
+        self.assertIn('app.project_id != args.project', content)
+
 if __name__ == '__main__':
     unittest.main()
