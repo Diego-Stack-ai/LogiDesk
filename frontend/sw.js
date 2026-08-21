@@ -206,7 +206,7 @@ self.addEventListener('fetch', (event) => {
                         <html>
                         <head>
                             <meta charset="utf-8">
-                            <title>Offline - Log Solution</title>
+                            <title>Offline - LogiDesk</title>
                             <style>
                                 body { font-family: sans-serif; text-align: center; padding: 50px; background: #f8fafc; color: #334155; }
                                 h1 { color: #0f172a; }
