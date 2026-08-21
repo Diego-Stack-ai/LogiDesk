@@ -1,7 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Funzione helper per controllare autenticazione
     function isAuthenticated() {
       return request.auth != null;
@@ -41,18 +41,18 @@ service cloud.firestore {
     // Regole per i dipendenti (lettura/scrittura profilo)
     match /dipendenti/{userId} {
       allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata() || isSoel());
-      
+
       allow update: if isAuthenticated() && request.auth.uid == userId &&
         getAffectedKeys().hasOnly(selfEditableFields());
-        
+
       allow update: if isAuthenticated() && isAdmin() &&
         !getAffectedKeys().hasAny(['ruolo', 'canElevate', 'uid', 'email', 'createdAt']);
-        
+
       allow create: if isAuthenticated() && isAdmin() &&
-        request.resource.data.ruolo in ['autista', 'fornitore', 'impiegata', 'soel'] && 
+        request.resource.data.ruolo in ['autista', 'fornitore', 'impiegata', 'soel'] &&
         request.resource.data.canElevate != true;
-        
-      allow delete: if false; 
+
+      allow delete: if false;
     }
 
     // Protezione registro amministratori atomico
@@ -95,6 +95,108 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+
+    // Funzione helper per verificare se utente e' amministratore in Core V1
+    function isCoreAdmin(company_id) {
+      let userData = get(/databases//documents/aziende//utenti/).data;
+      return userData.ruolo == 'amministratore';
+    }
+
+    // --- LOGIDESK CORE V1 RULES ---
+    match /aziende/{company_id} {
+      allow read: if isAuthenticated();
+
+      match /utenti/{uid} {
+        allow read: if isAuthenticated() && (request.auth.uid == uid || isCoreAdmin(company_id));
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /dipendenti/{employee_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /mezzi/{vehicle_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /settings/{setting_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /tenants/{tenant_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+
+        match /settings/{setting_id} {
+          allow read: if isAuthenticated();
+          allow write: if isAuthenticated() && isCoreAdmin(company_id);
+        }
+
+        match /punti_consegna/{point_id} {
+          allow read, write: if isAuthenticated();
+        }
+
+        match /import_mappings/{mapping_id} {
+          allow read, write: if isAuthenticated();
+        }
+      }
+    }
+    // -----------------------------
+
+
+    // Funzione helper per verificare se utente e' amministratore in Core V1
+    function isCoreAdmin(company_id) {
+      let userData = get(/databases/$(database)/documents/aziende/$(company_id)/utenti/$(request.auth.uid)).data;
+      return userData.ruolo == 'amministratore';
+    }
+
+    // --- LOGIDESK CORE V1 RULES ---
+    match /aziende/{company_id} {
+      allow read: if isAuthenticated();
+
+      match /utenti/{uid} {
+        allow read: if isAuthenticated() && (request.auth.uid == uid || isCoreAdmin(company_id));
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /dipendenti/{employee_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /mezzi/{vehicle_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /settings/{setting_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+      }
+
+      match /tenants/{tenant_id} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isCoreAdmin(company_id);
+
+        match /settings/{setting_id} {
+          allow read: if isAuthenticated();
+          allow write: if isAuthenticated() && isCoreAdmin(company_id);
+        }
+
+        match /punti_consegna/{point_id} {
+          allow read, write: if isAuthenticated();
+        }
+
+        match /import_mappings/{mapping_id} {
+          allow read, write: if isAuthenticated();
+        }
+      }
+    }
+    // -----------------------------
+
     // Regole per il nuovo sistema Tenant (DNR)
     match /customers/{tenant}/{collection=**} {
       allow read, write: if isAuthenticated();
@@ -111,8 +213,8 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && isAdmin();
     }
-    match /config/{docId} { 
-      allow read, write: if isAuthenticated() && docId != 'permessi_dashboard'; 
+    match /config/{docId} {
+      allow read, write: if isAuthenticated() && docId != 'permessi_dashboard';
     }
     match /viaggi/{document=**} { allow read, write: if isAuthenticated(); }
     match /ddt/{docId} { allow read, write: if isAuthenticated(); }
