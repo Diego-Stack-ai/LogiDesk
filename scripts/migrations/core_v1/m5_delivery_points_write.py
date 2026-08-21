@@ -380,7 +380,7 @@ class M5DeliveryPointsWrite:
     def write_reports(self, phase="PREFLIGHT"):
         os.makedirs(self.args.output_dir, exist_ok=True)
             
-        if phase == "PREFLIGHT" and all(v is True for k,v in self.manifest.items() if k != "OVERALL_STATUS"):
+        if all(v is True for k,v in self.manifest.items() if k != "OVERALL_STATUS"):
             self.manifest["OVERALL_STATUS"] = "PASS"
             
         with open(os.path.join(self.args.output_dir, f"M5_609_{phase}_VALIDATION.json"), "w") as f:
@@ -505,6 +505,141 @@ class M5DeliveryPointsWrite:
         reg_ref.update({"status": "COMPLETE", "completed_at": firestore.SERVER_TIMESTAMP if firestore else "SERVER_TIMESTAMP"})
         self.write_reports(phase="EXECUTE")
 
+    def verify_existing(self):
+        diagnostic = []
+        validation = {}
+        summary = {}
+        
+        reg = self.db.document(REGISTRY_PATH).get()
+        validation["REGISTRY_EXISTS"] = reg.exists
+        if reg.exists:
+            data = reg.to_dict() or {}
+            validation["REGISTRY_STATUS_COMPLETE"] = data.get("status") == "COMPLETE"
+            validation["CREATED_TARGET_COUNT_609"] = data.get("created_target_count") == 609
+            validation["COMPLETED_CHUNKS_VALID"] = data.get("completed_chunks") == [1, 2]
+        else:
+            validation["REGISTRY_STATUS_COMPLETE"] = False
+            validation["CREATED_TARGET_COUNT_609"] = False
+            validation["COMPLETED_CHUNKS_VALID"] = False
+            diagnostic.append("Registry missing")
+            
+        target_docs = list(self.db.collection(f"aziende/{REQUIRED_COMPANY}/tenants/{REQUIRED_TENANT}/punti_consegna").stream())
+        summary["TARGET_COUNT"] = len(target_docs)
+        validation["TARGET_COUNT_609"] = len(target_docs) == 609
+        
+        expected_targets = {t["codice_punto"]: t for t in self.target_payloads}
+        validation["SOURCE_COUNT_453"] = len(self.legacy_points) == 453
+        
+        target_dict = {d.id: d.to_dict() for d in target_docs}
+        
+        ids = sorted(target_dict.keys())
+        if ids:
+            validation["FIRST_ID_DP000001"] = ids[0] == "DP000001"
+            validation["LAST_ID_DP000609"] = ids[-1] == "DP000609"
+        else:
+            validation["FIRST_ID_DP000001"] = False
+            validation["LAST_ID_DP000609"] = False
+            
+        missing_ids = set(expected_targets.keys()) - set(target_dict.keys())
+        unexpected_ids = set(target_dict.keys()) - set(expected_targets.keys())
+        
+        summary["MISSING_ID_COUNT"] = len(missing_ids)
+        summary["UNEXPECTED_ID_COUNT"] = len(unexpected_ids)
+        validation["MISSING_ID_COUNT_0"] = len(missing_ids) == 0
+        validation["UNEXPECTED_ID_COUNT_0"] = len(unexpected_ids) == 0
+        if missing_ids: diagnostic.append(f"Missing IDs: {missing_ids}")
+        if unexpected_ids: diagnostic.append(f"Unexpected IDs: {unexpected_ids}")
+        
+        field_parity_count = 0
+        fingerprint_parity_count = 0
+        forbidden_count = 0
+        frutta_count = 0
+        latte_count = 0
+        association_groups = {}
+        singles_count = 0
+        
+        for d_id, doc_data in target_dict.items():
+            if d_id not in expected_targets:
+                continue
+                
+            expected = expected_targets[d_id]
+            expected_payload = expected["payload"]
+            expected_fingerprint = expected["fingerprint"]
+            
+            if expected_payload.get("sottocodice") == "FRUTTA": frutta_count += 1
+            if expected_payload.get("sottocodice") == "LATTE": latte_count += 1
+            
+            ag_id = doc_data.get("association_group_id")
+            if ag_id:
+                if ag_id not in association_groups:
+                    association_groups[ag_id] = []
+                association_groups[ag_id].append(doc_data)
+            else:
+                singles_count += 1
+            
+            match = True
+            for k, v in expected_payload.items():
+                if doc_data.get(k) != v:
+                    match = False
+                    diagnostic.append(f"{d_id} mismatch field {k}: expected {v}, got {doc_data.get(k)}")
+            if match:
+                field_parity_count += 1
+                
+            canonical_doc_payload = {k: v for k, v in doc_data.items() if k in expected_payload}
+            live_fingerprint = hashlib.sha256(json.dumps(canonical_doc_payload, sort_keys=True).encode("utf-8")).hexdigest()
+            if live_fingerprint == expected_fingerprint:
+                fingerprint_parity_count += 1
+            else:
+                diagnostic.append(f"{d_id} fingerprint mismatch")
+                
+            if any(k in doc_data for k in ["codice_frutta", "codice_latte", "tipo", "tipologia_grado"]):
+                forbidden_count += 1
+                
+        summary["FRUTTA_TARGET_COUNT"] = frutta_count
+        summary["LATTE_TARGET_COUNT"] = latte_count
+        validation["FRUTTA_TARGET_COUNT_392"] = frutta_count == 392
+        validation["LATTE_TARGET_COUNT_217"] = latte_count == 217
+        validation["FIELD_PARITY_609_OF_609"] = field_parity_count == 609
+        validation["FINGERPRINT_PARITY_609_OF_609"] = fingerprint_parity_count == 609
+        validation["FORBIDDEN_LEGACY_FIELD_DOC_COUNT_0"] = forbidden_count == 0
+        
+        valid_split_groups = 0
+        invalid_groups = 0
+        for ag_id, docs in association_groups.items():
+            if len(docs) == 2:
+                sottocodici = {d.get("sottocodice") for d in docs}
+                codici_esterni = {d.get("codice_esterno") for d in docs}
+                if "FRUTTA" in sottocodici and "LATTE" in sottocodici and len(codici_esterni) == 2:
+                    valid_split_groups += 1
+                else:
+                    invalid_groups += 1
+            else:
+                invalid_groups += 1
+                
+        summary["SINGLE_WITHOUT_ASSOCIATION"] = singles_count
+        summary["VALID_SPLIT_GROUPS"] = valid_split_groups
+        summary["SPLIT_DOCUMENTS"] = sum(len(docs) for ag_id, docs in association_groups.items())
+        summary["INVALID_GROUPS"] = invalid_groups
+        
+        validation["SINGLE_WITHOUT_ASSOCIATION_297"] = singles_count == 297
+        validation["VALID_SPLIT_GROUPS_156"] = valid_split_groups == 156
+        validation["INVALID_GROUPS_0"] = invalid_groups == 0
+        
+        overall_pass = all(validation.values())
+        validation["OVERALL_STATUS"] = "PASS" if overall_pass else "FAIL"
+        
+        os.makedirs(self.args.output_dir, exist_ok=True)
+        with open(os.path.join(self.args.output_dir, "M5_609_VERIFY_EXISTING_VALIDATION.json"), "w") as f:
+            json.dump(validation, f, indent=2)
+        with open(os.path.join(self.args.output_dir, "M5_609_VERIFY_EXISTING_SUMMARY.json"), "w") as f:
+            json.dump(summary, f, indent=2)
+        with open(os.path.join(self.args.output_dir, "M5_609_VERIFY_EXISTING_DIAGNOSTIC.json"), "w") as f:
+            json.dump(diagnostic, f, indent=2)
+            
+        if not overall_pass:
+            print("FATAL: Verify existing failed.")
+            sys.exit(1)
+
     def run(self):
         if self.args.execute and self.args.verify_existing:
             raise SystemExit("FATAL: Cannot execute and verify simultaneously.")
@@ -526,6 +661,9 @@ class M5DeliveryPointsWrite:
                 self.write_reports(phase="EXECUTE_FAIL")
                 sys.exit(1)
             self.execute_live()
+            
+        if self.args.verify_existing:
+            self.verify_existing()
 
 def main():
     parser = argparse.ArgumentParser()
