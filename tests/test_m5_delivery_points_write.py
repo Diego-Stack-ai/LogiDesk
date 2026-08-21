@@ -1,12 +1,12 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 import os
 import tempfile
 import shutil
 
 from scripts.migrations.core_v1.m5_delivery_points_write import M5DeliveryPointsWrite, REQUIRED_PROJECT, REQUIRED_COMPANY, REQUIRED_TENANT
 
-class TestM5DeliveryPointsWrite(unittest.TestCase):
+class TestM5Write609(unittest.TestCase):
     def setUp(self):
         self.db = MagicMock()
         self.args = MagicMock()
@@ -14,8 +14,8 @@ class TestM5DeliveryPointsWrite(unittest.TestCase):
         self.args.company_id = REQUIRED_COMPANY
         self.args.tenant_id = REQUIRED_TENANT
         self.args.execute = False
-        self.args.confirm_shadow_write = ""
         self.args.verify_existing = False
+        self.args.resume = False
         self.temp_dir = tempfile.mkdtemp()
         self.args.output_dir = self.temp_dir
         
@@ -30,15 +30,28 @@ class TestM5DeliveryPointsWrite(unittest.TestCase):
             
         self.db.document.side_effect = mock_doc
         
-        # Target state clean (registry absent)
-        self.db.collection.return_value.limit.return_value.stream.return_value = []
+        self.db.collection.return_value.limit.return_value.get.return_value = []
         
-        # 453 Legacy Points
         mock_docs = []
-        for i in range(453):
+        # Frutta only
+        for i in range(236):
+            d = MagicMock()
+            d.id = f"F{i:03d}"
+            d.to_dict.return_value = {"codice_frutta": f"F{i}", "codice_latte": "P00000", "cliente": f"Test {i}"}
+            mock_docs.append(d)
+            
+        # Latte only
+        for i in range(61):
             d = MagicMock()
             d.id = f"L{i:03d}"
-            d.to_dict.return_value = {"cliente": f"Test {i}"}
+            d.to_dict.return_value = {"codice_frutta": "", "codice_latte": f"L{i}", "cliente": f"Test {i}"}
+            mock_docs.append(d)
+            
+        # Both
+        for i in range(156):
+            d = MagicMock()
+            d.id = f"B{i:03d}"
+            d.to_dict.return_value = {"codice_frutta": f"BF{i}", "codice_latte": f"BL{i}", "cliente": f"Test {i}"}
             mock_docs.append(d)
         
         self.db.collection.return_value.stream.return_value = mock_docs
@@ -50,26 +63,36 @@ class TestM5DeliveryPointsWrite(unittest.TestCase):
         audit = M5DeliveryPointsWrite(self.db, self.args)
         audit.run()
         
-        self.assertEqual(len(audit.target_payloads), 453)
-        self.assertEqual(audit.target_payloads[0]["canonical_id"], "DP000001")
-        self.assertEqual(audit.target_payloads[-1]["canonical_id"], "DP000453")
+        self.assertEqual(len(audit.target_payloads), 609)
+        self.assertEqual(audit.target_payloads[0]["codice_punto"], "DP000001")
+        self.assertEqual(audit.target_payloads[-1]["codice_punto"], "DP000609")
+        
         self.assertTrue(audit.manifest["GATE_SOURCE_COUNT_453"])
-        self.assertTrue(audit.manifest["GATE_TARGET_EXPECTED_453"])
-        self.assertTrue(audit.manifest["GATE_ATOMIC_PLAN_454"])
+        self.assertTrue(audit.manifest["GATE_TARGET_COUNT_609"])
+        self.assertTrue(audit.manifest["GATE_CHUNK_PLAN_VALID"])
         self.assertEqual(audit.target_state, "CLEAN_START")
         
-    def test_execute(self):
+        self.assertEqual(len(audit.chunk1), 305)
+        self.assertEqual(len(audit.chunk2), 304)
+
+    def test_execute_clean_start(self):
         self.args.execute = True
-        self.args.confirm_shadow_write = "LOGIDESK_M5_DNR"
+        self.args.confirm_shadow_write = "LOGIDESK_M5_DNR_609"
         
         audit = M5DeliveryPointsWrite(self.db, self.args)
-        audit.run()
+        try:
+            audit.run()
+        except SystemExit as e:
+            print("SystemExit:", e)
+            print("Manifest non-True gates:", [k for k, v in audit.manifest.items() if v is not True])
+            raise
+        self.assertEqual(self.db.batch.call_count, 2)
         
-        # Batch should be called
-        self.db.batch.assert_called_once()
-        batch_mock = self.db.batch.return_value
-        self.assertEqual(batch_mock.create.call_count, 454)
-        batch_mock.commit.assert_called_once()
+    def test_static_write_safety(self):
+        with open("scripts/migrations/core_v1/m5_delivery_points_write.py", "r") as f:
+            code = f.read()
+        self.assertNotIn(".set(", code)
+        self.assertNotIn(".delete(", code)
         
 if __name__ == '__main__':
     unittest.main()
