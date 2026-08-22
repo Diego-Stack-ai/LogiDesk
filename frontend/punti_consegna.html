@@ -216,6 +216,7 @@
                 </div>
             </div>
             <div class="modal-body map-body">
+                <div id="mapContainer" style="width: 100%; height: 300px;"></div>
                 <div id="leafletMap"></div>
                 <div id="noMapOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:#f8fafc; z-index:1000; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b;">
                     <span class="material-icons-round" style="font-size:48px; margin-bottom:12px; opacity:0.5;">location_off</span>
@@ -368,12 +369,21 @@
                 lat = point.geolocalizzazione.lat || point.geolocalizzazione.latitude;
                 lng = point.geolocalizzazione.lng || point.geolocalizzazione.lon || point.geolocalizzazione.longitude;
             }
+
+            const container = document.getElementById('mapContainer');
+            if (!container) {
+                console.error("Map container not found in DOM");
+                return;
+            }
+
             if (!lat || !lng) {
                 document.getElementById('noMapOverlay').style.display = 'flex';
                 document.getElementById('modalMapSubtitle').innerText = "Coordinate non presenti";
+                container.style.visibility = 'hidden';
             } else {
                 document.getElementById('noMapOverlay').style.display = 'none';
                 document.getElementById('modalMapSubtitle').innerText = "Coordinate: " + parseFloat(lat).toFixed(5) + " / " + parseFloat(lng).toFixed(5);
+                container.style.visibility = 'visible';
                 setTimeout(() => {
                     if (window.map) {
                         window.map.invalidateSize();
@@ -386,7 +396,7 @@
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(window.map);
                         window.marker = L.marker([lat, lng]).addTo(window.map);
                     }
-                }, 100);
+                }, 200);
             }
         }
         window.closeMapModal = function() {
@@ -479,6 +489,14 @@
         // ==========================================
         // RENDER LOGIC
         // ==========================================
+        function formatExternalCode(val) {
+            if (!val) return '-';
+            let str = String(val).trim();
+            if (str.toUpperCase().startsWith('P')) {
+                str = str.substring(1);
+            }
+            return str;
+        }
         function formatTimeWindows(arr) {
             if (!arr || !Array.isArray(arr)) return "Non def.";
             return arr.map(w => {
@@ -487,6 +505,19 @@
                 return JSON.stringify(w);
             }).join(", ");
         }
+
+        document.getElementById('pointsContainer').addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn-icon');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+            const pointId = btn.getAttribute('data-point-id');
+            if (action === 'geo' && pointId) {
+                window.openMapModal(pointId);
+            } else if (action === 'edit' && pointId) {
+                window.openEditModal(pointId);
+            }
+        });
+
         function renderList() {
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const typeF = document.getElementById("typeFilter").value;
