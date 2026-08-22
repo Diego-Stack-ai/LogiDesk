@@ -12,153 +12,249 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-
     <style>
+        .list-container {
+            display: grid; margin-top: 12px;
+            max-height: 75vh; overflow-y: auto; padding-right: 12px;
+            padding-bottom: 20px;
+        }
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        .list-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filters input, .filters select {
+            padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+        }
+
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 16px;
-            margin-top: 12px;
         }
-        @media (max-width: 600px) {
-            .cards-container {
-                grid-template-columns: 1fr;
-            }
-        }
+
         .item-card {
             background: white;
             border-radius: 16px;
             border: 1px solid #e2e8f0;
             padding: 20px;
             transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
+
         .item-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px -10px rgba(79, 70, 229, 0.15);
         }
+
+        .item-card.inactive {
+            opacity: 0.7;
+            border-left: 4px solid #ef4444;
+        }
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
         }
-        .card-title {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .badge-frutta { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
-        .badge-latte { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
 
-        .card-body { margin-top: 16px; }
+        .card-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .card-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
         .card-row {
             display: flex;
             gap: 16px;
-            margin-bottom: 12px;
+            flex-wrap: wrap;
         }
+
         .data-item {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
+
         .data-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #64748b;
+            font-size: 10px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 700;
         }
+
         .data-value {
             font-size: 13px;
-            color: #334155;
             font-weight: 500;
+            color: var(--text-main);
         }
-        .card-actions {
+
+        .badge {
+            padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block;
+        }
+        .badge.frutta { background-color: #f59e0b; }
+        .badge.latte { background-color: #3b82f6; }
+
+        .association-group {
+            font-size: 11px; color: #64748b; margin-top: 8px; background: #f1f5f9; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; font-weight: 500;
+        }
+
+        .empty-state {
+            padding: 40px; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed #e2e8f0; font-weight: 500;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
             display: flex;
-            gap: 8px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9;
-            justify-content: flex-end;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
-        .btn-edit, .btn-delete, .btn-geolocate {
-            width: 36px;
-            height: 36px;
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+        .modal-body {
+            flex-grow: 1;
+            position: relative;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal-body.map-body { padding: 0; }
+
+        #leafletMap {
+            width: 100%;
+            height: 100%;
+        }
+        .btn-icon {
+            background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; border: 1px solid #e2e8f0;
+        }
+        .btn-icon:hover { background: #f1f5f9; }
+
+        .card-actions {
+            display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 12px;
+        }
+
+        /* Edit Form */
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+        }
+        .form-group {
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .form-group label {
+            font-size: 12px; font-weight: 600; color: #64748b;
+        }
+        .form-group input, .form-group select {
+            padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 14px;
+        }
+        .form-group input:read-only { background: #f8fafc; color: #94a3b8; }
+
+        /* Header Fix */
+        .glass-nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 10px 20px;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7));
+            color: var(--primary);
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            border: none;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f8fafc;
-            transition: all 0.2s;
+            font-size: 1.2rem;
         }
-        .btn-edit:hover, .btn-geolocate:hover { background: #e2e8f0; }
-        .empty-state { text-align: center; color: #64748b; padding: 40px; }
 
-        .toolbar {
+        .nav-links {
             display: flex;
             gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            background: white;
-            padding: 16px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px 12px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-        .search-box .material-icons-round {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-        .filter-select {
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: white;
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             font-weight: 500;
-            color: #334155;
-            cursor: pointer;
-        }
-        .btn-map, .btn-add {
-            padding: 0 20px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
-            height: 45px;
+            gap: 6px;
         }
-        .btn-map { background: #10b981; }
-        .btn-map:hover { background: #059669; }
-        .btn-add { background: var(--primary); }
-        .btn-add:hover { background: var(--primary-hover); }
-    </style>
 
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
 <body>
     <nav class="glass-nav">
@@ -501,6 +597,7 @@
 
             let filtered = fullData;
 
+            // Applica il resolver per filtrare e mostrare
             filtered.forEach(d => { d._resolvedType = resolvePointType(d); });
 
             if (search) {
@@ -545,86 +642,80 @@
             container.innerHTML = filtered.map(d => {
                 const isActive = d.attivo !== false;
                 const isLatte = d._resolvedType === "LATTE";
+                const typeBadge = isLatte ? "<span class=\"badge latte\">LATTE</span>" : "<span class=\"badge frutta\">FRUTTA</span>";
+                const codeDisplay = d.sottocodice ? (d.codice_esterno || "N/D") + " / " + d.sottocodice : (d.codice_esterno || d.codice_punto || "N/D");
 
-                let myCode = d.codice_esterno || d.codice_punto || "-";
-                let otherCode = "-";
-
-                let myWindow = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(", ") : d.finestre_consegna) : "-";
-                let otherWindow = "-";
-
-                let hasAssociation = false;
-
+                // ASSOCIATION LOGIC
+                let assocHTML = "";
                 if (d.association_group_id && associationMap[d.association_group_id]) {
-                    const related = associationMap[d.association_group_id].find(r => r.id !== d.id);
-                    if (related) {
-                        hasAssociation = true;
-                        otherCode = related.codice_esterno || related.codice_punto || "-";
-                        otherWindow = related.finestre_consegna ? (Array.isArray(related.finestre_consegna) ? related.finestre_consegna.join(", ") : related.finestre_consegna) : "-";
-                        // Override my variables if related has better data that is missing on current
-                        // Since they are distinct cards, we just show the other code.
+                    const related = associationMap[d.association_group_id].filter(r => r.id !== d.id);
+                    if (related.length > 0) {
+                        assocHTML = "<div class=\"association-group\">" +
+                            "<div style=\"display:flex; align-items:center; gap:4px;\">" +
+                            "<span class=\"material-icons-round\" style=\"font-size:14px;\">link</span> <strong>ASSOCIATO A:</strong></div>" +
+                            related.map(r => {
+                                const rType = resolvePointType(r);
+                                const rLatte = rType === "LATTE";
+                                const rBadge = rLatte ? "<span style=\"color:#3b82f6; font-weight:bold;\">LATTE</span>" : "<span style=\"color:#f59e0b; font-weight:bold;\">FRUTTA</span>";
+                                const rCode = r.sottocodice ? (r.codice_esterno || "N/D") + "/" + r.sottocodice : (r.codice_esterno || r.codice_punto || "N/D");
+                                return "<div>" + rBadge + " - " + (r.nome || "Senza nome") + " (" + rCode + ")</div>";
+                            }).join("") +
+                        "</div>";
                     }
                 }
 
-                let fruttaCode = isLatte ? otherCode : myCode;
-                let latteCode = isLatte ? myCode : otherCode;
+                const windows = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(", ") : d.finestre_consegna) : "-";
+                const lat = d.geolocalizzazione && d.geolocalizzazione.lat ? parseFloat(d.geolocalizzazione.lat).toFixed(5) : "-";
+                const lng = d.geolocalizzazione && d.geolocalizzazione.lng ? parseFloat(d.geolocalizzazione.lng).toFixed(5) : "-";
+                const gpsStatusColor = (lat !== "-" && lng !== "-") ? "#10b981" : "#ef4444";
 
-                let orariFrutta = isLatte ? otherWindow : myWindow;
-                let orariLatte = isLatte ? myWindow : otherWindow;
-
-                const lat = d.geolocalizzazione && d.geolocalizzazione.lat ? parseFloat(d.geolocalizzazione.lat).toFixed(4) : "-";
-                const lon = d.geolocalizzazione && d.geolocalizzazione.lng ? parseFloat(d.geolocalizzazione.lng).toFixed(4) : "-";
-
-                return `
-                    <div class="item-card" style="${isActive ? '' : 'opacity:0.6;'}">
-                        <div class="card-header">
-                            <div>
-                                <h4 class="card-title">${d.nome || d.nome_consegna || "Senza Nome"}</h4>
-                                <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
-                                    <span class="badge badge-frutta">F: ${fruttaCode}</span>
-                                    <span class="badge badge-latte">L: ${latteCode}</span>
-                                    <span class="badge" style="background:#f1f5f9; color:#64748b">ZONA: ${d.codice_zona || "N/D"}</span>
-                                    <span class="badge" style="background:#1e293b; color:white">${activeTenantId || 'DNR'}</span>
-                                    ${hasAssociation ? '<span style="font-size:12px; color:#10b981; font-weight:600; display:flex; align-items:center; gap:2px;"><span class="material-icons-round" style="font-size:14px;">link</span> Associato</span>' : ''}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-row">
-                                <div class="data-item" style="flex:2">
-                                    <span class="data-label">Indirizzo</span>
-                                    <span class="data-value">${d.indirizzo || ''} ${d.cap || ''}</span>
-                                </div>
-                                <div class="data-item" style="flex:1">
-                                    <span class="data-label">Città / Prov</span>
-                                    <span class="data-value">${d.citta || ''} (${d.provincia || d.prov || '-'})</span>
-                                </div>
-                            </div>
-                            <div class="card-row" style="background:#f8fafc; padding:8px; border-radius:8px;">
-                                <div class="data-item">
-                                    <span class="data-label">Orari Frutta</span>
-                                    <span class="data-value">${orariFrutta}</span>
-                                </div>
-                                <div class="data-item" style="border-left:1px solid #e2e8f0; padding-left:16px;">
-                                    <span class="data-label">Orari Latte</span>
-                                    <span class="data-value">${orariLatte}</span>
-                                </div>
-                                <div class="data-item" style="border-left:1px solid #e2e8f0; padding-left:16px;">
-                                    <span class="data-label">Coordinate GPS</span>
-                                    <span class="data-value">${lat}/${lon}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-edit" data-id="${d.id}" title="Modifica dati">
-                                <span class="material-icons-round" style="font-size:18px;">edit</span>
-                            </button>
-                            <!-- Elimina omesso come richiesto se non certificato -->
-                            <button class="btn-geolocate" data-id="${d.id}" title="Geolocalizza">
-                                <span class="material-icons-round" style="font-size:18px; color:#10b981;">my_location</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
+                return "<div class=\"item-card " + (isActive ? "" : "inactive") + "\">" +
+                        "<div class=\"card-header\">" +
+                            "<div>" +
+                                "<h4 class=\"card-title\">" + (d.nome || "Senza Nome") + "</h4>" +
+                                "<div style=\"display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;\">" +
+                                    typeBadge +
+                                    "<span class=\"badge\" style=\"background:#f1f5f9; color:#64748b\">ZONA: " + (d.codice_zona || "N/D") + "</span>" +
+                                    (isActive ? "<span class=\"badge\" style=\"background:#10b981;\">ATTIVO</span>" : "<span class=\"badge\" style=\"background:#ef4444;\">INATTIVO</span>") +
+                                "</div>" +
+                            "</div>" +
+                        "</div>" +
+                        "<div class=\"card-body\">" +
+                            "<div class=\"card-row\">" +
+                                "<div class=\"data-item\" style=\"flex:2\">" +
+                                    "<span class=\"data-label\">Indirizzo</span>" +
+                                    "<span class=\"data-value\">" + (d.indirizzo || "") + " " + (d.cap || "") + "</span>" +
+                                "</div>" +
+                                "<div class=\"data-item\" style=\"flex:1.5\">" +
+                                    "<span class=\"data-label\">Città / Prov</span>" +
+                                    "<span class=\"data-value\">" + (d.citta || "") + " " + (d.provincia ? "("+d.provincia+")" : "") + "</span>" +
+                                "</div>" +
+                            "</div>" +
+                            "<div class=\"card-row\" style=\"background:#f8fafc; padding:10px; border-radius:10px;\">" +
+                                "<div class=\"data-item\">" +
+                                    "<span class=\"data-label\">Codice</span>" +
+                                    "<span class=\"data-value\">" + codeDisplay + "</span>" +
+                                "</div>" +
+                                "<div class=\"data-item\" style=\"border-left:1px solid #e2e8f0; padding-left:16px;\">" +
+                                    "<span class=\"data-label\">Finestre Consegna</span>" +
+                                    "<span class=\"data-value\">" + windows + "</span>" +
+                                "</div>" +
+                                "<div class=\"data-item\" style=\"border-left:1px solid #e2e8f0; padding-left:16px;\">" +
+                                    "<span class=\"data-label\">GPS</span>" +
+                                    "<span class=\"data-value\" style=\"color:" + gpsStatusColor + "\">" + lat + " / " + lng + "</span>" +
+                                "</div>" +
+                            "</div>" +
+                            assocHTML +
+                        "</div>" +
+                        "<div class=\"card-actions\">" +
+                            "<button class=\"btn-icon btn-geolocate\" data-id=\"" + d.id + "\">" +
+                                "<span class=\"material-icons-round\">map</span> Geolocalizza" +
+                            "</button>" +
+                            "<button class=\"btn-icon btn-edit\" data-id=\"" + d.id + "\">" +
+                                "<span class=\"material-icons-round\">edit</span> Modifica" +
+                            "</button>" +
+                        "</div>" +
+                    "</div>";
             }).join("");
         }
 
