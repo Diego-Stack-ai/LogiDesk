@@ -506,18 +506,6 @@
             }).join(", ");
         }
 
-        document.getElementById('pointsContainer').addEventListener('click', function(e) {
-            const btn = e.target.closest('.btn-icon');
-            if (!btn) return;
-            const action = btn.getAttribute('data-action');
-            const pointId = btn.getAttribute('data-point-id');
-            if (action === 'geo' && pointId) {
-                window.openMapModal(pointId);
-            } else if (action === 'edit' && pointId) {
-                window.openEditModal(pointId);
-            }
-        });
-
         function renderList() {
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const typeF = document.getElementById("typeFilter").value;
@@ -693,15 +681,16 @@
 
             // Event Delegation for action buttons
             document.getElementById("listContainer").addEventListener("click", (e) => {
-                const btnGeo = e.target.closest(".btn-geolocate");
-                const btnEdit = e.target.closest(".btn-edit");
+                const btn = e.target.closest(".btn-icon");
+                if (!btn) return;
 
-                if (btnGeo) {
-                    const id = btnGeo.getAttribute("data-id");
-                    if (id) window.openMapModal(id);
-                } else if (btnEdit) {
-                    const id = btnEdit.getAttribute("data-id");
-                    if (id) window.openEditModal(id);
+                const action = btn.getAttribute("data-action");
+                const pointId = btn.getAttribute("data-point-id");
+
+                if (action === "geo" && pointId) {
+                    window.openMapModal(pointId);
+                } else if (action === "edit" && pointId) {
+                    window.openEditModal(pointId);
                 }
             });
         });
