@@ -1,352 +1,349 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.436">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Leaflet per mappa modale -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-
-    <style>
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
-            margin-top: 12px;
+\n<html lang="it">
+\n<head>
+\n    <meta charset="UTF-8">
+\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+\n    <title>LogiDesk - Punti di Consegna</title>
+\n    <link rel="stylesheet" href="styles.css?v=6.436">
+\n    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+\n    <link rel="manifest" href="manifest.json">
+\n
+\n    <!-- Leaflet per mappa modale -->
+\n    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+\n    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+\n
+\n
+\n    <style>
+\n        .cards-container {
+\n            display: grid;
+\n            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+\n            gap: 16px;
+\n            margin-top: 12px;
+\n        }
+\n        @media (max-width: 600px) {
+\n            .cards-container {
+\n                grid-template-columns: 1fr;
+\n            }
+\n        }
+\n        .item-card {
+\n            background: white;
+\n            border-radius: 16px;
+\n            border: 1px solid #e2e8f0;
+\n            padding: 20px;
+\n            transition: all 0.3s ease;
+\n        }
+\n        .item-card:hover {
+\n            transform: translateY(-2px);
+\n            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
+\n        }
+\n        .card-header {
+\n            display: flex;
+\n            justify-content: space-between;
+\n            align-items: flex-start;
+\n            margin-bottom: 16px;
+\n        }
+\n        .card-title {
+\n            margin: 0;
+\n            font-size: 16px;
+\n            font-weight: 700;
+\n            color: #1e293b;
+\n        }
+\n        .badge {
+\n            padding: 4px 10px;
+\n            border-radius: 20px;
+\n            font-size: 11px;
+\n            font-weight: 700;
+\n        }
+\n        .badge-frutta { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+\n        .badge-latte { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+\n
+\n        .card-body { margin-top: 16px; }
+\n        .card-row {
+\n            display: flex;
+\n            gap: 16px;
+\n            margin-bottom: 12px;
+\n        }
+\n        .data-item {
+\n            display: flex;
+\n            flex-direction: column;
+\n            gap: 4px;
+\n        }
+\n        .data-label {
+\n            font-size: 11px;
+\n            font-weight: 600;
+\n            color: #64748b;
+\n            text-transform: uppercase;
+\n        }
+\n        .data-value {
+\n            font-size: 13px;
+\n            color: #334155;
+\n            font-weight: 500;
+\n        }
+\n        .card-actions {
+\n            display: flex;
+\n            gap: 8px;
+\n            margin-top: 16px;
+\n            padding-top: 16px;
+\n            border-top: 1px solid #f1f5f9;
+\n            justify-content: flex-end;
+\n        }
+\n        .btn-edit, .btn-delete, .btn-geolocate {
+\n            width: 36px;
+\n            height: 36px;
+\n            border-radius: 8px;
+\n            border: none;
+\n            cursor: pointer;
+\n            display: flex;
+\n            align-items: center;
+\n            justify-content: center;
+\n            background: #f8fafc;
+\n            transition: all 0.2s;
+\n        }
+\n        .btn-edit:hover, .btn-geolocate:hover { background: #e2e8f0; }
+\n        .empty-state { text-align: center; color: #64748b; padding: 40px; }
+\n
+\n        .toolbar {
+\n            display: flex;
+\n            gap: 12px;
+\n            margin-bottom: 24px;
+\n            flex-wrap: wrap;
+\n            background: white;
+\n            padding: 16px;
+\n            border-radius: 16px;
+\n            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+\n        }
+\n        .search-box {
+\n            flex: 1;
+\n            min-width: 250px;
+\n            position: relative;
+\n        }
+\n        .search-box input {
+\n            width: 100%;
+\n            padding: 12px 16px 12px 40px;
+\n            border: 1px solid #e2e8f0;
+\n            border-radius: 12px;
+\n            font-family: inherit;
+\n            box-sizing: border-box;
+\n        }
+\n        .search-box .material-icons-round {
+\n            position: absolute;
+\n            left: 12px;
+\n            top: 50%;
+\n            transform: translateY(-50%);
+\n            color: #94a3b8;
+\n        }
+\n        .filter-select {
+\n            padding: 12px 16px;
+\n            border: 1px solid #e2e8f0;
+\n            border-radius: 12px;
+\n            background: white;
+\n            font-weight: 500;
+\n            color: #334155;
+\n            cursor: pointer;
+\n        }
+\n        .btn-map, .btn-add {
+\n            padding: 0 20px;
+\n            border: none;
+\n            border-radius: 12px;
+\n            font-weight: 600;
+\n            color: white;
+\n            cursor: pointer;
+\n            display: flex;
+\n            align-items: center;
+\n            gap: 8px;
+\n            height: 45px;
+\n        }
+\n        .btn-map { background: #10b981; }
+\n        .btn-map:hover { background: #059669; }
+\n        .btn-add { background: var(--primary); }
+\n        .btn-add:hover { background: var(--primary-hover); }
+\n    </style>
+\n
+\n</head>
+\n<body>
+\n    <nav class="glass-nav">
+\n        <div class="nav-content">
+\n            <div class="nav-left">
+\n                <div class="logo">
+\n                    <div class="logo-icon">
+\n                        <span class="material-icons-round">local_shipping</span>
+\n                    </div>
+\n                    LogiDesk <span id="tenantDisplay" style="font-size: 12px; opacity: 0.8; font-weight:normal; margin-left:8px;"></span>
+\n                </div>
+\n                <div class="nav-links">
+\n                    <a href="dashboard.html" class="nav-link"><span class="material-icons-round">dashboard</span> Dashboard</a>
+\n                    <a href="#" class="nav-link active"><span class="material-icons-round">storefront</span> Punti Consegna</a>
+\n                </div>
+\n            </div>
+\n            <button onclick="window.AuthService.logout()" class="logout-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+\n                <span class="material-icons-round" style="font-size: 16px;">logout</span> Esci
+\n            </button>
+\n        </div>
+\n    </nav>
+\n
+\n    <main class="main-container">
+\n        <div class="filters">
+\n            <input type="text" id="searchInput" placeholder="Cerca per nome, codice, indirizzo o citta'..." style="flex: 1; min-width: 250px;">
+\n            <select id="typeFilter" style="cursor: pointer;">
+\n                <option value="ALL">Tutte le Competenze</option>
+\n                <option value="FRUTTA">Frutta</option>
+\n                <option value="LATTE">Latte</option>
+\n            </select>
+\n            <select id="statusFilter" style="cursor: pointer;">
+\n                <option value="ALL">Tutti gli stati</option>
+\n                <option value="ATTIVI">Attivi</option>
+\n                <option value="INATTIVI">Inattivi</option>
+\n            </select>
+\n        </div>
+\n
+\n        <div id="stats" style="margin-bottom: 12px; font-weight: 600; font-size: 13px; color: #64748b; padding-left: 4px;">Caricamento in corso...</div>
+\n
+\n        <div id="listContainer" class="list-container cards-container">
+\n            <!-- Items rendered via JS -->
+\n        </div>
+\n    </main>
+\n
+\n    <!-- Map Modal -->
+\n    <div class="modal-overlay" id="mapModal">
+\n        <div class="modal-content">
+\n            <div class="modal-header">
+\n                <div>
+\n                    <h3 style="margin:0; font-size: 16px; color:#1e293b;" id="modalMapTitle">Geolocalizzazione Punto</h3>
+\n                    <div style="font-size: 12px; color:#64748b; margin-top:4px;" id="modalMapSubtitle">Coordinate: N/D</div>
+\n                </div>
+\n                <div style="display:flex; gap:8px;">
+\n                    <button class="btn-icon" style="background:#ef4444; color:white; border:none;" onclick="closeMapModal()">Chiudi</button>
+\n                </div>
+\n            </div>
+\n            <div class="modal-body map-body">
+\n                <div id="mapContainer" style="width: 100%; height: 300px;"></div>
+\n                <div id="leafletMap"></div>
+\n                <div id="noMapOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:#f8fafc; z-index:1000; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b;">
+\n                    <span class="material-icons-round" style="font-size:48px; margin-bottom:12px; opacity:0.5;">location_off</span>
+\n                    <h3 style="margin:0;">Coordinate non presenti</h3>
+\n                    <p style="font-size:13px;">Impossibile visualizzare il punto sulla mappa.</p>
+\n                </div>
+\n            </div>
+\n        </div>
+\n    </div>
+\n
+\n    <!-- Edit Modal -->
+\n    <div class="modal-overlay" id="editModal">
+\n        <div class="modal-content" style="max-width: 600px; height: auto; max-height: 90vh;">
+\n            <div class="modal-header">
+\n                <div>
+\n                    <h3 style="margin:0; font-size: 16px; color:#1e293b;">Modifica Punto di Consegna</h3>
+\n                    <div style="font-size: 12px; color:#64748b; margin-top:4px;" id="editModalSubtitle">ID: ...</div>
+\n                </div>
+\n                <div style="display:flex; gap:8px;">
+\n                    <button class="btn-icon" style="background:#ef4444; color:white; border:none;" onclick="closeEditModal()">Annulla</button>
+\n                    <button class="btn-icon" style="background:#10b981; color:white; border:none;" onclick="saveEdit()">Salva</button>
+\n                </div>
+\n            </div>
+\n            <div class="modal-body">
+\n                <form id="editForm" class="form-grid">
+\n                    <input type="hidden" id="editId">
+\n
+\n                    <div class="form-group" style="grid-column: 1 / -1;">
+\n                        <label>Nome Punto</label>
+\n                        <input type="text" id="editNome" required>
+\n                    </div>
+\n
+\n                    <div class="form-group" style="grid-column: 1 / -1;">
+\n                        <label>Indirizzo</label>
+\n                        <input type="text" id="editIndirizzo">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>CAP</label>
+\n                        <input type="text" id="editCap">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Città</label>
+\n                        <input type="text" id="editCitta">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Provincia</label>
+\n                        <input type="text" id="editProvincia" maxlength="2">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Zona</label>
+\n                        <input type="text" id="editZona">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Finestre Consegna</label>
+\n                        <input type="text" id="editFinestre">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Stato</label>
+\n                        <select id="editStato">
+\n                            <option value="true">Attivo</option>
+\n                            <option value="false">Inattivo</option>
+\n                        </select>
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Latitudine (Geolocalizzazione)</label>
+\n                        <input type="text" id="editLat">
+\n                    </div>
+\n
+\n                    <div class="form-group">
+\n                        <label>Longitudine (Geolocalizzazione)</label>
+\n                        <input type="text" id="editLng">
+\n                    </div>
+\n                </form>
+\n            </div>
+\n        </div>
+\n    </div>
+\n
+\n    <script type="module">
+\n        import "./core/auth-service.js";
+\n        import { db, auth } from "./core/firebase-init.js";
+\n        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+\n        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+\n        import { CompanyContext } from "./core/CompanyContext.js";
+\n
+\n        // CONFIGURATION FLAGS
+\n        const GEOLOCATION_WRITE_READY = true; // Abilitato scrittura sicura su lat/lng
+\n        const EDITABLE_FIELDS = ["nome", "indirizzo", "cap", "citta", "provincia", "codice_zona", "finestre_consegna", "attivo", "geolocalizzazione"];
+\n
+\n        const TENANT_ID_MAP = {
+\n            "DNR": "AgvcnbuUMu7YhzSuUKTY",
+\n            "GRAN CHEF": "UZC65YbnIbXsei88xNBX",
+\n            "CATTEL": "bSomOWB7pieGNej2KdJA",
+\n            "BAUER": "bXOveycf4bEXv2aCkyMU"
+\n        };
+\n
+\n        function resolveTenantId(labelOrId) {
+\n            if (Object.values(TENANT_ID_MAP).includes(labelOrId)) return labelOrId;
+\n            return TENANT_ID_MAP[labelOrId] || null;
+\n        }
+\n
+\n        let fullData = [];
+\n        let associationMap = {};
+\n        let activeTenantId = null;
+\n
+\n        // Map Globals
+\n        let mapInstance = null;
+\n        let mapMarker = null;
+\n
+\n        // ==========================================
+\n        // TYPE RESOLVER M5
+\n        // ==========================================
+\n        function resolvePointType(d) {
+            let sc = d.sottocodice ? String(d.sottocodice).trim().toUpperCase() : "";
+            if (sc === "FRUTTA" || sc === "LATTE") return sc;
+            return "UNKNOWN";
         }
-        @media (max-width: 600px) {
-            .cards-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        .item-card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-        .item-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-        .card-title {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .badge-frutta { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
-        .badge-latte { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-
-        .card-body { margin-top: 16px; }
-        .card-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 12px;
-        }
-        .data-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .data-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-        }
-        .data-value {
-            font-size: 13px;
-            color: #334155;
-            font-weight: 500;
-        }
-        .card-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9;
-            justify-content: flex-end;
-        }
-        .btn-edit, .btn-delete, .btn-geolocate {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-            transition: all 0.2s;
-        }
-        .btn-edit:hover, .btn-geolocate:hover { background: #e2e8f0; }
-        .empty-state { text-align: center; color: #64748b; padding: 40px; }
-
-        .toolbar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            background: white;
-            padding: 16px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px 12px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-        .search-box .material-icons-round {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-        .filter-select {
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: white;
-            font-weight: 500;
-            color: #334155;
-            cursor: pointer;
-        }
-        .btn-map, .btn-add {
-            padding: 0 20px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            height: 45px;
-        }
-        .btn-map { background: #10b981; }
-        .btn-map:hover { background: #059669; }
-        .btn-add { background: var(--primary); }
-        .btn-add:hover { background: var(--primary-hover); }
-    </style>
-
-</head>
-<body>
-    <nav class="glass-nav">
-        <div class="nav-content">
-            <div class="nav-left">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <span class="material-icons-round">local_shipping</span>
-                    </div>
-                    LogiDesk <span id="tenantDisplay" style="font-size: 12px; opacity: 0.8; font-weight:normal; margin-left:8px;"></span>
-                </div>
-                <div class="nav-links">
-                    <a href="dashboard.html" class="nav-link"><span class="material-icons-round">dashboard</span> Dashboard</a>
-                    <a href="#" class="nav-link active"><span class="material-icons-round">storefront</span> Punti Consegna</a>
-                </div>
-            </div>
-            <button onclick="window.AuthService.logout()" class="logout-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <span class="material-icons-round" style="font-size: 16px;">logout</span> Esci
-            </button>
-        </div>
-    </nav>
-
-    <main class="main-container">
-        <div class="filters">
-            <input type="text" id="searchInput" placeholder="Cerca per nome, codice, indirizzo o citta'..." style="flex: 1; min-width: 250px;">
-            <select id="typeFilter" style="cursor: pointer;">
-                <option value="ALL">Tutte le Competenze</option>
-                <option value="FRUTTA">Frutta</option>
-                <option value="LATTE">Latte</option>
-            </select>
-            <select id="statusFilter" style="cursor: pointer;">
-                <option value="ALL">Tutti gli stati</option>
-                <option value="ATTIVI">Attivi</option>
-                <option value="INATTIVI">Inattivi</option>
-            </select>
-        </div>
-
-        <div id="stats" style="margin-bottom: 12px; font-weight: 600; font-size: 13px; color: #64748b; padding-left: 4px;">Caricamento in corso...</div>
-
-        <div id="listContainer" class="list-container cards-container">
-            <!-- Items rendered via JS -->
-        </div>
-    </main>
-
-    <!-- Map Modal -->
-    <div class="modal-overlay" id="mapModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h3 style="margin:0; font-size: 16px; color:#1e293b;" id="modalMapTitle">Geolocalizzazione Punto</h3>
-                    <div style="font-size: 12px; color:#64748b; margin-top:4px;" id="modalMapSubtitle">Coordinate: N/D</div>
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="btn-icon" style="background:#ef4444; color:white; border:none;" onclick="closeMapModal()">Chiudi</button>
-                </div>
-            </div>
-            <div class="modal-body map-body">
-                <div id="mapContainer" style="width: 100%; height: 300px;"></div>
-                <div id="leafletMap"></div>
-                <div id="noMapOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:#f8fafc; z-index:1000; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b;">
-                    <span class="material-icons-round" style="font-size:48px; margin-bottom:12px; opacity:0.5;">location_off</span>
-                    <h3 style="margin:0;">Coordinate non presenti</h3>
-                    <p style="font-size:13px;">Impossibile visualizzare il punto sulla mappa.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div class="modal-overlay" id="editModal">
-        <div class="modal-content" style="max-width: 600px; height: auto; max-height: 90vh;">
-            <div class="modal-header">
-                <div>
-                    <h3 style="margin:0; font-size: 16px; color:#1e293b;">Modifica Punto di Consegna</h3>
-                    <div style="font-size: 12px; color:#64748b; margin-top:4px;" id="editModalSubtitle">ID: ...</div>
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="btn-icon" style="background:#ef4444; color:white; border:none;" onclick="closeEditModal()">Annulla</button>
-                    <button class="btn-icon" style="background:#10b981; color:white; border:none;" onclick="saveEdit()">Salva</button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" class="form-grid">
-                    <input type="hidden" id="editId">
-
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Nome Punto</label>
-                        <input type="text" id="editNome" required>
-                    </div>
-
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Indirizzo</label>
-                        <input type="text" id="editIndirizzo">
-                    </div>
-
-                    <div class="form-group">
-                        <label>CAP</label>
-                        <input type="text" id="editCap">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Città</label>
-                        <input type="text" id="editCitta">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Provincia</label>
-                        <input type="text" id="editProvincia" maxlength="2">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Zona</label>
-                        <input type="text" id="editZona">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Finestre Consegna</label>
-                        <input type="text" id="editFinestre">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Stato</label>
-                        <select id="editStato">
-                            <option value="true">Attivo</option>
-                            <option value="false">Inattivo</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Latitudine (Geolocalizzazione)</label>
-                        <input type="text" id="editLat">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Longitudine (Geolocalizzazione)</label>
-                        <input type="text" id="editLng">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import "./core/auth-service.js";
-        import { db, auth } from "./core/firebase-init.js";
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { CompanyContext } from "./core/CompanyContext.js";
-
-        // CONFIGURATION FLAGS
-        const GEOLOCATION_WRITE_READY = true; // Abilitato scrittura sicura su lat/lng
-        const EDITABLE_FIELDS = ["nome", "indirizzo", "cap", "citta", "provincia", "codice_zona", "finestre_consegna", "attivo", "geolocalizzazione"];
-
-        const TENANT_ID_MAP = {
-            "DNR": "AgvcnbuUMu7YhzSuUKTY",
-            "GRAN CHEF": "UZC65YbnIbXsei88xNBX",
-            "CATTEL": "bSomOWB7pieGNej2KdJA",
-            "BAUER": "bXOveycf4bEXv2aCkyMU"
-        };
-
-        function resolveTenantId(labelOrId) {
-            if (Object.values(TENANT_ID_MAP).includes(labelOrId)) return labelOrId;
-            return TENANT_ID_MAP[labelOrId] || null;
-        }
-
-        let fullData = [];
-        let associationMap = {};
-        let activeTenantId = null;
-
-        // Map Globals
-        let mapInstance = null;
-        let mapMarker = null;
-
-        // ==========================================
-        // TYPE RESOLVER M5
-        // ==========================================
-        function resolvePointType(d) {
-            if (d.sottocodice) {
-                const sc = String(d.sottocodice).trim().toUpperCase();
-                if (sc === 'FRUTTA') return 'FRUTTA';
-                if (sc === 'LATTE') return 'LATTE';
-            }
-            return 'UNKNOWN';
-        }
-
-        function buildAssociationMap(data) {
+        function extractData(dataList) {
+            fullData = dataList;
             associationMap = {};
-            data.forEach(d => {
+            fullData.forEach(d => {
                 if (d.association_group_id) {
                     if (!associationMap[d.association_group_id]) {
                         associationMap[d.association_group_id] = [];
@@ -355,352 +352,184 @@
                 }
             });
         }
-
-        // ==========================================
-        // UI & MODALS
-        // ==========================================
-        window.openMapModal = function(id) {
-            const point = fullData.find(d => d.id === id);
-            if (!point) return;
-            document.getElementById('mapModal').style.display = 'flex';
-            document.getElementById('modalMapTitle').innerText = point.nome || 'Punto senza nome';
-            let lat = null, lng = null;
-            if (point.geolocalizzazione) {
-                lat = point.geolocalizzazione.lat || point.geolocalizzazione.latitude;
-                lng = point.geolocalizzazione.lng || point.geolocalizzazione.lon || point.geolocalizzazione.longitude;
-            }
-
-            const container = document.getElementById('mapContainer');
-            if (!container) {
-                console.error("Map container not found in DOM");
-                return;
-            }
-
-            if (!lat || !lng) {
-                document.getElementById('noMapOverlay').style.display = 'flex';
-                document.getElementById('modalMapSubtitle').innerText = "Coordinate non presenti";
-                container.style.visibility = 'hidden';
-            } else {
-                document.getElementById('noMapOverlay').style.display = 'none';
-                document.getElementById('modalMapSubtitle').innerText = "Coordinate: " + parseFloat(lat).toFixed(5) + " / " + parseFloat(lng).toFixed(5);
-                container.style.visibility = 'visible';
-                setTimeout(() => {
-                    if (window.map) {
-                        window.map.invalidateSize();
-                        const latLng = new L.LatLng(lat, lng);
-                        window.map.setView(latLng, 15);
-                        if (window.marker) window.map.removeLayer(window.marker);
-                        window.marker = L.marker(latLng).addTo(window.map);
-                    } else {
-                        window.map = L.map('mapContainer').setView([lat, lng], 15);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(window.map);
-                        window.marker = L.marker([lat, lng]).addTo(window.map);
-                    }
-                }, 200);
-            }
-        }
-        window.closeMapModal = function() {
-            document.getElementById('mapModal').style.display = 'none';
-        }
-
-        window.openEditModal = function(id) {
-            const point = fullData.find(d => d.id === id);
-            if (!point) return;
-
-            document.getElementById('editModal').style.display = 'flex';
-            document.getElementById('editModalSubtitle').innerText = "ID: " + id;
-
-            document.getElementById('editId').value = id;
-            document.getElementById('editNome').value = point.nome || "";
-            document.getElementById('editIndirizzo').value = point.indirizzo || "";
-            document.getElementById('editCap').value = point.cap || "";
-            document.getElementById('editCitta').value = point.citta || "";
-            document.getElementById('editProvincia').value = point.provincia || "";
-            document.getElementById('editZona').value = point.codice_zona || "";
-
-            const windows = point.finestre_consegna ? (Array.isArray(point.finestre_consegna) ? point.finestre_consegna.join(", ") : point.finestre_consegna) : "";
-            document.getElementById('editFinestre').value = windows;
-
-            document.getElementById('editStato').value = point.attivo !== false ? "true" : "false";
-
-            if (point.geolocalizzazione) {
-                document.getElementById('editLat').value = point.geolocalizzazione.lat || "";
-                document.getElementById('editLng').value = point.geolocalizzazione.lng || "";
-            } else {
-                document.getElementById('editLat').value = "";
-                document.getElementById('editLng').value = "";
-            }
-
-            if (!GEOLOCATION_WRITE_READY) {
-                document.getElementById('editLat').setAttribute('readonly', 'true');
-                document.getElementById('editLng').setAttribute('readonly', 'true');
-            }
-        }
-
-        window.saveEdit = function() {
-            alert("Scrittura non ancora certificata (Core V1). Funzionalità in sola lettura.");
-            closeEditModal();
-        };
-        window.closeEditModal = function() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        window.saveEdit = async function() {
-            const id = document.getElementById('editId').value;
-            const point = fullData.find(d => d.id === id);
-            if (!point || !activeTenantId) return;
-
-            const updatePayload = {
-                nome: document.getElementById('editNome').value.trim(),
-                indirizzo: document.getElementById('editIndirizzo').value.trim(),
-                cap: document.getElementById('editCap').value.trim(),
-                citta: document.getElementById('editCitta').value.trim(),
-                provincia: document.getElementById('editProvincia').value.trim(),
-                codice_zona: document.getElementById('editZona').value.trim(),
-                finestre_consegna: document.getElementById('editFinestre').value.trim(),
-                attivo: document.getElementById('editStato').value === "true"
-            };
-
-            if (GEOLOCATION_WRITE_READY) {
-                updatePayload.geolocalizzazione = {
-                    lat: document.getElementById('editLat').value.trim(),
-                    lng: document.getElementById('editLng').value.trim()
-                };
-            }
-
-            const docRef = doc(db, CompanyContext.getDeliveryPointsPath(activeTenantId), id);
-
-            try {
-                // UPDATE IN FIRESTORE
-                await updateDoc(docRef, updatePayload);
-
-                // UPDATE IN MEMORY
-                Object.assign(point, updatePayload);
-
-                closeEditModal();
-                renderList();
-                alert("Punto aggiornato con successo.");
-            } catch(e) {
-                console.error("Errore salvataggio:", e);
-                alert("Errore durante il salvataggio: " + e.message);
-            }
-        }
-
-        // ==========================================
-        // RENDER LOGIC
-        // ==========================================
-        function formatExternalCode(val) {
-            if (!val) return '-';
-            let str = String(val).trim();
-            if (str.toUpperCase().startsWith('P')) {
-                str = str.substring(1);
-            }
-            return str;
-        }
-        function formatTimeWindows(arr) {
-            if (!arr || !Array.isArray(arr)) return "Non def.";
-            return arr.map(w => {
-                if (w.da && w.a) return w.da + " - " + w.a;
-                if (w.start && w.end) return w.start + " - " + w.end;
-                return JSON.stringify(w);
-            }).join(", ");
-        }
-
-        function renderList() {
+\n        function formatExternalCode(val) {
+\n            if (!val) return '-';
+\n            let str = String(val).trim();
+\n            if (str.toUpperCase().startsWith('P')) {
+\n                str = str.substring(1);
+\n            }
+\n            return str;
+\n        }
+\n        function formatTimeWindows(arr) {
+\n            if (!arr || !Array.isArray(arr)) return "Non def.";
+\n            return arr.map(w => {
+\n                if (w.da && w.a) return w.da + " - " + w.a;
+\n                if (w.start && w.end) return w.start + " - " + w.end;
+\n                return JSON.stringify(w);
+\n            }).join(", ");
+\n        }
+\n
+\n        function renderList() {
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const typeF = document.getElementById("typeFilter").value;
             const statusF = document.getElementById("statusFilter").value;
-
-            let filtered = fullData;
-
-            filtered.forEach(d => { d._resolvedType = resolvePointType(d); });
-
-            if (search) {
-                filtered = filtered.filter(d =>
-                    (d.nome && d.nome.toLowerCase().includes(search)) ||
-                    (d.indirizzo && d.indirizzo.toLowerCase().includes(search)) ||
-                    (d.citta && d.citta.toLowerCase().includes(search)) ||
-                    (d.codice_esterno && String(d.codice_esterno).toLowerCase().includes(search)) ||
-                    (d.sottocodice && String(d.sottocodice).toLowerCase().includes(search)) ||
-                    (d.codice_punto && String(d.codice_punto).toLowerCase().includes(search)) ||
-                    (d.codice_zona && String(d.codice_zona).toLowerCase().includes(search)) ||
-                    (d.association_group_id && String(d.association_group_id).toLowerCase().includes(search))
-                );
-            }
-
-            if (typeF !== "ALL") {
-                filtered = filtered.filter(d => d._resolvedType === typeF);
-            }
-
-            if (statusF === "ATTIVI") {
-                filtered = filtered.filter(d => d.attivo !== false);
-            } else if (statusF === "INATTIVI") {
-                filtered = filtered.filter(d => d.attivo === false);
-            }
-
-            const fruttaCount = fullData.filter(d => d._resolvedType === "FRUTTA").length;
-            const latteCount = fullData.filter(d => d._resolvedType === "LATTE").length;
-            const unknownCount = fullData.length - (fruttaCount + latteCount);
-
-            document.getElementById("stats").innerText =
-                `Trovati ${filtered.length} su ${fullData.length} (FRUTTA: ${fruttaCount}, LATTE: ${latteCount}, UNKNOWN: ${unknownCount})`;
-
+            let filtered = fullData.filter(d => {
+                const type = resolvePointType(d);
+                // Tipo
+                if (typeF !== "ALL" && type !== typeF) return false;
+                // Stato
+                if (statusF === "ACTIVE" && d.attivo === false) return false;
+                if (statusF === "INACTIVE" && d.attivo !== false) return false;
+                // Testo
+                if (search) {
+                    const match = (
+                        (d.nome && d.nome.toLowerCase().includes(search)) ||
+                        (d.codice_esterno && d.codice_esterno.toLowerCase().includes(search)) ||
+                        (d.citta && d.citta.toLowerCase().includes(search))
+                    );
+                    if (!match) return false;
+                }
+                return true;
+            });
+            const statsEl = document.getElementById("listStats");
+            let fC = 0, lC = 0, uC = 0;
+            fullData.forEach(d => {
+                let t = resolvePointType(d);
+                if(t==="FRUTTA") fC++;
+                else if(t==="LATTE") lC++;
+                else uC++;
+            });
+            statsEl.innerText = `Trovati ${filtered.length} su ${fullData.length} (FRUTTA: ${fC}, LATTE: ${lC}, UNKNOWN: ${uC})`;
             const container = document.getElementById("listContainer");
-            if (filtered.length === 0) {
-                container.innerHTML = "<div class=\"empty-state\" style=\"grid-column: 1 / -1;\">Nessun punto di consegna presente o corrispondente ai filtri.</div>";
-                container.classList.remove("cards-container");
-                return;
-            } else {
-                container.classList.add("cards-container");
-            }
-
-            container.innerHTML = filtered.map(d => {
-                const isActive = d.attivo !== false;
-                const isLatte = d._resolvedType === "LATTE";
-
-                let myCode = d.codice_esterno || d.codice_punto || "-";
-                let otherCode = "-";
-
-                let myWindow = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(", ") : d.finestre_consegna) : "-";
-                let otherWindow = "-";
-
-                let hasAssociation = false;
-
+            container.innerHTML = "";
+            let html = "";
+            filtered.forEach(d => {
+                const type = resolvePointType(d);
+                let isFrutta = type === "FRUTTA";
+                let isLatte = type === "LATTE";
+                let rawCode = d.codice_esterno || d.codice_punto || "-";
+                let primaryCode = formatExternalCode(rawCode);
+                let primaryBadge = "";
+                if (isFrutta) primaryBadge = `<span class="badge badge-frutta">F: ${primaryCode}</span>`;
+                else if (isLatte) primaryBadge = `<span class="badge badge-latte">L: ${primaryCode}</span>`;
+                else primaryBadge = `<span class="badge" style="background:#e2e8f0; color:#475569">?: ${primaryCode}</span>`;
+                let assocHTML = "";
                 if (d.association_group_id && associationMap[d.association_group_id]) {
-                    const related = associationMap[d.association_group_id].find(r => r.id !== d.id);
-                    if (related) {
-                        hasAssociation = true;
-                        otherCode = related.codice_esterno || related.codice_punto || "-";
-                        otherWindow = related.finestre_consegna ? (Array.isArray(related.finestre_consegna) ? related.finestre_consegna.join(", ") : related.finestre_consegna) : "-";
-                        // Override my variables if related has better data that is missing on current
-                        // Since they are distinct cards, we just show the other code.
+                    const siblings = associationMap[d.association_group_id].filter(sib => sib.id !== d.id);
+                    if (siblings.length > 0) {
+                        let sibling = siblings[0];
+                        let sibType = resolvePointType(sibling);
+                        let sibRaw = sibling.codice_esterno || sibling.codice_punto || "-";
+                        let sibCode = formatExternalCode(sibRaw);
+                        assocHTML = `<div style="font-size: 12px; color: #64748b; margin-top: 4px;">&#128279; Associato a ${sibType}: ${sibCode}</div>`;
                     }
                 }
-
-                let fruttaCode = isLatte ? otherCode : myCode;
-                let latteCode = isLatte ? myCode : otherCode;
-
-                let orariFrutta = isLatte ? otherWindow : myWindow;
-                let orariLatte = isLatte ? myWindow : otherWindow;
-
-                const lat = d.geolocalizzazione && d.geolocalizzazione.lat ? parseFloat(d.geolocalizzazione.lat).toFixed(4) : "-";
-                const lon = d.geolocalizzazione && d.geolocalizzazione.lng ? parseFloat(d.geolocalizzazione.lng).toFixed(4) : "-";
-
-                return `
-                    <div class="item-card" style="${isActive ? '' : 'opacity:0.6;'}">
-                        <div class="card-header">
-                            <div>
-                                <h4 class="card-title">${d.nome || d.nome_consegna || "Senza Nome"}</h4>
-                                <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
-                                    <span class="badge badge-frutta">F: ${fruttaCode}</span>
-                                    <span class="badge badge-latte">L: ${latteCode}</span>
-                                    <span class="badge" style="background:#f1f5f9; color:#64748b">ZONA: ${d.codice_zona || "N/D"}</span>
-                                    <span class="badge" style="background:#1e293b; color:white">${activeTenantId || 'DNR'}</span>
-                                    ${hasAssociation ? '<span style="font-size:12px; color:#10b981; font-weight:600; display:flex; align-items:center; gap:2px;"><span class="material-icons-round" style="font-size:14px;">link</span> Associato</span>' : ''}
+                let tenantLabel = "N/A";
+                if (d.tenant_name) tenantLabel = d.tenant_name;
+                else if (d.tenant_id === 'AgvcnbuUMu7YhzSuUKTY') tenantLabel = "DNR";
+                let channelHTML = `<div style="font-size: 12px; font-weight: 600; color: #475569; margin-top: 2px;">CANALE: ${type}</div>`;
+                let windows = formatTimeWindows(d.finestre_consegna);
+                html += `
+                    <div class="item-card">
+                        <div class="item-header">
+                            <div class="item-title">
+                                <span class="material-icons" style="color: #94a3b8; font-size: 20px;">storefront</span>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 15px; color: #1e293b;">${d.nome || "Senza Nome"}</div>
+                                    <div style="font-size: 12px; color: #64748b;">${tenantLabel}</div>
+                                    ${channelHTML}
                                 </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px; text-align: right;">
+                                <div>${primaryBadge}</div>
+                                ${assocHTML}
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="card-row">
-                                <div class="data-item" style="flex:2">
-                                    <span class="data-label">Indirizzo</span>
-                                    <span class="data-value">${d.indirizzo || ''} ${d.cap || ''}</span>
-                                </div>
-                                <div class="data-item" style="flex:1">
-                                    <span class="data-label">Città / Prov</span>
-                                    <span class="data-value">${d.citta || ''} (${d.provincia || d.prov || '-'})</span>
-                                </div>
+                        <div class="item-details">
+                            <div class="detail-row">
+                                <span class="material-icons detail-icon">place</span>
+                                <span>${d.indirizzo || "-"}, ${d.citta || ""} (${d.provincia || ""})</span>
                             </div>
-                            <div class="card-row" style="background:#f8fafc; padding:8px; border-radius:8px;">
-                                <div class="data-item">
-                                    <span class="data-label">Orari Frutta</span>
-                                    <span class="data-value">${orariFrutta}</span>
-                                </div>
-                                <div class="data-item" style="border-left:1px solid #e2e8f0; padding-left:16px;">
-                                    <span class="data-label">Orari Latte</span>
-                                    <span class="data-value">${orariLatte}</span>
-                                </div>
-                                <div class="data-item" style="border-left:1px solid #e2e8f0; padding-left:16px;">
-                                    <span class="data-label">Coordinate GPS</span>
-                                    <span class="data-value">${lat}/${lon}</span>
-                                </div>
+                            <div class="detail-row">
+                                <span class="material-icons detail-icon">schedule</span>
+                                <span>Orari: ${windows}</span>
                             </div>
                         </div>
-                        <div class="card-actions">
-                            <button class="btn-edit" data-id="${d.id}" title="Modifica dati">
-                                <span class="material-icons-round" style="font-size:18px;">edit</span>
+                        <div class="item-actions">
+                            <button class="btn-icon" data-action="geo" data-point-id="${d.id}" title="Geolocalizza">
+                                <span class="material-icons" style="color: #10b981; pointer-events:none;">location_on</span>
                             </button>
-                            <!-- Elimina omesso come richiesto se non certificato -->
-                            <button class="btn-geolocate" data-id="${d.id}" title="Geolocalizza">
-                                <span class="material-icons-round" style="font-size:18px; color:#10b981;">my_location</span>
+                            <button class="btn-icon" data-action="edit" data-point-id="${d.id}" title="Modifica">
+                                <span class="material-icons" style="color: #3b82f6; pointer-events:none;">edit</span>
                             </button>
                         </div>
                     </div>
                 `;
-            }).join("");
-        }
-
-        async function init(user) {
-            const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
-            activeTenantId = resolveTenantId(tenantLabel);
-            const statsEl = document.getElementById("stats");
-
-            document.getElementById("tenantDisplay").innerText = "Tenant: " + tenantLabel;
-
-            if (!activeTenantId) {
-                statsEl.innerText = "Errore: Tenant non riconosciuto.";
-                statsEl.style.color = "#ef4444";
-                return;
-            }
-
-            const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
-
-            try {
-                const snapshot = await getDocs(collection(db, path));
-                fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                buildAssociationMap(fullData);
-
-                if (fullData.length === 0) {
-                    document.getElementById("listContainer").innerHTML = "<div class=\"empty-state\">Nessun punto di consegna presente per questo tenant.</div>";
-                    document.getElementById("listContainer").classList.remove("cards-container");
-                    statsEl.innerText = "0 record";
-                } else {
-                    renderList();
-                }
-            } catch (err) {
-                console.error("[Punti di Consegna] Errore lettura:", err);
-                statsEl.innerText = "Errore di caricamento: " + err.message;
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("searchInput").addEventListener("input", renderList);
-            document.getElementById("typeFilter").addEventListener("change", renderList);
-            document.getElementById("statusFilter").addEventListener("change", renderList);
-
-            // Event Delegation for action buttons
-            document.getElementById("listContainer").addEventListener("click", (e) => {
-                const btn = e.target.closest(".btn-icon");
-                if (!btn) return;
-
-                const action = btn.getAttribute("data-action");
-                const pointId = btn.getAttribute("data-point-id");
-
-                if (action === "geo" && pointId) {
-                    window.openMapModal(pointId);
-                } else if (action === "edit" && pointId) {
-                    window.openEditModal(pointId);
-                }
             });
-        });
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                init(user);
-            }
-        });
-    </script>
-    <script src="script.js?v=6.436"></script>
-</body>
-</html>
+            container.innerHTML = html;
+        }
+\n        async function init(user) {
+\n            const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
+\n            activeTenantId = resolveTenantId(tenantLabel);
+\n            const statsEl = document.getElementById("stats");
+\n
+\n            document.getElementById("tenantDisplay").innerText = "Tenant: " + tenantLabel;
+\n
+\n            if (!activeTenantId) {
+\n                statsEl.innerText = "Errore: Tenant non riconosciuto.";
+\n                statsEl.style.color = "#ef4444";
+\n                return;
+\n            }
+\n
+\n            const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+\n
+\n            try {
+\n                const snapshot = await getDocs(collection(db, path));
+\n                fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+\n
+\n                buildAssociationMap(fullData);
+\n
+\n                if (fullData.length === 0) {
+\n                    document.getElementById("listContainer").innerHTML = "<div class=\"empty-state\">Nessun punto di consegna presente per questo tenant.</div>";
+\n                    document.getElementById("listContainer").classList.remove("cards-container");
+\n                    statsEl.innerText = "0 record";
+\n                } else {
+\n                    renderList();
+\n                }
+\n            } catch (err) {
+\n                console.error("[Punti di Consegna] Errore lettura:", err);
+\n                statsEl.innerText = "Errore di caricamento: " + err.message;
+\n            }
+\n        }
+\n
+\n        document.addEventListener("DOMContentLoaded", () => {
+\n            document.getElementById("searchInput").addEventListener("input", renderList);
+\n            document.getElementById("typeFilter").addEventListener("change", renderList);
+\n            document.getElementById("statusFilter").addEventListener("change", renderList);
+\n
+\n            // Event Delegation for action buttons
+\n            document.getElementById("listContainer").addEventListener("click", (e) => {
+\n                const btn = e.target.closest(".btn-icon");
+\n                if (!btn) return;
+\n
+\n                const action = btn.getAttribute("data-action");
+\n                const pointId = btn.getAttribute("data-point-id");
+\n
+\n                if (action === "geo" && pointId) {
+\n                    window.openMapModal(pointId);
+\n                } else if (action === "edit" && pointId) {
+\n                    window.openEditModal(pointId);
+\n                }
+\n            });
+\n        });
+\n
+\n        onAuthStateChanged(auth, (user) => {
+\n            if (user) {
+\n                init(user);
+\n            }
+\n        });
+\n    </script>
+\n    <script src="script.js?v=6.436"></script>
+\n</body>
+\n</html>
+\n
