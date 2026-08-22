@@ -668,6 +668,28 @@
                 listDiv.appendChild(item);
             });
 
+            // LOGICA CENTRAMENTO MAPPA (fitBounds)
+            if (filtered.length > 0 && window.mapInstance) {
+                const bounds = new google.maps.LatLngBounds();
+                let validMarkers = 0;
+                filtered.forEach(p => {
+                    const mLat = parseFloat(p.lat) || 0;
+                    const mLng = parseFloat(p.lon) || 0;
+                    // Escludi i punti non geolocalizzati (che finiscono a 45.42 per default o a 0)
+                    if (mLat !== 0 && mLng !== 0 && mLat !== 45.42) { 
+                        bounds.extend(new google.maps.LatLng(mLat, mLng));
+                        validMarkers++;
+                    }
+                });
+                if (validMarkers > 0) {
+                    window.mapInstance.fitBounds(bounds);
+                    // Non zoomare troppo se c'è un solo punto
+                    if (validMarkers === 1) {
+                        window.mapInstance.setZoom(16);
+                    }
+                }
+            }
+
             document.getElementById('stat-count').innerText = filtered.length;
         };
 
