@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.434">
+    <link rel="stylesheet" href="styles.css?v=6.435">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
+    
+    <!-- Leaflet per mappa modale -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        .list-container {
-            display: grid; margin-top: 12px;
+        .list-container { 
+            display: grid; margin-top: 12px; 
             max-height: 75vh; overflow-y: auto; padding-right: 12px;
             padding-bottom: 20px;
         }
@@ -17,16 +22,15 @@
         .list-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
         .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
         .list-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
+        
         .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .filters input, .filters select {
             padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
         }
-
-        /* Card Layout from gestione.html */
+        
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 16px;
         }
 
@@ -37,13 +41,15 @@
             padding: 20px;
             transition: all 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .item-card:hover {
             border-color: var(--primary);
             box-shadow: 0 10px 25px -10px rgba(79, 70, 229, 0.15);
         }
-
+        
         .item-card.inactive {
             opacity: 0.7;
             border-left: 4px solid #ef4444;
@@ -69,6 +75,7 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
+            flex-grow: 1;
         }
 
         .card-row {
@@ -97,18 +104,64 @@
             color: var(--text-main);
         }
 
-        .badge {
+        .badge { 
             padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block;
         }
         .badge.frutta { background-color: #f59e0b; }
         .badge.latte { background-color: #3b82f6; }
-
-        .association-group {
-            font-size: 11px; color: #64748b; margin-top: 8px; background: #f1f5f9; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-weight: 500;
+        
+        .association-group { 
+            font-size: 11px; color: #64748b; margin-top: 8px; background: #f1f5f9; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; font-weight: 500;
         }
-
+        
         .empty-state {
             padding: 40px; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed #e2e8f0; font-weight: 500;
+        }
+
+        /* Map Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+        .modal-body {
+            flex-grow: 1;
+            position: relative;
+        }
+        #leafletMap {
+            width: 100%;
+            height: 100%;
+        }
+        .btn-icon {
+            background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; border: 1px solid #e2e8f0;
+        }
+        .btn-icon:hover { background: #f1f5f9; }
+        
+        .card-actions {
+            display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 12px;
         }
     </style>
 </head>
@@ -136,7 +189,7 @@
                 <option value="INATTIVI">Inattivi</option>
             </select>
         </div>
-
+        
         <div id="stats" style="margin-bottom: 12px; font-weight: 600; font-size: 13px; color: #64748b; padding-left: 4px;">Caricamento in corso...</div>
 
         <div id="listContainer" class="list-container cards-container">
@@ -144,12 +197,33 @@
         </div>
     </main>
 
+    <!-- Map Modal -->
+    <div class="modal-overlay" id="mapModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h3 style="margin:0; font-size: 16px; color:#1e293b;" id="modalMapTitle">Geolocalizzazione Punto</h3>
+                    <div style="font-size: 12px; color:#64748b; margin-top:4px;" id="modalMapSubtitle">Coordinate: N/D</div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-icon" style="background:#ef4444; color:white; border:none;" onclick="closeMapModal()">Chiudi</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="leafletMap"></div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import "./core/auth-service.js";
         import { db, auth } from "./core/firebase-init.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { CompanyContext } from "./core/CompanyContext.js";
+
+        // CONFIGURATION FLAGS
+        const GEOLOCATION_WRITE_READY = false; // DEFERRED CRUD general safety
 
         const TENANT_ID_MAP = {
             "DNR": "AgvcnbuUMu7YhzSuUKTY",
@@ -164,39 +238,101 @@
         }
 
         let fullData = [];
+        let associationMap = {}; // association_group_id -> [records]
+
+        // Map Globals
+        let mapInstance = null;
+        let mapMarker = null;
+
+        function buildAssociationMap(data) {
+            associationMap = {};
+            data.forEach(d => {
+                if (d.association_group_id) {
+                    if (!associationMap[d.association_group_id]) {
+                        associationMap[d.association_group_id] = [];
+                    }
+                    associationMap[d.association_group_id].push(d);
+                }
+            });
+        }
+
+        window.openMapModal = function(id) {
+            const point = fullData.find(d => d.id === id);
+            if (!point) return;
+
+            document.getElementById('mapModal').style.display = 'flex';
+            
+            const hasCoords = point.geolocalizzazione && point.geolocalizzazione.lat && point.geolocalizzazione.lng;
+            const lat = hasCoords ? parseFloat(point.geolocalizzazione.lat) : 45.4642; // default Milan
+            const lng = hasCoords ? parseFloat(point.geolocalizzazione.lng) : 9.1900;
+            
+            document.getElementById('modalMapTitle').innerText = point.nome || 'Punto senza nome';
+            document.getElementById('modalMapSubtitle').innerText = hasCoords ? 
+                "Coordinate: " + lat.toFixed(5) + " / " + lng.toFixed(5) : 
+                "Coordinate non presenti (Geocoding non disponibile in READ_ONLY)";
+
+            if (!mapInstance) {
+                mapInstance = L.map('leafletMap').setView([lat, lng], hasCoords ? 15 : 6);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(mapInstance);
+            } else {
+                mapInstance.setView([lat, lng], hasCoords ? 15 : 6);
+            }
+
+            if (mapMarker) {
+                mapInstance.removeLayer(mapMarker);
+            }
+
+            if (hasCoords) {
+                mapMarker = L.marker([lat, lng]).addTo(mapInstance);
+                mapMarker.bindPopup("<b>" + (point.nome || 'Punto') + "</b>").openPopup();
+            }
+
+            setTimeout(() => {
+                mapInstance.invalidateSize();
+            }, 300);
+        }
+
+        window.closeMapModal = function() {
+            document.getElementById('mapModal').style.display = 'none';
+        }
 
         function renderList() {
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const typeF = document.getElementById("typeFilter").value;
             const statusF = document.getElementById("statusFilter").value;
-
+            
             let filtered = fullData;
-
+            
             if (search) {
-                filtered = filtered.filter(d =>
+                filtered = filtered.filter(d => 
                     (d.nome && d.nome.toLowerCase().includes(search)) ||
                     (d.indirizzo && d.indirizzo.toLowerCase().includes(search)) ||
                     (d.citta && d.citta.toLowerCase().includes(search)) ||
                     (d.codice_esterno && String(d.codice_esterno).toLowerCase().includes(search)) ||
                     (d.sottocodice && String(d.sottocodice).toLowerCase().includes(search)) ||
-                    (d.codice_punto && String(d.codice_punto).toLowerCase().includes(search))
+                    (d.codice_punto && String(d.codice_punto).toLowerCase().includes(search)) ||
+                    (d.codice_zona && String(d.codice_zona).toLowerCase().includes(search)) ||
+                    (d.association_group_id && String(d.association_group_id).toLowerCase().includes(search))
                 );
             }
-
+            
             if (typeF === "FRUTTA") {
                 filtered = filtered.filter(d => !d.sottocodice || d.sottocodice.trim() === "");
             } else if (typeF === "LATTE") {
                 filtered = filtered.filter(d => d.sottocodice && d.sottocodice.trim() !== "");
             }
-
+            
             if (statusF === "ATTIVI") {
                 filtered = filtered.filter(d => d.attivo !== false);
             } else if (statusF === "INATTIVI") {
                 filtered = filtered.filter(d => d.attivo === false);
             }
-
+            
             document.getElementById("stats").innerText = "Trovati " + filtered.length + " record su " + fullData.length;
-
+            
             const container = document.getElementById("listContainer");
             if (filtered.length === 0) {
                 container.innerHTML = "<div class=\"empty-state\" style=\"grid-column: 1 / -1;\">Nessun punto di consegna presente o corrispondente ai filtri.</div>";
@@ -205,23 +341,36 @@
             } else {
                 container.classList.add("cards-container");
             }
-
+            
             container.innerHTML = filtered.map(d => {
                 const isActive = d.attivo !== false;
                 const isLatte = d.sottocodice && d.sottocodice.trim() !== "";
                 const typeBadge = isLatte ? "<span class=\"badge latte\">LATTE</span>" : "<span class=\"badge frutta\">FRUTTA</span>";
-
                 const codeDisplay = d.sottocodice ? (d.codice_esterno || "N/D") + " / " + d.sottocodice : (d.codice_esterno || d.codice_punto || "N/D");
-
+                
+                // ASSOCIATION LOGIC
                 let assocHTML = "";
-                if (d.association_group_id) {
-                    assocHTML = "<div class=\"association-group\"><span class=\"material-icons-round\" style=\"font-size:14px;\">link</span> Associazione: " + d.association_group_id + "</div>";
+                if (d.association_group_id && associationMap[d.association_group_id]) {
+                    const related = associationMap[d.association_group_id].filter(r => r.id !== d.id);
+                    if (related.length > 0) {
+                        assocHTML = "<div class=\"association-group\">" +
+                            "<div style=\"display:flex; align-items:center; gap:4px;\">" +
+                            "<span class=\"material-icons-round\" style=\"font-size:14px;\">link</span> <strong>ASSOCIATO A:</strong></div>" +
+                            related.map(r => {
+                                const rLatte = r.sottocodice && r.sottocodice.trim() !== "";
+                                const rBadge = rLatte ? "<span style=\"color:#3b82f6; font-weight:bold;\">LATTE</span>" : "<span style=\"color:#f59e0b; font-weight:bold;\">FRUTTA</span>";
+                                const rCode = r.sottocodice ? (r.codice_esterno || "N/D") + "/" + r.sottocodice : (r.codice_esterno || r.codice_punto || "N/D");
+                                return "<div>" + rBadge + " - " + (r.nome || "Senza nome") + " (" + rCode + ")</div>";
+                            }).join("") +
+                        "</div>";
+                    }
                 }
-
+                
                 const windows = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(", ") : d.finestre_consegna) : "-";
-                const lat = d.geolocalizzazione && d.geolocalizzazione.lat ? parseFloat(d.geolocalizzazione.lat).toFixed(4) : "-";
-                const lng = d.geolocalizzazione && d.geolocalizzazione.lng ? parseFloat(d.geolocalizzazione.lng).toFixed(4) : "-";
-
+                const lat = d.geolocalizzazione && d.geolocalizzazione.lat ? parseFloat(d.geolocalizzazione.lat).toFixed(5) : "-";
+                const lng = d.geolocalizzazione && d.geolocalizzazione.lng ? parseFloat(d.geolocalizzazione.lng).toFixed(5) : "-";
+                const gpsStatusColor = (lat !== "-" && lng !== "-") ? "#10b981" : "#ef4444";
+                
                 return "<div class=\"item-card " + (isActive ? "" : "inactive") + "\">" +
                         "<div class=\"card-header\">" +
                             "<div>" +
@@ -254,21 +403,29 @@
                                     "<span class=\"data-value\">" + windows + "</span>" +
                                 "</div>" +
                                 "<div class=\"data-item\" style=\"border-left:1px solid #e2e8f0; padding-left:16px;\">" +
-                                    "<span class=\"data-label\">GPS (Lat/Lon)</span>" +
-                                    "<span class=\"data-value\">" + lat + " / " + lng + "</span>" +
+                                    "<span class=\"data-label\">GPS</span>" +
+                                    "<span class=\"data-value\" style=\"color:" + gpsStatusColor + "\">" + lat + " / " + lng + "</span>" +
                                 "</div>" +
                             "</div>" +
                             assocHTML +
                         "</div>" +
+                        "<div class=\"card-actions\">" +
+                            "<button class=\"btn-icon\" onclick=\"openMapModal('" + d.id + "')\">" +
+                                "<span class=\"material-icons-round\">map</span> Geolocalizza" +
+                            "</button>" +
+                            "<button class=\"btn-icon\" style=\"opacity:0.5; cursor:not-allowed;\" title=\"CRUD deferred\">" +
+                                "<span class=\"material-icons-round\">edit</span> Modifica" +
+                            "</button>" +
+                        "</div>" +
                     "</div>";
             }).join("");
         }
-
+        
         async function init(user) {
             const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
             const tenantId = resolveTenantId(tenantLabel);
             const statsEl = document.getElementById("stats");
-
+            
             document.getElementById("tenantDisplay").innerText = "(" + tenantLabel + ")";
 
             if (!tenantId) {
@@ -285,6 +442,8 @@
                 const snapshot = await getDocs(collection(db, path));
                 fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 console.log("[Punti di Consegna] Letti " + fullData.length + " record.");
+                
+                buildAssociationMap(fullData);
 
                 if (fullData.length === 0) {
                     document.getElementById("listContainer").innerHTML = "<div class=\"empty-state\">Nessun punto di consegna presente per questo tenant.<br><span style=\"font-size:11px; opacity:0.5;\">(migration pending)</span></div>";
@@ -314,6 +473,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.434"></script>
+    <script src="script.js?v=6.435"></script>
 </body>
 </html>
