@@ -155,38 +155,45 @@
     </style>
 </head>
 <body>
-    <nav class="glass-nav">
+        <nav class="glass-nav">
         <div class="nav-content">
-            <div class="nav-left">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <span class="material-icons-round">local_shipping</span>
-                    </div>
-                    LogiDesk <span id="tenantDisplay" style="font-size: 12px; opacity: 0.8; font-weight:normal; margin-left:8px;"></span>
-                </div>
-                <div class="nav-links">
-                    <a href="dashboard.html" class="nav-link"><span class="material-icons-round">dashboard</span> Dashboard</a>
-                    <a href="#" class="nav-link active"><span class="material-icons-round">storefront</span> Punti Consegna</a>
-                </div>
-            </div>
-            <button onclick="window.AuthService.logout()" class="logout-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <span class="material-icons-round" style="font-size: 16px;">logout</span> Esci
+            <img src="assets/brand/logidesk-mark.svg" alt="LS" style="height: 32px; width: auto; margin-right: 8px;">
+            <button id="dashboardBtn" class="logout-btn" title="Dashboard"
+                onclick="window.navigateWithState('dashboard.html')"
+                style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
+                <span class="material-icons-round">dashboard</span>
             </button>
+            <div class="nav-title" style="flex: 1;">Punti di Consegna <span id="tenantDisplay" style="font-size: 12px; opacity: 0.8; font-weight:normal; margin-left:8px;"></span></div>
+            <a href="#" onclick="window.AuthService.logout(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
         </div>
     </nav>
     <main class="main-container">
-        <div class="filters">
-            <input type="text" id="searchInput" placeholder="Cerca per nome, codice, indirizzo o citta'..." style="flex: 1; min-width: 250px;">
-            <select id="typeFilter" style="cursor: pointer;">
-                <option value="ALL">Tutte le Competenze</option>
-                <option value="FRUTTA">Frutta</option>
-                <option value="LATTE">Latte</option>
-            </select>
-            <select id="statusFilter" style="cursor: pointer;">
-                <option value="ALL">Tutti gli stati</option>
-                <option value="ATTIVI">Attivi</option>
-                <option value="INATTIVI">Inattivi</option>
-            </select>
+                <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
+            <div class="filters-container" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <div class="input-group" style="flex:1; min-width: 250px;">
+                    <input type="text" id="searchInput" placeholder="Cerca cliente, codice o citt ..." style="width:100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div class="input-group">
+                    <select id="typeFilter" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
+                        <option value="ALL">Tutte le Competenze</option>
+                        <option value="FRUTTA">Frutta</option>
+                        <option value="LATTE">Latte</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <select id="statusFilter" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
+                        <option value="ALL">Tutti gli stati</option>
+                        <option value="ATTIVI">Attivi</option>
+                        <option value="INATTIVI">Inattivi</option>
+                    </select>
+                </div>
+                <div class="action-buttons" style="display:flex; gap:12px;">
+                    <button id="btnShowMap" class="btn-map" onclick="window.navigateWithState('mappa_google.html')" style="background: #10b981; color: white; border: none; height: 45px; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-icons-round">map</span> Mappa
+                    </button>
+                    <!-- Aggiungi nascosto/disabilitato per ora per Punti Consegna -->
+                </div>
+            </div>
         </div>
         <div id="stats" style="margin-bottom: 12px; font-weight: 600; font-size: 13px; color: #64748b; padding-left: 4px;">Caricamento in corso...</div>
         <div id="listContainer" class="list-container cards-container">
@@ -426,12 +433,12 @@
                                 <span>Orari: ${windows}</span>
                             </div>
                         </div>
-                        <div class="item-actions">
-                            <button class="btn-icon" data-action="geo" data-point-id="${d.id}" title="Geolocalizza">
-                                <span class="material-icons" style="color: #10b981; pointer-events:none;">location_on</span>
+                                                <div class="item-actions" style="display:flex; gap:8px;">
+                            <button class="btn-edit" data-action="geo" data-point-id="${d.id}" title="Geolocalizza (Google Maps)" style="border: 1px solid #e2e8f0;">
+                                <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
                             </button>
-                            <button class="btn-icon" data-action="edit" data-point-id="${d.id}" title="Modifica">
-                                <span class="material-icons" style="color: #3b82f6; pointer-events:none;">edit</span>
+                            <button class="btn-edit" data-action="edit" data-point-id="${d.id}" title="Modifica dati" style="border: 1px solid #e2e8f0;">
+                                <span class="material-icons-round" style="font-size:18px; color:var(--text-main); pointer-events:none;">edit</span>
                             </button>
                         </div>
                     </div>
