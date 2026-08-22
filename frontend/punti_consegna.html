@@ -312,7 +312,7 @@
             if (sc === "FRUTTA" || sc === "LATTE") return sc;
             return "UNKNOWN";
         }
-        function extractData(dataList) {
+        function buildAssociationMap(dataList) {
             fullData = dataList;
             associationMap = {};
             fullData.forEach(d => {
@@ -362,7 +362,7 @@
                 }
                 return true;
             });
-            const statsEl = document.getElementById("listStats");
+            const statsEl = document.getElementById("stats");
             let fC = 0, lC = 0, uC = 0;
             fullData.forEach(d => {
                 let t = resolvePointType(d);
