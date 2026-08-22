@@ -335,20 +335,12 @@
         // TYPE RESOLVER M5
         // ==========================================
         function resolvePointType(d) {
-            if (d.tipo === "FRUTTA" || d.tipo === "LATTE") return d.tipo;
-            if (d.competenza === "FRUTTA" || d.competenza === "LATTE") return d.competenza;
-
-            if (d.legacy_provenance === "clienti_fatturazione") return "LATTE";
-            if (d.legacy_provenance === "raccolta clienti") return "FRUTTA";
-            if (d.source_type === "legacy_clienti_fatturazione") return "LATTE";
-            if (d.source_type === "legacy_raccolta_clienti") return "FRUTTA";
-
-            if (d.migration_metadata && d.migration_metadata.source === "clienti_fatturazione") return "LATTE";
-            if (d.migration_metadata && d.migration_metadata.source === "raccolta_clienti") return "FRUTTA";
-
-            // Last resort
-            if (d.sottocodice && String(d.sottocodice).trim() !== "") return "LATTE";
-            return "FRUTTA"; // Safest fallback
+            if (d.sottocodice) {
+                const sc = String(d.sottocodice).trim().toUpperCase();
+                if (sc === 'FRUTTA') return 'FRUTTA';
+                if (sc === 'LATTE') return 'LATTE';
+            }
+            return 'UNKNOWN';
         }
 
         function buildAssociationMap(data) {
@@ -369,45 +361,34 @@
         window.openMapModal = function(id) {
             const point = fullData.find(d => d.id === id);
             if (!point) return;
-
             document.getElementById('mapModal').style.display = 'flex';
-
-            const hasCoords = point.geolocalizzazione && point.geolocalizzazione.lat && point.geolocalizzazione.lng;
-
-            if (!hasCoords) {
-                document.getElementById('noMapOverlay').style.display = 'flex';
-                document.getElementById('modalMapTitle').innerText = point.nome || 'Punto senza nome';
-                document.getElementById('modalMapSubtitle').innerText = "Coordinate non presenti";
-                return;
-            }
-
-            document.getElementById('noMapOverlay').style.display = 'none';
-            const lat = parseFloat(point.geolocalizzazione.lat);
-            const lng = parseFloat(point.geolocalizzazione.lng);
-
             document.getElementById('modalMapTitle').innerText = point.nome || 'Punto senza nome';
-            document.getElementById('modalMapSubtitle').innerText = "Coordinate: " + lat.toFixed(5) + " / " + lng.toFixed(5);
-
-            if (!mapInstance) {
-                mapInstance = L.map('leafletMap').setView([lat, lng], 15);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; OpenStreetMap'
-                }).addTo(mapInstance);
-            } else {
-                mapInstance.setView([lat, lng], 15);
+            let lat = null, lng = null;
+            if (point.geolocalizzazione) {
+                lat = point.geolocalizzazione.lat || point.geolocalizzazione.latitude;
+                lng = point.geolocalizzazione.lng || point.geolocalizzazione.lon || point.geolocalizzazione.longitude;
             }
-
-            if (mapMarker) mapInstance.removeLayer(mapMarker);
-
-            mapMarker = L.marker([lat, lng]).addTo(mapInstance);
-            mapMarker.bindPopup("<b>" + (point.nome || 'Punto') + "</b>").openPopup();
-
-            setTimeout(() => {
-                mapInstance.invalidateSize();
-            }, 300);
+            if (!lat || !lng) {
+                document.getElementById('noMapOverlay').style.display = 'flex';
+                document.getElementById('modalMapSubtitle').innerText = "Coordinate non presenti";
+            } else {
+                document.getElementById('noMapOverlay').style.display = 'none';
+                document.getElementById('modalMapSubtitle').innerText = "Coordinate: " + parseFloat(lat).toFixed(5) + " / " + parseFloat(lng).toFixed(5);
+                setTimeout(() => {
+                    if (window.map) {
+                        window.map.invalidateSize();
+                        const latLng = new L.LatLng(lat, lng);
+                        window.map.setView(latLng, 15);
+                        if (window.marker) window.map.removeLayer(window.marker);
+                        window.marker = L.marker(latLng).addTo(window.map);
+                    } else {
+                        window.map = L.map('mapContainer').setView([lat, lng], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(window.map);
+                        window.marker = L.marker([lat, lng]).addTo(window.map);
+                    }
+                }, 100);
+            }
         }
-
         window.closeMapModal = function() {
             document.getElementById('mapModal').style.display = 'none';
         }
@@ -446,6 +427,10 @@
             }
         }
 
+        window.saveEdit = function() {
+            alert("Scrittura non ancora certificata (Core V1). Funzionalità in sola lettura.");
+            closeEditModal();
+        };
         window.closeEditModal = function() {
             document.getElementById('editModal').style.display = 'none';
         }
@@ -494,6 +479,14 @@
         // ==========================================
         // RENDER LOGIC
         // ==========================================
+        function formatTimeWindows(arr) {
+            if (!arr || !Array.isArray(arr)) return "Non def.";
+            return arr.map(w => {
+                if (w.da && w.a) return w.da + " - " + w.a;
+                if (w.start && w.end) return w.start + " - " + w.end;
+                return JSON.stringify(w);
+            }).join(", ");
+        }
         function renderList() {
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const typeF = document.getElementById("typeFilter").value;
