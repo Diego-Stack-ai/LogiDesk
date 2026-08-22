@@ -191,7 +191,9 @@
                     <button id="btnShowMap" class="btn-map" onclick="window.navigateWithState('mappa_google.html')" style="background: #10b981; color: white; border: none; height: 45px; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                         <span class="material-icons-round">map</span> Mappa
                     </button>
-                    <!-- Aggiungi nascosto/disabilitato per ora per Punti Consegna -->
+                    <button class="btn-add" onclick="window.openEditModal(null)" style="background: var(--primary); color: white; border: none; height: 45px; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-icons-round">add</span> Aggiungi
+                    </button>
                 </div>
             </div>
         </div>
@@ -490,7 +492,7 @@
             document.getElementById("statusFilter").addEventListener("change", renderList);
             // Event Delegation for action buttons
             document.getElementById("listContainer").addEventListener("click", (e) => {
-                const btn = e.target.closest(".btn-icon");
+                const btn = e.target.closest(".btn-edit");
                 if (!btn) return;
                 const action = btn.getAttribute("data-action");
                 const pointId = btn.getAttribute("data-point-id");
@@ -498,6 +500,8 @@
                     window.openMapModal(pointId);
                 } else if (action === "edit" && pointId) {
                     window.openEditModal(pointId);
+                } else if (action === "delete" && pointId) {
+                    window.deletePoint(pointId);
                 }
             });
         });
