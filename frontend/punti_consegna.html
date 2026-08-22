@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.432">
+    <link rel="stylesheet" href="styles.css?v=6.433">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
@@ -44,13 +44,13 @@
 
     <main class="main-container">
         <div class="filters">
-            <input type="text" id="searchInput" placeholder="Cerca per nome, codice o indirizzo..." onkeyup="renderList()" style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-            <select id="typeFilter" onchange="renderList()" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
-                <option value="ALL">Tutti (Frutta & Latte)</option>
+            <input type="text" id="searchInput" placeholder="Cerca per nome, codice o indirizzo..." style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <select id="typeFilter" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+                <option value="ALL">Tutti (Frutta &amp; Latte)</option>
                 <option value="FRUTTA">Frutta</option>
                 <option value="LATTE">Latte</option>
             </select>
-            <select id="statusFilter" onchange="renderList()" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+            <select id="statusFilter" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
                 <option value="ALL">Tutti gli stati</option>
                 <option value="ATTIVI">Attivi</option>
                 <option value="INATTIVI">Inattivi</option>
@@ -65,38 +65,24 @@
     </main>
 
     <script type="module">
-        import { db } from './core/firebase-init.js';
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { AuthService } from './core/auth-service.js';
+        import './core/auth-service.js';
+        import { db, auth } from './core/firebase-init.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { CompanyContext } from './core/CompanyContext.js';
+
+        const TENANT_ID_MAP = {
+            'DNR': 'AgvcnbuUMu7YhzSuUKTY'
+        };
+
+        function resolveTenantId(labelOrId) {
+            if (Object.values(TENANT_ID_MAP).includes(labelOrId)) return labelOrId;
+            return TENANT_ID_MAP[labelOrId] || null;
+        }
 
         let fullData = [];
 
-        window.logoutFirebase = async function() {
-            await AuthService.logout();
-        };
-
-        async function init() {
-            const user = await AuthService.requireAuth();
-            if(!user) return;
-            
-            const tenantId = localStorage.getItem('activeTenant') || 'DNR'; 
-            
-            const path = CompanyContext.getDeliveryPointsPath(tenantId);
-            console.log("[Punti di Consegna] Leggendo da:", path);
-            
-            try {
-                const snapshot = await getDocs(collection(db, path));
-                fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                console.log(`[Punti di Consegna] Letti ${fullData.length} record.`);
-                renderList();
-            } catch (err) {
-                console.error("[Punti di Consegna] Errore lettura:", err);
-                document.getElementById('stats').innerText = "Errore di caricamento: " + err.message;
-            }
-        }
-        
-        window.renderList = function() {
+        function renderList() {
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const typeF = document.getElementById('typeFilter').value;
             const statusF = document.getElementById('statusFilter').value;
@@ -168,10 +154,49 @@
                     </div>
                 `;
             }).join('');
-        };
+        }
         
-        window.onload = init;
+        async function init(user) {
+            const tenantLabel = localStorage.getItem('activeTenant') || 'DNR';
+            const tenantId = resolveTenantId(tenantLabel);
+            const statsEl = document.getElementById('stats');
+
+            if (!tenantId) {
+                statsEl.innerText = `Errore: Tenant non riconosciuto ("${tenantLabel}"). Controlla le impostazioni.`;
+                statsEl.style.color = '#ef4444';
+                console.error('[Punti di Consegna] Tenant non risolvibile:', tenantLabel);
+                return;
+            }
+
+            const path = CompanyContext.getDeliveryPointsPath(tenantId);
+            console.log('[Punti di Consegna] Utente:', user.email, '| Path:', path);
+
+            try {
+                const snapshot = await getDocs(collection(db, path));
+                fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log(`[Punti di Consegna] Letti ${fullData.length} record.`);
+                renderList();
+            } catch (err) {
+                console.error("[Punti di Consegna] Errore lettura:", err);
+                statsEl.innerText = "Errore di caricamento: " + err.message;
+                statsEl.style.color = '#ef4444';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('searchInput').addEventListener('input', renderList);
+            document.getElementById('typeFilter').addEventListener('change', renderList);
+            document.getElementById('statusFilter').addEventListener('change', renderList);
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                init(user);
+            } else {
+                console.log('[Punti di Consegna] Utente non autenticato — redirect gestito da auth-service.js.');
+            }
+        });
     </script>
-    <script src="script.js?v=6.432"></script>
+    <script src="script.js?v=6.433"></script>
 </body>
 </html>
