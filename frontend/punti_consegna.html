@@ -4,75 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.433">
+    <link rel="stylesheet" href="styles.css?v=6.434">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        .list-container { 
-            display: grid; gap: 16px; margin-top:20px; 
-            max-height: 70vh; overflow-y: auto; padding-right: 12px;
+        .list-container {
+            display: grid; margin-top: 12px;
+            max-height: 75vh; overflow-y: auto; padding-right: 12px;
+            padding-bottom: 20px;
         }
         .list-container::-webkit-scrollbar { width: 8px; }
         .list-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
         .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
         .list-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .data-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px;}
-        .data-card.active-true { border-left: 5px solid #10b981; }
-        .data-card.active-false { border-left: 5px solid #ef4444; opacity: 0.7; }
-        
         .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white;}
+        .filters input, .filters select {
+            padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+        }
+
+        /* Card Layout from gestione.html */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .item-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px -10px rgba(79, 70, 229, 0.15);
+        }
+
+        .item-card.inactive {
+            opacity: 0.7;
+            border-left: 4px solid #ef4444;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .card-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .card-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .data-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .data-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .data-value {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .badge {
+            padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block;
+        }
         .badge.frutta { background-color: #f59e0b; }
         .badge.latte { background-color: #3b82f6; }
-        
-        .association-group { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+        .association-group {
+            font-size: 11px; color: #64748b; margin-top: 8px; background: #f1f5f9; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-weight: 500;
+        }
+
+        .empty-state {
+            padding: 40px; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed #e2e8f0; font-weight: 500;
+        }
     </style>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/svg+xml" href="assets/brand/logidesk-mark.svg">
 </head>
 <body>
     <nav class="glass-nav">
         <div class="nav-content">
-            <button onclick="window.history.back()" class="logout-btn" style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
+            <button onclick="window.history.back()" class="logout-btn" style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;" title="Indietro">
                 <span class="material-icons-round">arrow_back</span>
             </button>
-            <div class="nav-title" style="flex: 1;">Punti di Consegna</div>
-            <a href="#" onclick="window.logoutFirebase(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
+            <div class="nav-title" style="flex: 1;">Punti di Consegna <span id="tenantDisplay" style="font-size: 14px; font-weight: normal; color: rgba(255,255,255,0.8); margin-left: 8px;"></span></div>
         </div>
     </nav>
 
     <main class="main-container">
         <div class="filters">
-            <input type="text" id="searchInput" placeholder="Cerca per nome, codice o indirizzo..." style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-            <select id="typeFilter" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
-                <option value="ALL">Tutti (Frutta &amp; Latte)</option>
+            <input type="text" id="searchInput" placeholder="Cerca per nome, codice, indirizzo o citta'..." style="flex: 1; min-width: 250px;">
+            <select id="typeFilter" style="cursor: pointer;">
+                <option value="ALL">Tutte le Competenze</option>
                 <option value="FRUTTA">Frutta</option>
                 <option value="LATTE">Latte</option>
             </select>
-            <select id="statusFilter" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+            <select id="statusFilter" style="cursor: pointer;">
                 <option value="ALL">Tutti gli stati</option>
                 <option value="ATTIVI">Attivi</option>
                 <option value="INATTIVI">Inattivi</option>
             </select>
         </div>
-        
-        <div id="stats" style="margin-bottom: 16px; font-weight: 500; color: #475569;">Caricamento in corso...</div>
 
-        <div id="listContainer" class="list-container">
+        <div id="stats" style="margin-bottom: 12px; font-weight: 600; font-size: 13px; color: #64748b; padding-left: 4px;">Caricamento in corso...</div>
+
+        <div id="listContainer" class="list-container cards-container">
             <!-- Items rendered via JS -->
         </div>
     </main>
 
     <script type="module">
-        import './core/auth-service.js';
-        import { db, auth } from './core/firebase-init.js';
+        import "./core/auth-service.js";
+        import { db, auth } from "./core/firebase-init.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { CompanyContext } from './core/CompanyContext.js';
+        import { CompanyContext } from "./core/CompanyContext.js";
 
         const TENANT_ID_MAP = {
-            'DNR': 'AgvcnbuUMu7YhzSuUKTY'
+            "DNR": "AgvcnbuUMu7YhzSuUKTY",
+            "GRAN CHEF": "UZC65YbnIbXsei88xNBX",
+            "CATTEL": "bSomOWB7pieGNej2KdJA",
+            "BAUER": "bXOveycf4bEXv2aCkyMU"
         };
 
         function resolveTenantId(labelOrId) {
@@ -83,120 +166,154 @@
         let fullData = [];
 
         function renderList() {
-            const search = document.getElementById('searchInput').value.toLowerCase().trim();
-            const typeF = document.getElementById('typeFilter').value;
-            const statusF = document.getElementById('statusFilter').value;
-            
+            const search = document.getElementById("searchInput").value.toLowerCase().trim();
+            const typeF = document.getElementById("typeFilter").value;
+            const statusF = document.getElementById("statusFilter").value;
+
             let filtered = fullData;
-            
+
             if (search) {
-                filtered = filtered.filter(d => 
+                filtered = filtered.filter(d =>
                     (d.nome && d.nome.toLowerCase().includes(search)) ||
                     (d.indirizzo && d.indirizzo.toLowerCase().includes(search)) ||
+                    (d.citta && d.citta.toLowerCase().includes(search)) ||
                     (d.codice_esterno && String(d.codice_esterno).toLowerCase().includes(search)) ||
                     (d.sottocodice && String(d.sottocodice).toLowerCase().includes(search)) ||
                     (d.codice_punto && String(d.codice_punto).toLowerCase().includes(search))
                 );
             }
-            
-            if (typeF === 'FRUTTA') {
-                filtered = filtered.filter(d => !d.sottocodice || d.sottocodice.trim() === '');
-            } else if (typeF === 'LATTE') {
-                filtered = filtered.filter(d => d.sottocodice && d.sottocodice.trim() !== '');
+
+            if (typeF === "FRUTTA") {
+                filtered = filtered.filter(d => !d.sottocodice || d.sottocodice.trim() === "");
+            } else if (typeF === "LATTE") {
+                filtered = filtered.filter(d => d.sottocodice && d.sottocodice.trim() !== "");
             }
-            
-            if (statusF === 'ATTIVI') {
+
+            if (statusF === "ATTIVI") {
                 filtered = filtered.filter(d => d.attivo !== false);
-            } else if (statusF === 'INATTIVI') {
+            } else if (statusF === "INATTIVI") {
                 filtered = filtered.filter(d => d.attivo === false);
             }
-            
-            const fruttaCount = fullData.filter(d => !d.sottocodice || d.sottocodice.trim() === '').length;
-            const latteCount = fullData.filter(d => d.sottocodice && d.sottocodice.trim() !== '').length;
-            
-            document.getElementById('stats').innerText = `Trovati ${filtered.length} record su ${fullData.length} (Frutta: ${fruttaCount}, Latte: ${latteCount})`;
-            
-            const container = document.getElementById('listContainer');
+
+            document.getElementById("stats").innerText = "Trovati " + filtered.length + " record su " + fullData.length;
+
+            const container = document.getElementById("listContainer");
             if (filtered.length === 0) {
-                container.innerHTML = "<p>Nessun punto di consegna trovato.</p>";
+                container.innerHTML = "<div class=\"empty-state\" style=\"grid-column: 1 / -1;\">Nessun punto di consegna presente o corrispondente ai filtri.</div>";
+                container.classList.remove("cards-container");
                 return;
+            } else {
+                container.classList.add("cards-container");
             }
-            
+
             container.innerHTML = filtered.map(d => {
                 const isActive = d.attivo !== false;
-                const isLatte = d.sottocodice && d.sottocodice.trim() !== '';
-                const typeBadge = isLatte ? '<span class="badge latte">LATTE</span>' : '<span class="badge frutta">FRUTTA</span>';
-                
-                const codeDisplay = d.sottocodice ? `${d.codice_esterno} / ${d.sottocodice}` : (d.codice_esterno || d.codice_punto || 'N/D');
-                
-                let assocHTML = '';
+                const isLatte = d.sottocodice && d.sottocodice.trim() !== "";
+                const typeBadge = isLatte ? "<span class=\"badge latte\">LATTE</span>" : "<span class=\"badge frutta\">FRUTTA</span>";
+
+                const codeDisplay = d.sottocodice ? (d.codice_esterno || "N/D") + " / " + d.sottocodice : (d.codice_esterno || d.codice_punto || "N/D");
+
+                let assocHTML = "";
                 if (d.association_group_id) {
-                    assocHTML = `<div class="association-group"><span class="material-icons-round" style="font-size:12px; vertical-align:middle;">link</span> Gruppo Associazione: ${d.association_group_id}</div>`;
+                    assocHTML = "<div class=\"association-group\"><span class=\"material-icons-round\" style=\"font-size:14px;\">link</span> Associazione: " + d.association_group_id + "</div>";
                 }
-                
-                const windows = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(', ') : d.finestre_consegna) : '';
-                
-                return `
-                    <div class="data-card active-${isActive}">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div style="font-weight:bold; font-size:16px; color:#1e293b;">${d.nome || 'Senza Nome'}</div>
-                            ${typeBadge}
-                        </div>
-                        <div style="font-size:14px; color:#475569;">
-                            <strong>Codice:</strong> ${codeDisplay} | <strong>Zona:</strong> ${d.codice_zona || 'N/D'}
-                        </div>
-                        <div style="font-size:14px; color:#475569;">
-                            <span class="material-icons-round" style="font-size:14px; vertical-align:middle;">location_on</span>
-                            ${d.indirizzo || ''}, ${d.cap || ''} ${d.citta || ''} ${d.provincia ? '('+d.provincia+')' : ''}
-                        </div>
-                        ${windows ? `<div style="font-size:13px; color:#64748b;"><strong>Finestre Consegna:</strong> ${windows}</div>` : ''}
-                        ${assocHTML}
-                    </div>
-                `;
-            }).join('');
+
+                const windows = d.finestre_consegna ? (Array.isArray(d.finestre_consegna) ? d.finestre_consegna.join(", ") : d.finestre_consegna) : "-";
+                const lat = d.geolocalizzazione && d.geolocalizzazione.lat ? parseFloat(d.geolocalizzazione.lat).toFixed(4) : "-";
+                const lng = d.geolocalizzazione && d.geolocalizzazione.lng ? parseFloat(d.geolocalizzazione.lng).toFixed(4) : "-";
+
+                return "<div class=\"item-card " + (isActive ? "" : "inactive") + "\">" +
+                        "<div class=\"card-header\">" +
+                            "<div>" +
+                                "<h4 class=\"card-title\">" + (d.nome || "Senza Nome") + "</h4>" +
+                                "<div style=\"display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;\">" +
+                                    typeBadge +
+                                    "<span class=\"badge\" style=\"background:#f1f5f9; color:#64748b\">ZONA: " + (d.codice_zona || "N/D") + "</span>" +
+                                    (isActive ? "<span class=\"badge\" style=\"background:#10b981;\">ATTIVO</span>" : "<span class=\"badge\" style=\"background:#ef4444;\">INATTIVO</span>") +
+                                "</div>" +
+                            "</div>" +
+                        "</div>" +
+                        "<div class=\"card-body\">" +
+                            "<div class=\"card-row\">" +
+                                "<div class=\"data-item\" style=\"flex:2\">" +
+                                    "<span class=\"data-label\">Indirizzo</span>" +
+                                    "<span class=\"data-value\">" + (d.indirizzo || "") + " " + (d.cap || "") + "</span>" +
+                                "</div>" +
+                                "<div class=\"data-item\" style=\"flex:1.5\">" +
+                                    "<span class=\"data-label\">Citta' / Prov</span>" +
+                                    "<span class=\"data-value\">" + (d.citta || "") + " " + (d.provincia ? "("+d.provincia+")" : "") + "</span>" +
+                                "</div>" +
+                            "</div>" +
+                            "<div class=\"card-row\" style=\"background:#f8fafc; padding:10px; border-radius:10px;\">" +
+                                "<div class=\"data-item\">" +
+                                    "<span class=\"data-label\">Codice</span>" +
+                                    "<span class=\"data-value\">" + codeDisplay + "</span>" +
+                                "</div>" +
+                                "<div class=\"data-item\" style=\"border-left:1px solid #e2e8f0; padding-left:16px;\">" +
+                                    "<span class=\"data-label\">Finestre Consegna</span>" +
+                                    "<span class=\"data-value\">" + windows + "</span>" +
+                                "</div>" +
+                                "<div class=\"data-item\" style=\"border-left:1px solid #e2e8f0; padding-left:16px;\">" +
+                                    "<span class=\"data-label\">GPS (Lat/Lon)</span>" +
+                                    "<span class=\"data-value\">" + lat + " / " + lng + "</span>" +
+                                "</div>" +
+                            "</div>" +
+                            assocHTML +
+                        "</div>" +
+                    "</div>";
+            }).join("");
         }
-        
+
         async function init(user) {
-            const tenantLabel = localStorage.getItem('activeTenant') || 'DNR';
+            const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
             const tenantId = resolveTenantId(tenantLabel);
-            const statsEl = document.getElementById('stats');
+            const statsEl = document.getElementById("stats");
+
+            document.getElementById("tenantDisplay").innerText = "(" + tenantLabel + ")";
 
             if (!tenantId) {
-                statsEl.innerText = `Errore: Tenant non riconosciuto ("${tenantLabel}"). Controlla le impostazioni.`;
-                statsEl.style.color = '#ef4444';
-                console.error('[Punti di Consegna] Tenant non risolvibile:', tenantLabel);
+                statsEl.innerText = "Errore: Tenant non riconosciuto (" + tenantLabel + "). Controlla le impostazioni.";
+                statsEl.style.color = "#ef4444";
+                console.error("[Punti di Consegna] Tenant non risolvibile:", tenantLabel);
                 return;
             }
 
             const path = CompanyContext.getDeliveryPointsPath(tenantId);
-            console.log('[Punti di Consegna] Utente:', user.email, '| Path:', path);
+            console.log("[Punti di Consegna] Utente:", user.email, "| Path:", path);
 
             try {
                 const snapshot = await getDocs(collection(db, path));
                 fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                console.log(`[Punti di Consegna] Letti ${fullData.length} record.`);
-                renderList();
+                console.log("[Punti di Consegna] Letti " + fullData.length + " record.");
+
+                if (fullData.length === 0) {
+                    document.getElementById("listContainer").innerHTML = "<div class=\"empty-state\">Nessun punto di consegna presente per questo tenant.<br><span style=\"font-size:11px; opacity:0.5;\">(migration pending)</span></div>";
+                    document.getElementById("listContainer").classList.remove("cards-container");
+                    statsEl.innerText = "0 record";
+                } else {
+                    renderList();
+                }
             } catch (err) {
                 console.error("[Punti di Consegna] Errore lettura:", err);
                 statsEl.innerText = "Errore di caricamento: " + err.message;
-                statsEl.style.color = '#ef4444';
+                statsEl.style.color = "#ef4444";
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('searchInput').addEventListener('input', renderList);
-            document.getElementById('typeFilter').addEventListener('change', renderList);
-            document.getElementById('statusFilter').addEventListener('change', renderList);
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("searchInput").addEventListener("input", renderList);
+            document.getElementById("typeFilter").addEventListener("change", renderList);
+            document.getElementById("statusFilter").addEventListener("change", renderList);
         });
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 init(user);
             } else {
-                console.log('[Punti di Consegna] Utente non autenticato — redirect gestito da auth-service.js.');
+                console.log("[Punti di Consegna] Utente non autenticato - redirect gestito da auth-service.js.");
             }
         });
     </script>
-    <script src="script.js?v=6.433"></script>
+    <script src="script.js?v=6.434"></script>
 </body>
 </html>
