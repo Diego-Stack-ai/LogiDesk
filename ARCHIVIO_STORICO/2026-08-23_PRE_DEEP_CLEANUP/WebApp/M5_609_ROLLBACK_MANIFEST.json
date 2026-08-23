@@ -1,0 +1,2441 @@
+{
+  "registry": "system_migrations/core_v1_m5_delivery_points_dnr",
+  "targets": [
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000001",
+      "fingerprint": "90380f991189bcf875c707238eefa4dbc6fe5a79863a0da19fc1da810e9b0075"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000002",
+      "fingerprint": "1615bf92743e07134aebb9a54cfd41be0fb19a8f36555104ffb5b4e41a1f40c0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000003",
+      "fingerprint": "c70d4d59c8e0e8b65b24c4346ee36b17e783d60581f226d2ebe419854515a697"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000004",
+      "fingerprint": "fd26ddc22eb768b7aa141a933f6bf771d56cec04e829b8b3f38576359ec968e4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000005",
+      "fingerprint": "f8f5892619b467dc097b131be6caaae8372d4c3d4f63d84961c4a464fdc4479d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000006",
+      "fingerprint": "7ca30e148db9481c4cb9deb21c1853c84496b6fce049933955d29fe88a4ded44"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000007",
+      "fingerprint": "b4be3fbf28b1955266293144e9843208c48d97476ae239ecdaed078583c968d1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000008",
+      "fingerprint": "62078760e0b03b02f744819e65ba31e2830d567a9bd678036d0e1df846b06d1d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000009",
+      "fingerprint": "83d8273657b3508509031591349951546e75875abe670fda5775b18d730b8643"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000010",
+      "fingerprint": "25ad86b7b8816ac5486aa59653965720a2b40cc0a99496cf8821c41a8e863f46"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000011",
+      "fingerprint": "828944a147322d5512200143123600d809e8d4576aa1ee452f43637d234dd775"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000012",
+      "fingerprint": "029c73946ee9d5fb3f8a1a3686c9b1c02355c34c4f1d46e1408b58d54c980b71"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000013",
+      "fingerprint": "02ae66eb24c48e87feff652bd1c6b2188aa7438a29673d1dbafeeaf1b0663c73"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000014",
+      "fingerprint": "07241ce572e0dbe153dfb6945b3bf1c203529a83ce35244c2414633e703ceeed"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000015",
+      "fingerprint": "2a5994c1e7374afb7006e5fc131d8434c5faa915379fdf81682c02e8e1764014"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000016",
+      "fingerprint": "f27a3b42c0f9340ea131459ae4ed05ab1bcbe2878248a470ebf5216888d29c84"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000017",
+      "fingerprint": "43d14ca481988fa97c993c4f25a09294e849e188775f74e6d971d8d758818f1a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000018",
+      "fingerprint": "f4736d5b1ffbf33aaedca4844d22da98d52673d0a0d5b9229e1075408fa2385d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000019",
+      "fingerprint": "a257127da0513c2029c46835590d558ed5732ffabd241fe58ad8a3c85c24f4f6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000020",
+      "fingerprint": "e6d14e369089f20581c1db355a5e86364049d834fd9bc652454c06190a9998a7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000021",
+      "fingerprint": "677729ef0536d9ffa228c513937dc5d51b3e00112e1066e6b5b632e53c25f47a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000022",
+      "fingerprint": "50da54ac9bd177b98d33ad10978cf19c0badeb4146a042ec5a7dc5aebd51748f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000023",
+      "fingerprint": "182584e309321faffcb336375ebbbbc900ec3b8127683f24d71c7dc667e011f7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000024",
+      "fingerprint": "72420ae422ea2b455971f7b4c9397c2fa85bc6776712949bc7ba4304ed122a2e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000025",
+      "fingerprint": "23c8ff3d0a40eddec75d3225c99fe591aae96f752e202e33b7209b0fdeb37eba"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000026",
+      "fingerprint": "21efe10acf47c8cd208ae2d980c85017d64921534d1d4591e62c315bb0b75dc8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000027",
+      "fingerprint": "42f07d95ba2993b502b83f161117ecf3678e6b205e7bf51e509d9f59cec172e8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000028",
+      "fingerprint": "044bdd69fadc5eb51ab7796e93c667a034876d965256dbf27d255fc69bc4eda4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000029",
+      "fingerprint": "206a25dbdc0e4b20b221e0c2f14abbe0717ae95e34d5b6b8c1080a48e2ed2cec"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000030",
+      "fingerprint": "a155a81dd47c75d3f50803bac2a7201743998c2d4393a4be55d083f2236cc109"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000031",
+      "fingerprint": "7825a3ec2b245631941ad858c31cacff29275bfc71bad51bfa3b2405ccba38c6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000032",
+      "fingerprint": "13335eb5e3677b1223b0d18b045e62d442e0e81017b90c32ac61f80277b0a85d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000033",
+      "fingerprint": "8504223f03e9b1e7e54bfbeb4b1f78542dc0d4a5f6f0f46814b3d09f5be41999"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000034",
+      "fingerprint": "8483447a2b6dc9c0133f27b8ef581e22548383ffbb6cca91bc2c148d0058a7b0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000035",
+      "fingerprint": "bc2188fb457249c464f6e6ed6116bfcc2ca9ce065f958fb2bdf3063b2ef04480"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000036",
+      "fingerprint": "f56e992e315cdec664e20027b7df7733fab315cda2b36f039f5b07c977db67e6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000037",
+      "fingerprint": "b08f802b4e17362bfa2d82ca52f755830f88ad08a323d82ea70f43fc0fc22125"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000038",
+      "fingerprint": "ca585e311dda852052a5a84d97d99b5c3962562a11f6ace180e2c7ae8a1041e5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000039",
+      "fingerprint": "fe93fce8989b8f48a2943ebcf1681de72f3f892e6abda4fd8ed395ece51fecd6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000040",
+      "fingerprint": "e33648669ff6b310c322bca7b6090f6866b37831bb26d9517c7f395e5f7d8138"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000041",
+      "fingerprint": "756f560f744392c565d9e8ea3f4c6cca24edd108411be80adf2a6333fb6a4e68"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000042",
+      "fingerprint": "0c29945097da7314066298698a58560cf20a9289e6d893ab32e98a850cb56e10"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000043",
+      "fingerprint": "079911ba9bd145a5aabe9298410238d33353618deba4c46969cf5b48378ca260"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000044",
+      "fingerprint": "073a96fdfc12e7a9eb2fc61fe7af6fc119db1f53ebf473ceff0a300bac8313bf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000045",
+      "fingerprint": "c70c9bd4bccba940e78e9bc642eb03624440affb4846b65cb836972e71139d3e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000046",
+      "fingerprint": "e26f9831c37068b6f436613607fe748c9e988194cc5f753ffa54aca70ced37c1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000047",
+      "fingerprint": "cca317a25f43aba8f2da0547a136daab901d488f2619fc470f6180d085cdd8c0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000048",
+      "fingerprint": "cc7253627988a431a1be43053f03f51cad07a6bc1aa5e878414b212b83c1630b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000049",
+      "fingerprint": "5a86e0109d5a6fe2a57b65e9762bf4092c0fd872c2925cf396dbb7cff097ad94"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000050",
+      "fingerprint": "beee6f0811de7ded7930b092ea5916417da9d730b8d31c5cafd624fd37c0a93f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000051",
+      "fingerprint": "19613d1ebf1ab3ce0223a3e753f5c24aafec007641baa6f050d119388fde1d8d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000052",
+      "fingerprint": "cbf60cd6c181cd6f4aeeb9ef05bcab672ba566b296742d0b74057c6cc56a88e8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000053",
+      "fingerprint": "7a629e01d33f1fcb5333b3d96787df902eaa103277c589b75140f2503b61d079"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000054",
+      "fingerprint": "45388010aaef79ed1dc1f5a37916ba7d7d09ed4b38ba7606d578979cd6d6b457"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000055",
+      "fingerprint": "1cc1a06a24af4288d9eb0c5ec1f2778ea1cbc4bf04975308bc53378a7123ad74"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000056",
+      "fingerprint": "3c0b04e3250430357da45ee45037474ed5cd395cd6d66e586940b60c1389a453"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000057",
+      "fingerprint": "2a0e91285bbe442cb077217082d844957164c0a0a786704e36bfaf34746ece67"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000058",
+      "fingerprint": "a30556604cddff56ab1193dc61f948a883f8d57a316f69c98c527668ee97cc19"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000059",
+      "fingerprint": "c6479f6fdf571db0bdef2d710cff46f5f8d3299f8019da00002eccfd9a03f5ab"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000060",
+      "fingerprint": "2ced366c6777e0c361e9c03e508511600b88a2b1d8baa4d406e658e67045c4f6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000061",
+      "fingerprint": "8e4fe39f4bf380f2ddcd915f59bb8e1c056cb893e9085efc8b3bfafd3fec1c34"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000062",
+      "fingerprint": "e362ad02450374152453d3e6c3b707a75468062067283de5caddb6b8682716bf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000063",
+      "fingerprint": "ec4d3bbed428f09462d9caee32f2a07d773a4b98c594045eb9afce979768d142"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000064",
+      "fingerprint": "de03605d303d708d7c083bb98d0c4f9cba2bf9e5189943d0fb5e68602a50701e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000065",
+      "fingerprint": "fb3255de801c0fc4685aa43179041f14f85a73e0fe1716444b79479b419090ce"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000066",
+      "fingerprint": "ae1e04afcdcba54e4555eba49ce55d3153b01849a87635d6b5e73a18a899a5a6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000067",
+      "fingerprint": "3bc34f713a6b36ca7c5c7f060ee8756a1ce74b2aea906022db533ea9808c7258"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000068",
+      "fingerprint": "57605b73dcd5e044e68e0bcac2ee3f38f1f13cbf5e581a34055528e0d517e2ae"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000069",
+      "fingerprint": "005f3375d1e0d3e266900c8397e1326cf15ed34788d8343d734052ca5c67120a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000070",
+      "fingerprint": "064abd9fd5fb56b43a78557fc0246e4ef54ebcae81da7ddec28c5e0c4278b79d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000071",
+      "fingerprint": "a5a349048696d35c5f75455c482adbc71b23eb2e2b638b5ddd40f5f8b75b3419"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000072",
+      "fingerprint": "886905b9293e311b3335e98e1144015259425f2bb1e0d9b17c86b32f222aa13e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000073",
+      "fingerprint": "4f3cb6d7aff16174ed2fdce4c801996d42cb41a61112b68e3131a7ff5d6bf67a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000074",
+      "fingerprint": "0c3f7fe321f99eb0f2ae3394f7640a277f464b224cfe8478b51c747f83a1e789"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000075",
+      "fingerprint": "0ef2378e5895a998588dccc29b088275686ed4646af5aef1faf2db27836ff5ee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000076",
+      "fingerprint": "3bd1357a8a1af12c7a29be1742766eade464c408d73a819a177075bb34b431b2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000077",
+      "fingerprint": "2f62e5066557257de94bf5f0d0eb571a3521d6a1814f90ed5214d6e90143b01c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000078",
+      "fingerprint": "2e251cf0811d626ab2f64101ae829c114603724088915e977e25f60a4d270a0a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000079",
+      "fingerprint": "416d505a46298014f692d0411a90ff338fe68e63125235a82cf829a0391762dd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000080",
+      "fingerprint": "53562e4939c5ff86f5e89dd3ce82bd7baa31fd5743387a75dde46d36db86b9e4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000081",
+      "fingerprint": "290fd2e5044b04932a2b0746c6f5d886c317128e69c85c53e11b793ed0c88153"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000082",
+      "fingerprint": "d54f5c4668f93d0473836d3e633f730dd057c6bbf243b4815bc321ae9efca8c2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000083",
+      "fingerprint": "a85ddcfaf17013f9ffd8ca267c0e2d9bb3297afe9c0ee98bcd70b53c566f9ba9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000084",
+      "fingerprint": "a438493845446a230a1275a815cee21c9688e79bf1224762387f4f67d298b7a7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000085",
+      "fingerprint": "5bf79bb7507ab0717b3c8aeae3d34c5ecec4e96a3a28880f87bc7435a7e68eff"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000086",
+      "fingerprint": "9bc4c7dd4394364c9163e469c3e249dc02076728270f51963763e7f5b1501f7e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000087",
+      "fingerprint": "8093b0f643222b6e62147dab3b25f2bb7937b1c3538cd97ff3f5a19277e7c35c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000088",
+      "fingerprint": "1e7224a11b48e7db689e7dfda2b4cad2a98792d7a4bd76a544a6138b93ea42a5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000089",
+      "fingerprint": "7af5e3ce22c8f7da2191d37b2f4dcb4f6468c2d63ae899ab734deed06e0e3402"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000090",
+      "fingerprint": "21277ac502428895a07293d1efcaee7c67a7c1f662e8cc14dbe6bb0b91126565"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000091",
+      "fingerprint": "718e7537119cc0930a96eab8d909c953754d8db38bb8bef1acfc2df14ed9faee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000092",
+      "fingerprint": "d2f81f11248e0269e370d348f04ec95c77f1f83f8354407365cf4bf6d41a8c9e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000093",
+      "fingerprint": "5103adb0e3ae48f1f2e06c4cd5a74c61fdae66eed5b2254941830e1e3f8626e8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000094",
+      "fingerprint": "577ea038b741da1c2ecaa4c9ebbb1a6f1d9f252e8ae3b53e27da6b4dcb01901c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000095",
+      "fingerprint": "b4377fbdafa30bba9519954a08a3f6251b8489a24873323abbcb6aa2c516379c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000096",
+      "fingerprint": "83f846105136e8865623663f8b401c71210b8a368eab45de82c04a2f8ee7a3c4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000097",
+      "fingerprint": "de808dba2888c08039a5a2538c6dfec184f58de3cb79616e6515e0d51b764fb7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000098",
+      "fingerprint": "7535a8966b0f6c510f71307f644d134259e81f3f3552d2255cead38fa3fddc7c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000099",
+      "fingerprint": "9f6e766eb168949aeb3563ef44ab619829555eb60de187d3240192ce8c1f55e6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000100",
+      "fingerprint": "5ec8172c35d43ba90d8121177840695153bc65b2ad19566041502d91d9695c5d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000101",
+      "fingerprint": "a4c021f96691d4bf71a0078fc7978952fda001f660be525da99ccb2bad9efaf3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000102",
+      "fingerprint": "101c8614f79d28293c595d0247ed09c453ee1e1447a470891c00549c4938760e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000103",
+      "fingerprint": "910d5dbabecb786221003c098878d2f19f55b483b4cd17529f5c9f14327ac3b7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000104",
+      "fingerprint": "ed624ac50e73a6d98067d724d87a4b5d3cf05007a50ca24ef495e47c02bc6926"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000105",
+      "fingerprint": "884e7ea940a0101d377bd57641f4fe52add32d6a1dc36887a2363f962fab7dcd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000106",
+      "fingerprint": "d0f8d350b15f4c0eff95f25bbbaa28c77327c1025eb98deeb2d07374fa5d106b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000107",
+      "fingerprint": "bf482b32d4acdeeb8fc36b32db17d0025e58277ed843f2c6f7ddcb6ad35d3164"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000108",
+      "fingerprint": "d6c4ffad7fe403eeed02f7eec97d8033bbab54582283a354269dbbf4227aed14"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000109",
+      "fingerprint": "74095b81ef140534bd174e8ecc528e17ad749d6e67e6f03cb15efe3aebbd5276"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000110",
+      "fingerprint": "a4c77da7d9d26ece17f5b38300ac382d06897aaeea7f3484647f4d00b77b645e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000111",
+      "fingerprint": "ce6348cec51044d1b0a455b707988d7060f38658b3d838c189e86f54784664ab"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000112",
+      "fingerprint": "c4c34c70dfe4f0f383279ae516cf38d6f89eed356b41a2fadb665980667b3264"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000113",
+      "fingerprint": "64109141fd25c2f1b7f9d7e6706356c13286dd461c5301612c6be3687f618248"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000114",
+      "fingerprint": "1a2412a1f4439ccf6bb7ff5ff645a981188a362d05210867c4fa57f8df7a1bf4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000115",
+      "fingerprint": "68123558bbf8278382e26830d54c8be9bac26e43bb54f5baa4b64683499be3bc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000116",
+      "fingerprint": "3724f19e66a23274a0139c9e3448c755fd22b5f3c463ca3cd10b48b467b377cb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000117",
+      "fingerprint": "ad80d3aeb85a28ed5a0bb41af1a8381db0890a8269f78530643ab51e290b28fc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000118",
+      "fingerprint": "48d59eccdd722a7e072217d3cdc44e26b03a170d48c082776aa2f0e495ce36bd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000119",
+      "fingerprint": "bf8d7ae0276b8c0cc7918d4cf05cbc5db38f07f1bbfc53aa15faf34c9e6f8c92"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000120",
+      "fingerprint": "20538884aa51c4d7719bc5508341a8e03ebe6c9e96e6137908c2a6cb78118b2c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000121",
+      "fingerprint": "2ea2dbb039dd89c85c12be8d44d84bd8ccc033d2abe31fd66faec84d64f7cd9b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000122",
+      "fingerprint": "6f41195cca6977996f09b07c14a09367164d0a2fc761cb00c80a1677fbeefbe5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000123",
+      "fingerprint": "29906b0265ece7677b3cf0fd17d28ceaa281be2abf6770ae56f977685803eb17"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000124",
+      "fingerprint": "f7afa004627c262854087ebf7c6fac7197df7ae034c94ed09145b9a5fcab0eac"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000125",
+      "fingerprint": "de53b6ba6171af9fadf3fb890b93b9dcfccf457b4c7df0d609d31c1e9e6be35f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000126",
+      "fingerprint": "8b6c40aeb21d9dcb12c21b8f8ae15bbf1fb1b27f3f0ed321a5e71135e0c8a9ae"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000127",
+      "fingerprint": "b707cb1d18f29db548ddcf062cb0698b312e83cf9238e9ca4adc9408c589fdcc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000128",
+      "fingerprint": "dec93ad1f78b6262a7a6818da40461db27c3dae9be8daaee4808a4df83d0c200"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000129",
+      "fingerprint": "59866b0e80ecc615a0fab0f043f912f51f75683e56d760eea2d4a84f96e20346"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000130",
+      "fingerprint": "129639cba5910b1a1eae14df49b21f35e77d3baf5cd21b274faa9eec3df113d6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000131",
+      "fingerprint": "27482f345e17a208b090968bf0b79981eb9402a34e73bdc64620bb3598d11f98"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000132",
+      "fingerprint": "2e44b23448dd5abc11a6a23289beef8b35cac53cc136a00075a2dc879a0f30b6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000133",
+      "fingerprint": "7bd5a7f3be6b837069061bd2e50f72aef24af75e0168060fe97375db1b8c9ce6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000134",
+      "fingerprint": "0922b263c81abebba7b534902b1398b4bef99d50c28043b88ca04b67abb3f725"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000135",
+      "fingerprint": "e0d1ca11fbcc9c59213fabc6f97d2e0a530ec871398a405e0d8f97a18bc2bdbd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000136",
+      "fingerprint": "e8ebcec9bb49ad0a96f9c9932c84b2744e677701d56e6787056e17ca4d84abc8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000137",
+      "fingerprint": "caabd7f43db642522e12e79fb54cc10e8ad39ab7fa35528af9316efa65f28578"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000138",
+      "fingerprint": "5628f270e16d27321b437337f9e2bbffb18817a0795ecbe01783829005e8702c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000139",
+      "fingerprint": "334646c93125c56b437c61e1099d4e91cc513ccc05e9e0e2ebb8b0eb2ccdade5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000140",
+      "fingerprint": "f4e01b74fd34f5d49b2bcc7ddaacd5f4a43cf72a94c9c057dd455fb51bc5d9bf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000141",
+      "fingerprint": "c4f61dfb12b45d9c9cf141181ec225b510a61860714f6924d1131252d164155d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000142",
+      "fingerprint": "43c258b63e28f99210bbe15516e88e66638bb0caede4e4fd17301fe1baefd4ee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000143",
+      "fingerprint": "98d6d12f3c9294e309c89100fc0233e72bd7ea4c1504067077eda0d6681a6e6f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000144",
+      "fingerprint": "316a8c702f9075b299387b39d90d4e13cf43b9c01a78ed506f70cb2055b16c2d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000145",
+      "fingerprint": "f11f89aa510ef6e189d5c5967bb211e4ede4cd665222d78951c7025cfefa13aa"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000146",
+      "fingerprint": "61ffa5d4c5868c5fa459ec72438b0a8d841a06f8412d78f7e15a91dc23071bac"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000147",
+      "fingerprint": "d6070db99cad9e8aceb348a994d1f5f12838b9f956561e8a83459e5da90c3406"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000148",
+      "fingerprint": "28e3875bd926a81b6d0afb9cb636af4b466e40f341d8162c788333a407f1cfbb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000149",
+      "fingerprint": "0a7210d035158a2010db4813dcc8876c045e663b20b3932239c62021926b889a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000150",
+      "fingerprint": "0b92a2c97fdacbd6f1e4e76f33051163a51f19221fc9ba8f27436bb52d5a2474"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000151",
+      "fingerprint": "09101d72a085c87b52337741de81bb10571c953bba3f5bbcf403f54d3a744eee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000152",
+      "fingerprint": "f80c4a2f31f5d287e29c0bed273a7ef6243851df6bf0ea43689bcb7d1630f8ee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000153",
+      "fingerprint": "42b3d9e70645fe852a512eee826cdb80c6ab0072e6e101551ade33c4f943037d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000154",
+      "fingerprint": "0bf764096e79d62ef170d10f25676b84b0478a2ab60006c922f8001e1d616ea7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000155",
+      "fingerprint": "e6f8a980f680768df0571bb464610fe8bb377b584196e62c7701f034a905c73c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000156",
+      "fingerprint": "4db4b21691a0c74daf6dc5971e414c814e9cd2d9dcfbf18d013f48bb5199c755"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000157",
+      "fingerprint": "227f4da1bd6c7aef87d20922078bde4ffaa7032f69fad3da156b5931051cfaba"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000158",
+      "fingerprint": "249f02166899fe7f1816dc9fd4ae06866875efc25bd786622c4ff03d1d99cd66"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000159",
+      "fingerprint": "474827ea44ac0aeb6c988d285febc43a57f0f6a59957bb27cdc23bc20dbbb47b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000160",
+      "fingerprint": "714c20ed1a458897144decb11d74bccc319d04a0cb2d9cc66b0815e12ecb2bc3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000161",
+      "fingerprint": "aaa4846c02bb6341a8885e9e66e486144addfca3e566b2b969872daefe73c6bb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000162",
+      "fingerprint": "a9a6d54355d8934e53c87dcabbf5eb0595c725f8413b1e510eb0cbb6cbb0bbf0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000163",
+      "fingerprint": "37917e3aa513494dea8281c4b97bfb162bcaa70ff9cd408f746fc19627ba5b11"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000164",
+      "fingerprint": "1a41ae329e668762d462d6c570d2bf1b58661f1f411b0afefe6a2f8c25075030"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000165",
+      "fingerprint": "c112d5d41b9e0ba9ea09be11e623966b444a9297a6a8ff47af6b5f18e4bc7c75"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000166",
+      "fingerprint": "72a8a63200e4985d148a35085f0585166df6ecd044a5608cb4a51144ece5454a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000167",
+      "fingerprint": "2969aca3b50895be76bd11f298935549c9ab2473d1acb462341e7c4442a0ab0d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000168",
+      "fingerprint": "dadf353667f0e128ba68e93f5ae30a2f13149b7ecdcd7ea4608d88085c054135"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000169",
+      "fingerprint": "b6e97a919db6b64babda90c0011dd02ef71d37da91f016778efb15079ae0e9d9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000170",
+      "fingerprint": "096ff3f8cbebde11a57e10b85fe898371b37c81151ccf3b884786ca063999c3e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000171",
+      "fingerprint": "0ee2f4ee9e7b98343d64f5e7e0cb03864512ec30f76b16eefec5feb84a3375a3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000172",
+      "fingerprint": "600ddde378e99f78792a43e38e366650b106820458d6038fc321c07101e0ecc7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000173",
+      "fingerprint": "800a93f737be1b0747d3b05f27684954683cee59017a92e9de921ce58cf64d52"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000174",
+      "fingerprint": "712698395a00de57f4bd28fd689009c281dcac46b38bd30a0dc0e5d46b7139a3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000175",
+      "fingerprint": "f36e559f32eb414f746bc3c62558ac362b1c91546cccaca4d17685ba9e33d3ec"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000176",
+      "fingerprint": "b3c8effaae8efbcfd778e31fce551f61f9910e12925fe7cd2355fde43c66963f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000177",
+      "fingerprint": "bc8dfd5d14fe3db12c741867c5bd0b99f25c6e8d70e961a41495f6e50990a690"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000178",
+      "fingerprint": "e64c157c4fa1c5cca81c81fa57edcd7044bc910f4b3208692f39b7cc330d0bbd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000179",
+      "fingerprint": "28446f35f52c090a2a61b4ff583e12d789e9a745ccac0ffc0de36c1118fe3a65"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000180",
+      "fingerprint": "9bd7ec75b52ac60b0c4e8a3b955474b726c78e997a215a28fdc45b2bb0fd2a57"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000181",
+      "fingerprint": "b521b124606c22b1ff5eb7130e4b18641594a1d471f36c01518e578bb94effa4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000182",
+      "fingerprint": "584d5eb42a33a80525705e88d552cf255e4d6aad7a3e644413a0bf4a249d897d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000183",
+      "fingerprint": "50fa29124a3bd4b70ca1752a3a3f1b78c5f92e7039dcfbf9ffee175866e74cf2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000184",
+      "fingerprint": "f37d759a869b6bd3ae3efdfa79ff2894c53912577d95cc39c6ca01bd677b8e66"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000185",
+      "fingerprint": "60002c576c5ea9084dbc616a1b6d6c4a347702fbde9769cc8111981cfd4d179e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000186",
+      "fingerprint": "b643b8404e888830d17a337f467e1345dd6dbf78dc54e015b7d46de42413f0af"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000187",
+      "fingerprint": "d0d48be41d2dbc6853f27a1aed7a1e7dab66dca084e0c93622fe7e23c5437909"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000188",
+      "fingerprint": "36091dc25684ca4c860f344459d8f8bb05c72c61522ed9677246564cc9e6b11b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000189",
+      "fingerprint": "641a6bbd75e53d33847f360cd4ad31b156ed182d1886f9a74faa03fabbbd698a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000190",
+      "fingerprint": "db3f2af7df5a51b68b54ab51df5c87a1032e8939e134ef0640dd66e1b85d35f4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000191",
+      "fingerprint": "cb71a31c9a65b5e5c8036684ea1ddbeca9a6043d89f938f5099dacd332c68bcb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000192",
+      "fingerprint": "5c14d1dcda564091268676dc3eebdc9a8239735e131f77db2736c22cfceaeb8a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000193",
+      "fingerprint": "d99384f647f5a8ac4a5398dbf08f2c270999e1b966a0ff5e1b095d98d2749708"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000194",
+      "fingerprint": "8b20d91f99b50c8737dad9097178c19f6fcdac12b369809d44667c2a9103e216"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000195",
+      "fingerprint": "8b05bab0625e5fde060911a8d1b31df97c229e8e53fcc238d00401f2c76003f0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000196",
+      "fingerprint": "dffcf3ba36720245f8d177d39a3f56f61948e510212f647f0f816b80d6ee763d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000197",
+      "fingerprint": "1b57eb481d9db39dbf33c320bc2c03850961c1d0f971c467e65ac335e727888c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000198",
+      "fingerprint": "e664129296ef6e838fc925dc12e6beaf4f4d513a11b1f38a2ca8ecd6cb7f9f3a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000199",
+      "fingerprint": "123ee7559b7dc494181123bd7c3507ca6b8c1ada9e5165eedfadd76d5a54beaf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000200",
+      "fingerprint": "e0145b842ce1ef6c997ad1184a013ae0da7d8fbf7c0d5fe019a427ebfca797ba"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000201",
+      "fingerprint": "f3ec273a86b0df3fa895256be49e3ee50489f6dc25117876a3722b1ee1420beb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000202",
+      "fingerprint": "334ac5da720dbd6dbfc815372520f715f8f0631736c3b489d9e8d4c9a932938c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000203",
+      "fingerprint": "8fca71369ecd755318bd8de443e906078a89e400e4ee5c4c0caa8c17297bc0cd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000204",
+      "fingerprint": "08845ec0a1ec7dd1de33bec092725d2ea6a969ca613937cf5f78b00eaf9dff16"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000205",
+      "fingerprint": "edc4b9a06440f47f830ff027de5c19b8fc1bba869098b2870f4fa4737ae4ba33"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000206",
+      "fingerprint": "043c0cb521bbfae97a18d51e68ac57e6583e9271c1c6ad12785ac88b030196d4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000207",
+      "fingerprint": "c12ef2f18ee6ef7fdb4521f5038fa2594efcb3638f16dc858f83c5e767dbc4b6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000208",
+      "fingerprint": "e4bde47399a90099a03ac810f56620f5d92a46dc2b1fb5d6001096bc57211286"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000209",
+      "fingerprint": "bbe8c34a940897e3c81ef8213335e41f67621dd5461fcd7637419ebc99bbfb49"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000210",
+      "fingerprint": "d6315f908390b776893d716fd35f539e36dadf8fc657a5da1c4af37f47017e4d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000211",
+      "fingerprint": "2231861f16c14086af2fa62b328a6123c7be3ef6784dc9391455fbd2b60b6038"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000212",
+      "fingerprint": "f218d8a6d8429a98ccb49fcd7ee7d696243ca5d242eca03de5e2c6bbb0b4ba95"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000213",
+      "fingerprint": "c97bcd1779b5d8eb1b8dea3faaf9b40eced2f1fac7b2e10a89cf2c449a657831"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000214",
+      "fingerprint": "78435bd6194d103c9048b79fbc1f176d2be7d287b4b776e9c522fe15f9aa8c4f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000215",
+      "fingerprint": "ae05a570f3ab59297501ef76a9b1bd56458db2c636cd286c98cb0aa7f60cf67b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000216",
+      "fingerprint": "5950737e04ddaa973f3f6962952190368e9d9f5a8e320c0b9963715c4075ecc4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000217",
+      "fingerprint": "b5d08ec2e503d719536b2b8d93c263ea1ab7b24cf624c8e89b6809e0c8a59ec9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000218",
+      "fingerprint": "78050f0c61810b2b0cab0541a89f7fbb811cc8a9014cb49e1e715e6d29d754c3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000219",
+      "fingerprint": "e9920c3526e48391d0e5fdd15bbed564d8c6d29f7ee83c0b4ab0f0ddbda37f2d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000220",
+      "fingerprint": "bf02bd15feec716585931365647283cde30883da73b21647a8b236b317fb54a9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000221",
+      "fingerprint": "f29a1e08954845af6e4e2b177ab52ea12185bbdfa4828298125bdc7622988277"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000222",
+      "fingerprint": "7db8737cfe77bab477304f43f6401e498cf04c79e9f20c0642d0da75dacce5ef"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000223",
+      "fingerprint": "97c1b357a543860360872e0d4635810043941c7468708cbe22ab2818c11bb8fb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000224",
+      "fingerprint": "7ace1be8891c7d578648ccf71bacea47a0b5ed69ee3e4f25f2686e9dfb04598a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000225",
+      "fingerprint": "726054b44afff4ba7606a03700b162865d4a57746094b77087bf4fd2bb3c766c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000226",
+      "fingerprint": "56facba028d7c67e2a15e57f8e327a9c469f3269bd909241f296dcbd6500f166"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000227",
+      "fingerprint": "cdf88d52cbe97a49754669dda1a86d23feff798cb7658310ed9931f1bd81b8fe"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000228",
+      "fingerprint": "05de97abfdbb5a3ef0c779121994e97dfdfcfb9d3c5589611006379513a39478"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000229",
+      "fingerprint": "395eda752f6b45957e93e87d8c8430bc31247911da0a45b2185fcf54fe378469"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000230",
+      "fingerprint": "f9896e0dddf6faee7a427ca4e07cb0ea0b6fdb340bf840b8f32a7aec38e96152"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000231",
+      "fingerprint": "a2416523d6f4269d06039d9a142f0e97cbee616e77f5f85bcc88f425339626d2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000232",
+      "fingerprint": "10991fc50e13e61c488f3bfa9f77c0ce095ed2b1b66b61d17700cc132c37cc40"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000233",
+      "fingerprint": "f5e5758c45d555839b6e29e7b0fd6e3b9add05e8ac234e15b99249348d8175b3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000234",
+      "fingerprint": "ea4424a236ef5366c09d06d324bd5fe7ff46f8a044cf9e545514852f8f2693dc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000235",
+      "fingerprint": "b5ed705b53adbd033a28b313bcb6e0f1910c79b1bb18808b2257ab7e4a1abc70"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000236",
+      "fingerprint": "e08156216a7dcbc21fdddf6adae52800b5a16ae57a06eebda8180d55fc17b4ca"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000237",
+      "fingerprint": "7c9ae982c3ea260f87a543806b1b7e30659b71efdd23578fb0a01d90a324f450"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000238",
+      "fingerprint": "be1a43ab6c9cce139dd8cb9918f659d87ee007c130932e72282262b1ea35322c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000239",
+      "fingerprint": "b18958cab600f3b654975b2ed75a45462efae96e2c3a5f95fbdb3b7da53c3901"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000240",
+      "fingerprint": "2248fa4ba6d1b547a44499154014dd6f059425d119ed0145757288577ab75604"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000241",
+      "fingerprint": "5e3d5347e74483c55c461fcda9224cd5a1fb6b65c733c3a2b6e4e98608d534e2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000242",
+      "fingerprint": "7594442efad1ebdbd8ca21ed887adf18b90fe8d06bb373e25997adafdcf5c313"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000243",
+      "fingerprint": "930d7abbccbea20135a426753bfa708b814d134b70163f66a9065701b188cfa9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000244",
+      "fingerprint": "7c5c7485c62c8471fa280d9488f6a9dc8beba1f853c18160aab308c42a9a86c8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000245",
+      "fingerprint": "cf8253e32f44c982a36f64e60cb2ba3681033780a9b9108724017735dcff4311"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000246",
+      "fingerprint": "9f26f341594f29b19ad0cfa55a4ed68c7d9a126946d53c93ffdfe1c7bb00fd1e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000247",
+      "fingerprint": "24a14825d44c7b130f82a9c96f2fc3fb39b2aa2e6f287c6b8dc96b96003daac4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000248",
+      "fingerprint": "f3125fc114d98889737a063c031103e3568eccc1720ac0c26fb5fef3bd1d51c9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000249",
+      "fingerprint": "0716bdc38dee0bd78107aaccbbf4464368cf21b16e89886112ca70f5af87d20a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000250",
+      "fingerprint": "e0265199ec107994d5160e0c0a797e64c62720bbba957aedd392ffd2a0a193c6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000251",
+      "fingerprint": "1abda39cea523fc2ecc169eb7b5c7447d316f39d74aa4b2713ec13476334d1c4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000252",
+      "fingerprint": "ce429a6e7c3058229501de0c99ab7607f6688fb39312dc7926dafb93dd4f7a12"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000253",
+      "fingerprint": "5426558c30aff4203b7f265560adc5e2626a3ea06205c737a2b5b5ea122f5a1f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000254",
+      "fingerprint": "f64bb9483649963f9a3450577d6fdef760f029af57d29e446e8c99b21e867ade"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000255",
+      "fingerprint": "06e9a2bfd0c6915a3ca90b83f0d000e290fb1997523baa7919671ed420d6a0cf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000256",
+      "fingerprint": "849cc274161df51f06fdd18f568dcef920619b5e90adfb3cb23f8d0c20eca5b1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000257",
+      "fingerprint": "77406d7451f5ef0d302cade5c8296b09d1fa09ffbdfb78fb6c8c38868ea43eb4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000258",
+      "fingerprint": "f3f84876b8f444427e785f8fbbca9c58760d7a415101e0c9a570430bc1e12a32"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000259",
+      "fingerprint": "165bfcc2865f57ae3626db584bb1cc8e5344090f486609a61a3249adb9942e19"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000260",
+      "fingerprint": "05c9589015b85242ca527d6de8be46792c78c15deb2d48c65fcec2f490d318bd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000261",
+      "fingerprint": "da13721a3d2e8c16699b794e3453290a839a623e8d85bc2908a0274645ecd888"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000262",
+      "fingerprint": "03ebe43daf7332c68e756bb6aff5b5b3573f93e100d37716be1db8dbdf502c15"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000263",
+      "fingerprint": "4f6c1c489db5fe78dd104cebbc99fa17c6213c3f735bff76d2f114a5f9255e87"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000264",
+      "fingerprint": "4ba6b303d816f2839d314be50bb146433e1b95523d1473887a182f5d9a076f7a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000265",
+      "fingerprint": "a697870436334eafb1175f788caa7d255e4cba9e1f6d1671c19798b4cbf2e6e6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000266",
+      "fingerprint": "09d1733e941b80b656bc0399067149f2fe65327dd1d5d7e542f833db7263838d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000267",
+      "fingerprint": "1c3d84784e4bd51a109c6e695ae540bae6c76b3cdd9e463305068eaf779cedd9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000268",
+      "fingerprint": "6548b3f5cbf9614012669dc8cab499c3291fe6508c2a9ff0a5d8bca9ecbca5af"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000269",
+      "fingerprint": "c68a911974c8a0d91979f237de0ec6343a7ba88e9d005d734b46e5fcdc6affeb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000270",
+      "fingerprint": "a1fa0e607c79546dd7fef4909c0fa36b39612178d5cb2f2407a99c57b30fe336"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000271",
+      "fingerprint": "b5d62c8a4aea2f6a6994d3edd0d673c76f3f8ab1e7589b53db026dffffe9d410"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000272",
+      "fingerprint": "36b3861cc69be8ee1f2fb6e453c2e7f41a442f4f3a2597fdac26f76d1807f8fd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000273",
+      "fingerprint": "a0c9568d6ad9e5d750ce917df7a262ecd30dc4ee530da32717a49967e676da4e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000274",
+      "fingerprint": "18138568f4cee20a7570cabbd30993c8bbfbda22f2cd9f88f1ad1d02a5163220"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000275",
+      "fingerprint": "b9036b5852cfee3c769b93699f26551af7fbc483ed56de722e30f09db6eb3659"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000276",
+      "fingerprint": "18d05731ca4c2e4bfcd2d31de5c9e8dad004ee350e831a67c025f15f090f8c50"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000277",
+      "fingerprint": "fd73ad27eb21dda18d7e222d8bad23f980bb63f51457b4b15d7432f11324f559"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000278",
+      "fingerprint": "bfe21dd2837b68d4e8e1488f0cc16516f1107c1f8aad6db0b621c0084b707367"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000279",
+      "fingerprint": "1c0a7805272cc63e1deac13e697775f06e78f3c607938647b8ed032dff728b15"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000280",
+      "fingerprint": "6099a506a6b4986710d52f080be1c061de8d6364c73a6717f37064766436a607"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000281",
+      "fingerprint": "bbc9adf9f56f3ef747de115604e3ff159a42af4bc7f5f781eb4cc49e28dcc4ec"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000282",
+      "fingerprint": "9d843e52f87477b7116411154e78b2f75dc41a226b49cba79c0f71bfe193ae68"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000283",
+      "fingerprint": "4d84a3fa51d4995f1b967237544e9639bd3d922f3eb44d6b6ba5b112d9181f3f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000284",
+      "fingerprint": "fcfe49f6bb1dbd48da3a3c7fcf3776af233060bff9721dfc7272801aa6af7694"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000285",
+      "fingerprint": "2163d97222679f1b51a0a526ba497de43f4e06b167737814c272766bd7ce16b4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000286",
+      "fingerprint": "e43d04559109739197df1e336184ce2c27d129e3937538913a528f8b812681bf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000287",
+      "fingerprint": "a60314406533435cbc8bdc175251ff48a7a8c7f8ea87635178b56472cba1feab"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000288",
+      "fingerprint": "fcba82e3fb8ae62209b3e8daa386024a4971fe6d3dbff5a3bec8a4e38d67123f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000289",
+      "fingerprint": "0728936e29ed97495e1432d20859416dd6f930d5b0e835121b474c5b701668a3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000290",
+      "fingerprint": "96ce39b31b808ac598e78caa6c9a65aa4050f91ddc76673b1799bf355077fc38"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000291",
+      "fingerprint": "00915d54993bfe4d4bfb76cd0da05cbf5df0731c5c37594c43fa338a6617ddbd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000292",
+      "fingerprint": "124f8e51b78a0dad5c25b2887d18d566a76ef6fe9b9e4b0d218ec3bf41b2f637"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000293",
+      "fingerprint": "9eed43f4fb56537f0d8a9f6f9e642a25d7f73877d8655a7dac76fdee4c71aa70"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000294",
+      "fingerprint": "994736d14165afcb4320cee15d46188ead6d168e6e43ea9975ff878c9b3b5a2d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000295",
+      "fingerprint": "dcd042322134f84318d5ef4db63eaf651e42e13cf66c8f9bf82db9485dff3cb6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000296",
+      "fingerprint": "e0152cc544e778b11fc22593eddd11fc3b41161e0ae0331105825fd9445a7ad1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000297",
+      "fingerprint": "8cd8435e164098d99a16b7527e6825da7f8129686c5f8e844982e58a674b3924"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000298",
+      "fingerprint": "e7c5c30308d75a239cc925f05934f2df665d9da9a3b547212d5375a73821f6a0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000299",
+      "fingerprint": "95b4244a9c2bf1a88477118c2dad062d93a49a40415c2442b7fa8c26481304a7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000300",
+      "fingerprint": "b8c40c55673d468237f6ba216635cb8e92167d3eaf60a28648b3e47ebb704eca"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000301",
+      "fingerprint": "8c3617185696b11dcbccb5595591ea43fbd2addbde2dd6844b3891297ca38e8a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000302",
+      "fingerprint": "4cfa01f56e2795d7003212a489f6ef0508688c0358ca1ec800491342203d9886"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000303",
+      "fingerprint": "3330d517bc3f90168b5b139e925be515236e9a0b97662efbfba9359a7c656da9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000304",
+      "fingerprint": "9b9a926198fce37d6a8e68158fbc2a6c11985a49f34aaa7a30a14b9731dfff90"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000305",
+      "fingerprint": "3284bee66e2a234ff8c29e9be332fee7f0484d05af3921e92b5c0dc9cc1f67e8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000306",
+      "fingerprint": "cc33616128cb45d90c67e4a9a939dbe6db41325596e505e96c3fb34375c6f468"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000307",
+      "fingerprint": "87e31655479b342b7433a250c6d6f41d981bf0345ee52dabdcce508662827dfc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000308",
+      "fingerprint": "dbbc3e7a3c81e0de9c343eaa2f1d8e297f8d7404acd79f50a1a649f3702ab0fc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000309",
+      "fingerprint": "c0047e75a6accf2be606a2b9355e22fd42be3d3f1189fdeae6746ce0e32adc13"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000310",
+      "fingerprint": "da8179d64785787a911096444b4203fac845072b3853b4eaa800f8743720642f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000311",
+      "fingerprint": "8972c8389b1563e1726820d839e6f93665cd490b946417203537e2faf3dceba6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000312",
+      "fingerprint": "c9dec040439c3843b336465e256af23845f5715b7b804905e3711c36ceaf11ee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000313",
+      "fingerprint": "de9c364fa0cd8df02eef213d887957486b97fab361eb89ccfa2b697b342380ea"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000314",
+      "fingerprint": "e78e5e03526a09a79a989c83657de698c1376eecbc9519f2a1fc140130e305d5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000315",
+      "fingerprint": "a033056c128dbafd484f56bdafc21145f36cdcc4e3d30ca9bd990e6b7a4a084d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000316",
+      "fingerprint": "2f7b9eb4541e0e3cba98ae6a7a60241a2ec64e89ea3bc3431e6fbefc0fd8b7f7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000317",
+      "fingerprint": "d0ec69f5d5d34d3cb57fa099ab5abafc94c7a9b2aa4432c45b5d8dba1efde337"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000318",
+      "fingerprint": "9f9f72b3883ed451932fbb24ea838adf7c5eb1a48e160875dd9dba908ee0dca3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000319",
+      "fingerprint": "be641c1ec06bb214aa788f257f968ec866cff6d5fe9477196e249f3e4ddea5f7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000320",
+      "fingerprint": "435f16ab0c5f995eac70ff65786d5934397130b3ef93fdc8f035245282bea015"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000321",
+      "fingerprint": "9f4c596cee5bfc1d45538eda3eb0505569f9403802871cae2423f7c45e82f62c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000322",
+      "fingerprint": "2f9efd9a163a606e22ef0cf4d97068846c6013f11cf84e1f90970af46c41b1dd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000323",
+      "fingerprint": "6a76043a4896c73222a1dd4706d9baade966b8df8427276144c8e5ee91097a96"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000324",
+      "fingerprint": "224976ca36e829578fdf93d44c208be854f679c360ff84a9907a7a04e6a5fb00"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000325",
+      "fingerprint": "3ccc66b3b9c819553cf807e9361bbb1f2a91dc1620abf57e9a1ba64f6f2eca4f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000326",
+      "fingerprint": "fd512941869db23479d9bb9cbbc9e5b8b6b6cd62ebe721bc235dbd83aa5d76a3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000327",
+      "fingerprint": "eda8f74c87c16ee5881c7f8611dc16e0902be3ec36e4f963335906d4de35c193"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000328",
+      "fingerprint": "8d1cb4c11d177c013a479b5e49453f37e6d544459109fffa28ba7f2d8f254f98"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000329",
+      "fingerprint": "229a8df5422c96546deb9940c3efd030cbaca4e460dddf7fb0d71112c4af9720"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000330",
+      "fingerprint": "e66670e1c58c6bd52bf7e7895c0f3fb67f863c413e8cab467d7fb932a8446d1a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000331",
+      "fingerprint": "fc3a367fc26ca26e7cccc3ddc337cd29912c9ea24684397ce56b62a4d0609942"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000332",
+      "fingerprint": "6b12983b89d098e587df900007d0a02382b0dad777cd38b9355ae014a289d7ad"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000333",
+      "fingerprint": "88f76b4457c3c2369e239d71a8ae5c99c79621dfc666e9f805b445f7847fefbd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000334",
+      "fingerprint": "72b83e3f8344f5294df2cc2461237397815bd6ea9fdcc65ca02849713ff33b7d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000335",
+      "fingerprint": "109bef0df696ccebf11b27342cf84227ac6e20b05e54af985841e9863234c386"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000336",
+      "fingerprint": "78f80a7a485a75037fcb0c7db6f5d2ee039bd1101c6af601f3904d84ecdde42b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000337",
+      "fingerprint": "8498315c4c4d03320a2efd945376d3dc18124685028bc9453a2c0fb4eee11f57"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000338",
+      "fingerprint": "e26a8b591c02db2557c59f1b5185ef9c0b769c5d4749651ac25e6e17cb1342da"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000339",
+      "fingerprint": "d16481c48b16d779e48fa4d11bddcc007bd5f8dfb3524a755f23934dea2936c2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000340",
+      "fingerprint": "ec51ee0cf85fc2094974e2165012f53dcecea57af540f814c4fb9bb5c03ded4e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000341",
+      "fingerprint": "84f54aef31b633b5b413002b463a38bb6cae0bc636dbd232ac69373a138a9148"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000342",
+      "fingerprint": "ab8f3905e62573e031bcd83e4599a79680c455d49340c22c50adf430002cd176"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000343",
+      "fingerprint": "b9817071736f58d83c5c20cd0871e936b7f9af5c3528cb693b0e641896ae239a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000344",
+      "fingerprint": "e116a63e3011d5312e22679413bc0afbe494bb4379370c66fd8f4ba6d03a910c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000345",
+      "fingerprint": "b5c21c6b4219b82b9be7dd28e98e69dbf0148d0b0d71c73fba6056dac1ebade4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000346",
+      "fingerprint": "a4d7e20e2ef8d98c8675e703a74115d61a2bae17399ec5bd719b0f74ffe7f963"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000347",
+      "fingerprint": "855e29b9d9afd1db1a7ce4dcf93ec053dfa088c87812f53d852519870de6e7aa"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000348",
+      "fingerprint": "1129b894932e97cd76e8422e85ec8c7272de8798a2417f8327b1d7a3ffb825e4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000349",
+      "fingerprint": "0bda91716e30e9816664058d280d04236e8cf94d85555ff05f96b13bf1196103"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000350",
+      "fingerprint": "2a56e0abcdfa29b15048a49b3e9a0ce9cc0977e18a3023a75689cf603bb47de0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000351",
+      "fingerprint": "04a811f3d8e2ef7cc86e8eee8068ccc9f2cb5925bdbec9ba15ab69f3cbe06b14"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000352",
+      "fingerprint": "243eeb56ed1b8c5ae5587e29ec45c82a1721741be91a31fea971cf0560cee12c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000353",
+      "fingerprint": "15ff3ed9c4940d6a6a0171fa53b430bcba8a01b506b902d219f4c66ff947c20b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000354",
+      "fingerprint": "fa057430639f458992a7f4baeaf298acb99b2872f95fe45e3373e1ba61f29ae1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000355",
+      "fingerprint": "965eef41b5a392db2aa9ae235a77146cc9c520e9c935780bf4dc6e1db0e02551"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000356",
+      "fingerprint": "65b7c3b91a07b50a59ad8cdb18abff33b7836a82ece984b425eea3a485e3346a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000357",
+      "fingerprint": "e018ed1d2077ff7cd060311261156829b196f5afae8925019993692f4f23f6ae"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000358",
+      "fingerprint": "04c7eff009cc27792c56f7e0245a5dea5c4e9ce130f4445d2f2f55fe9e2a58f8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000359",
+      "fingerprint": "ebd4c350da02b8e805c24b2304ba45471302f6fb4a5e6f7f1e56f3b9bde45abe"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000360",
+      "fingerprint": "15e44458c37c5c7f44ac96c6a125b3d299e0b822ba285646e092ed480375c14b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000361",
+      "fingerprint": "c47aeb491bc5deea010c78cc53728bb0a5a75eb302f215442404126bc2486b57"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000362",
+      "fingerprint": "1dc4c2afa99a6bb26505848f9d1c40a98c2a49914a60f71ebf3930e4bd50a65c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000363",
+      "fingerprint": "90094b2e42e73d64f85d2f11d03d191176f8ba933539e7801d3a2c8c78a66e0a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000364",
+      "fingerprint": "26369d3dfc03e4c1a3fbba169e88436a0164917067584f4d3db4f854151ea9f2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000365",
+      "fingerprint": "a4a55d1950dbd5ecc72797d353ddcb95798ae4a5d8b0d9bef3568feb3be8a72e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000366",
+      "fingerprint": "a8da07bee11c41124a891686beea96da9bb5bd7f6b464f0582aa613e4a6ed687"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000367",
+      "fingerprint": "942affea794ec0aee9f1bd3fba2de90aa3d65e75fef0d63b43a0c3f277a72cf7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000368",
+      "fingerprint": "338f464c75107d82e8fbc94bbee740f728614fd8ea7185ee4b88a6f0986b5072"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000369",
+      "fingerprint": "f4d5d3a43687ccd5f7ea5245ea28c356f55f9b8570c95bf91d64917778f8849f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000370",
+      "fingerprint": "03c258e520416c344443bc9e7f8aeec220177a400d500ff963ec9ff0b0170564"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000371",
+      "fingerprint": "5c2ef8fccc01efc4f1f2f3557c80c6974d49ea9a657d23a749266185b09347be"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000372",
+      "fingerprint": "a78db8cdfb3b471b0b60fb37698255e5761b1fb4b1796a046d55768364267166"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000373",
+      "fingerprint": "855d16b4017a37e10985817eb364378f2047d0d16721c495732a02d133f1a8fb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000374",
+      "fingerprint": "ba8f7209b880c42c61026b730dcf997e2a1b78976a74caf196fedbf5ea68bc8c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000375",
+      "fingerprint": "67ae5fc861ff2fc8c93b98cccddfc5f8616ffbe196af8600eb36d29d644c36c0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000376",
+      "fingerprint": "7cb737b83679d2e0fe51b467b98728c7b2fdcf206440a7dd5cada24f95861f2b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000377",
+      "fingerprint": "6db2f534a4508a3ea8f33f3f02ca1ff92acd47b90068f9a214af08ed2ef9b7e5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000378",
+      "fingerprint": "997d76c0d67ea43bb0c32c2793bfec9519e2092d976f240e22ef54765c4238ae"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000379",
+      "fingerprint": "864e7cb416ab1a8e522f7b0a91e6266ac615fda6ed7157c0d0422597138dc1d4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000380",
+      "fingerprint": "189ce50db342a1174bb6fc134afbd6b086c2cd680b1c0711e2a639745ba642bd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000381",
+      "fingerprint": "cb2526d1aec2dddb40e2422a57cd3e8e1521ee335efd463fb25f59ea43e2fec6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000382",
+      "fingerprint": "8bd94091480717c9c047e72650bde2bc4b70cf843f429fad8f92702dd4d88646"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000383",
+      "fingerprint": "be1e30aeb2f94495ebfcf779cb0885c7cf35eec6d1e3cd36cfd0d48ee1eb1e53"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000384",
+      "fingerprint": "9094105aad1df181d07c87bad0fde1de1c9ffd0e09633e9bc196e79d3476f1ba"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000385",
+      "fingerprint": "60524cd66a1c614328cdaa007774cef9cbb76685fbf42983fcc373cbdf0e55d5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000386",
+      "fingerprint": "c8cbd57910126a7b019fa0e043ff927e01a1c3093bbd660cb3379b5daa41da3b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000387",
+      "fingerprint": "2e52407beb8f858f4caa2f767485967a1c534c8ae0909934bd4efd8df7a362c8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000388",
+      "fingerprint": "0fa739994d7dbe572149c4754c1c634a9132c87f2cb0feb71018f508c0b34db3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000389",
+      "fingerprint": "1da725ddb8df17610f3c288cf48df5315df52ae7d280c61b50cab09f4e75ea6a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000390",
+      "fingerprint": "cebdd938e048fcaa70308ca45b23cca9df1228d21a636356ea29697fd9b16afe"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000391",
+      "fingerprint": "2207072dfbf373b07b8c8f31331d59ec938dde271ac06ec2284465373598efe6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000392",
+      "fingerprint": "08c332650265db6eee62b2143169f414a57a90dbf504b6134d57907ea8fb688b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000393",
+      "fingerprint": "eb1778f3cd70b7d23e4d74ddf26e3da1efddb001f0e6b94f22314cdabef80565"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000394",
+      "fingerprint": "3a7dc88a07599971c3c0dcbd1ca8ce2c6c27cfa994d63f3f6983a1a5d093aecf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000395",
+      "fingerprint": "700cee57081a4edaa7d38f663c377a8d061d8ea5203bbfebd5ab61662b50196a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000396",
+      "fingerprint": "9387fc51d23d446e288589a2c793a7d653419a8b849241d8d1f714490e1fb8d5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000397",
+      "fingerprint": "ec6adb70eee91e9687af7a246a230ae70baf47bccd486bfb08654ddbc89fa4e3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000398",
+      "fingerprint": "fac71bae485cad786ffad35d52c6c02a8e7d7a1bed01d0623d40b12b31322186"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000399",
+      "fingerprint": "7da87bcf646cd24329d53f5c637714f823a4e3d7654a1aac837ff78cbe8498a9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000400",
+      "fingerprint": "6461d359f063f8beaa15cc57dc8afae12c0655afe9e4090aef2793e76180d802"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000401",
+      "fingerprint": "02305ac63f8594c083cc7217ca75ce9f970620fd221c6271797507d167700c02"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000402",
+      "fingerprint": "54896f96daa095274a351d396d5b0d463f12af5b4ff5d474f2a64bba8ead232b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000403",
+      "fingerprint": "5ac41bf75c275a1d69078c9032a8ac40f60e4832de1c5f0ce13f98bcdc541c0a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000404",
+      "fingerprint": "6b9aa99a7d9e4b5f164f91e6dcd7fde3fdea04ea2462fd0ed200c8556db4d7ea"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000405",
+      "fingerprint": "82aea261d6bbecd8a67a886b27cc906eaaa390cffa1d925e61997ade3f769d4a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000406",
+      "fingerprint": "37c27e73db956056a5ef31298e8dfd3d7e7a15ddfa00d0173bb31ee633436d04"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000407",
+      "fingerprint": "84fe6569187348448bdbab983cb4592a19067f99937b5dfe043152a9f5871c11"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000408",
+      "fingerprint": "64f12ea64663e248d0ce33c1b37e945b69d4ee5e1ea50d70051b19bdb4fcfb74"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000409",
+      "fingerprint": "91275b135c489c9ee961753e69a09339673392508fed47812a887c1974809d4a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000410",
+      "fingerprint": "ab0511004ccbcb6d4728dbca502e79db888510381ef8f5f55b4da518fcb7d263"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000411",
+      "fingerprint": "441c5b0888a41a793766a3b7c8b689934debe311346d472273805bbe51d6e7ee"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000412",
+      "fingerprint": "69a28ed481bec1a42e9211524b4df02f86953a55247968bca35d076ed6a00bf5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000413",
+      "fingerprint": "d0044ccd3ea4d8eed7be85dfc1feac9cc986a92fbe0f86a376f4c8e11ab94cdc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000414",
+      "fingerprint": "5a3c20bbd6f0fc3fb2efe0fd2904ae8452ef01ed6499a51fbc6a3b9c05b4a68e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000415",
+      "fingerprint": "5a674dd107d512171505fe4006049a305bb112b670d9a42c7069f97677e628a7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000416",
+      "fingerprint": "601ff8032f331c51d39018d48c5ce5d8733574bde0c0154bd60656f178915094"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000417",
+      "fingerprint": "f5e0e9bd713b0b62de77bef72479d83c0fa06281e00afa0cac3fab9fc6571bd0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000418",
+      "fingerprint": "40c5ab8de659273bd4a3e452c746ce43e272212b43ba11ec05d096410bf90d5f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000419",
+      "fingerprint": "75168a1a0d6fc3a194de691a35b5beb4e6f5e881be741340507918c80dd243ed"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000420",
+      "fingerprint": "7064274c8b3d30bdfb5d0b9f1a9d5922914c5c9b00f17c8130bb74fbdac92398"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000421",
+      "fingerprint": "e04a3c66c6d991cf00067d23d761c6d8655695a7a31f39b48f10ef4d6f6debe8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000422",
+      "fingerprint": "58ab5011d24cf1b5cb4d54d753cb6e4cc168a5b4e5002cfc288570c0fd9cf4e9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000423",
+      "fingerprint": "855a50eefb49f2a829ea2e4ff539b83c64f99b8dfa6d4baa807bbc380e999df1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000424",
+      "fingerprint": "21d9ce60f53bed54defd7ef371902a5f374976ea81b51811577912e21b857622"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000425",
+      "fingerprint": "0fdca66bc26e95f5a9f51bbd74e172f3d5671b97bb93f8ebd2c996d6401bba41"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000426",
+      "fingerprint": "c8e101efc495fc058bbebe6dcc2dd7c0fb9f57920b2fb138a40772d69127a02f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000427",
+      "fingerprint": "2dbf14b7ab6cb26f9c1364c66f8b930c4ade66c4f16c4783e4ebe7b108d302e1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000428",
+      "fingerprint": "3f37768b3945d4878e56b5ae684dec50c60d99a151f67705e85012d4b93f5290"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000429",
+      "fingerprint": "09f410608e2f33d28763583ea77a206b4ab1ad9c50f03d864a0c3ce96b92dfbe"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000430",
+      "fingerprint": "20cd008ad99e69f7dddb0398f76a49cae98e0ac8279a766493c117894fa65e00"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000431",
+      "fingerprint": "4f872f439ba54474a94afa1d378c9334e8175ab573f03cc142406048b83b3307"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000432",
+      "fingerprint": "f7ec35fe0a7f351c7bdd1e9e79fba40392b2a562f8e65a50a097ab18ec09ce5c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000433",
+      "fingerprint": "4622a1f5efe5a90cd07c40ebd9aefe666948a23bdf40bec69f888df397eba5fc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000434",
+      "fingerprint": "e5030ab42a77cc38b16531686685e30094a2f01c9c3ac64ddb8ee47d2e4286f5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000435",
+      "fingerprint": "4e5f95183080145f73cc8b97040445abbfcabeb53bcb3f962a50740c1f234b44"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000436",
+      "fingerprint": "62cb04a80e746b4c4d7b77708facb9e25634402e539c59830e864d2194ebef99"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000437",
+      "fingerprint": "baf7b2628fc77a77b07af998570e015fcae7f34aedaf501e4709c9a94cfbcec2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000438",
+      "fingerprint": "4ad0a897f72b5371f1e88dbecf65bb2eccb8dc8e2718c38b4358edfb4c8b3e7f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000439",
+      "fingerprint": "7c337701341e726f046f9dbd9e28307111fae98956a7825414d0a7da009c6e3a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000440",
+      "fingerprint": "1e95255c399441d205ec8b2f101ac930dc6f82cb0b391f6cf9ef9618301bb2f7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000441",
+      "fingerprint": "21f0ff8fb2986a1bd3e3e3b333f8c7da075bf1b34e4160006f1f03157836be6f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000442",
+      "fingerprint": "7101cb351d57c3f68f25b6f3b450dc95c6c43d3ee1be2ed3f01d78962dab0c16"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000443",
+      "fingerprint": "9b6c5bf5fb297dbc3c1d556f6c35ca63f19696fc4c97668b59b859abafd09401"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000444",
+      "fingerprint": "4c4c0c140c5c8bf5ad2aba2bc341de4c03a9d6186e644aba12e5d76ac20728f5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000445",
+      "fingerprint": "7549d92f394e5d0fcbf0fdb5749795c55a6714a47aed584d750bd8fba1c51c49"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000446",
+      "fingerprint": "245a4e4d30ed7b67535dc48a914171f7235786a9e4fda8bb6e6fd2923a55fe4f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000447",
+      "fingerprint": "ae90522bf98695ce4d3cadebabf8eb7ba7933ba4c6a5ae28f3f5eb674b08b855"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000448",
+      "fingerprint": "b53e8d805267bd026eb28b68d8e34d10388aa8f922d6609512753b79c2e36696"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000449",
+      "fingerprint": "cc88f2fb0289cd6bd127e8dcfc707299e1c00225874f59ab3e7122aaea8b598c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000450",
+      "fingerprint": "e0e08002de5088a430e4bb954f05fa9ae9412ea9592dce7cd1f2519baa13bc65"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000451",
+      "fingerprint": "195ff8ca09e2d0ab36152edacff08e6eb26fd2a4f0e0341e21d77f15a09fa865"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000452",
+      "fingerprint": "418bb8353c47cb75d9562898940d5a9fa70351c2e6794b22c3a6ba3375f61d36"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000453",
+      "fingerprint": "2a234556ff2dfa75ff5f733dd4db8ffadd5bf638293ad1695c77e4d16712324c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000454",
+      "fingerprint": "07a585d7c8058f4f7bcc6dc3afd1d03462e0ab657ac86d32c071e722b3d9db6e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000455",
+      "fingerprint": "c4d0bbaac77053c17a19c3a6678fbe22b6fd2793d3b6a4ced8b8b8ddd9e9c5bc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000456",
+      "fingerprint": "f07e4681b5ee9228f1c2df79869de80421580e376d0794b642c824a5f7f6a77f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000457",
+      "fingerprint": "8004d58bd77d061d960b1e1bf00bd0e32f0e0cf39e50bdf9a4122b043767be94"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000458",
+      "fingerprint": "2f739b6b9784b856a17f3156ac21de2e875ee03eed5c25ef73f1528748412c1d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000459",
+      "fingerprint": "50c96a6ab897273f31124a3bdf2076af271c49f9d44037beedea70bd9cc76b53"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000460",
+      "fingerprint": "2a8a7b1149e73f13acf094a8571536138cf7b4dff985f5a7eaeb72d487650646"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000461",
+      "fingerprint": "1e97d8ff0e62c45cbf19ff641c804075b61cac3ff7a606ab18e2bd7135adbb19"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000462",
+      "fingerprint": "551cd2ecf6507f426a09d07c5274b0381ed12e5282a0584bfee9700a6906eead"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000463",
+      "fingerprint": "53ccf9d48027016fa0d2714fad7fd85c97b07cbf3bfbd99709478937b64856f3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000464",
+      "fingerprint": "3dd4a0a1743fc3adb3493dcf1c592e2452398a58aa4b517bbc893085213b70a0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000465",
+      "fingerprint": "322476a534d91be034520d0031a520de0630c5e1cdc60fde0b09f48c5b036da6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000466",
+      "fingerprint": "798781bc2512a4c7029ad88ccc41093110ad6a12acdb2317808e3f8eab60df51"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000467",
+      "fingerprint": "c6f89675c5d3114b5bc9ffc21e6e0edb877004daf096826ee57fde93f8b941b4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000468",
+      "fingerprint": "abeee8fc48fb481d6f0091499d9968952980801f9b8ec5d1de09571df4261ac2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000469",
+      "fingerprint": "fe41de3d65f90432d6dd8b95bedcb1e6bd4b0c78cd9c9e80e64693521f707b31"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000470",
+      "fingerprint": "df4c04f103431d7ca574a1324f07dfac015166eb4a62625074b961c92c5dcace"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000471",
+      "fingerprint": "ca0f8c82e115533d355be1a145bfa181067f0f2a1512f07d82dd97c53b189579"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000472",
+      "fingerprint": "5c9e326de62e9f636d8ef144fe5d8c94386eb2db70e5f7e118fd9464e91ce060"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000473",
+      "fingerprint": "03bdc8e54565ce465f3eb4e45d37db8724a3dba217d82d55df966eaa5c2f0767"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000474",
+      "fingerprint": "65189e99793c2b3b1ce0b19906a40c88e0864443a423ba923cede8710558311d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000475",
+      "fingerprint": "5bd9866839bac239928e58053d50f091a2dbcecd413b729920c5b307c3f95946"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000476",
+      "fingerprint": "2dcf22b854cc36c4aeab19cdc951aa6bd9c1de9cc04844ca9648511b8173f730"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000477",
+      "fingerprint": "1626b4ee7f81b8a844229bc8112a1b4af91f617c0433fe2e81af97edd5934b9f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000478",
+      "fingerprint": "18e6ca6531e3c13781e1da5ef000f06053259ef13a098ce7aa8210c35727290a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000479",
+      "fingerprint": "68c0106a59de20d849980bbed7ab8105065f71a1c62708fd7b58b9787306ace3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000480",
+      "fingerprint": "e0e458e5de3c0d462b30eae7cb72e0c11e5485bcd38537152c464e015e8d9789"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000481",
+      "fingerprint": "d4935a577383779730deac4c738b0312c94250b9f804db1edb357613eb4c73b9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000482",
+      "fingerprint": "50a3dbfc9c33b1723724d0d0687857c288cc50ad732c5c21f2dbf1c913433162"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000483",
+      "fingerprint": "492e3b86ee5e0a073d37f7ab924fad5abb27df52d6537f8187cd98797246ba20"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000484",
+      "fingerprint": "4226710736fcb092614dddd1d32f5fe02967946e31244044520f65418dcdfd83"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000485",
+      "fingerprint": "8516d2d0dbf0d7809b78b57caf8cb6d4f34b5d1e0f667cb0b033925b4f36e027"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000486",
+      "fingerprint": "ce992eb2e635d99cba5d3808d0b136c2eb6cd6c908f374c55d98c3fd8f799fdb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000487",
+      "fingerprint": "510642fea3489783506883679291c33a54e743321924cea0d58521f631bc69b0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000488",
+      "fingerprint": "f3f47b8722f860e12c68315908ddb69dd2fcd3098b8be64c73e7442238885463"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000489",
+      "fingerprint": "edf0e896f39278cb954db249201d01b2c6f85a481659c24838b0815f2611ac15"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000490",
+      "fingerprint": "6529fa8f3a0863dab1902d313db7fbaba59da7919ba6f99793ff04ee83eb45b6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000491",
+      "fingerprint": "cd0e316a91c9e5de320f794ee25cfec52c929b5fef2df4ee8d4266ee2b039d9f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000492",
+      "fingerprint": "76b48ca42bd8c5c6e6186f7c77fcc29f4b2159fb27c09d041cfabb824b07da84"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000493",
+      "fingerprint": "4a75d650c5a37ac5230b24ccc42735fc355d7d23f48974889114ccf26e4f0dc1"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000494",
+      "fingerprint": "7606bce12033b102f4d1825508ccabcf26ee777168444963ebead35351f1fc48"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000495",
+      "fingerprint": "4caa2e5ba4443e5c6152a38d458e41efb86c9897511c6fe2f74230af9502fe87"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000496",
+      "fingerprint": "94553d429b1f03b07fe600649605e4974cf35e7565f5731ae22cd27a41ac61b8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000497",
+      "fingerprint": "5351ea980462e508214159b8be5cd20d69a1a737b299ae52a1e3dd54b1bdcef8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000498",
+      "fingerprint": "69732ecc8c2f62d50b4b3e834f8422571a40d793e53a1ff2de24cb54dde92005"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000499",
+      "fingerprint": "785d7364875feef61c5c7c83e304a8293cdaf5ccb50ed317657f30ecb85a78f2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000500",
+      "fingerprint": "356cf8fea60a8d0c0e08fa2fc02ed0b4ef948d599b6f6a79561ba4c4cc0d1cca"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000501",
+      "fingerprint": "4bfe5654405b9d65fbbfbbfb6f20170417069da47fb40ddc291ae1128738947b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000502",
+      "fingerprint": "712e085003bdc3d272fa8ac234ac69d063a6726afce47504109b459104a0ea2a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000503",
+      "fingerprint": "5063ca21e531ba165b59d2a0e36b960fc7c37f89394eefa128f93762bbc642fb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000504",
+      "fingerprint": "fb82268e40676baa0d2d8cbb73eb687d64b5fb3f41d6ae78ab4805295d9e790f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000505",
+      "fingerprint": "11a3d9e6eeb64b4c1138b1c728827e7411f832f8aa955936e9d955492c75d5c8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000506",
+      "fingerprint": "a6d1cdc614d9eb8dd46a21d6321740bbdce218540f552ca5383d09780da39b3a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000507",
+      "fingerprint": "0fc2048bec9c8a6d4eb5bb3e5a1e8df49e80e31fe74a5012f51b8efc7a266557"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000508",
+      "fingerprint": "7552c22e480c50ad686fcf21bef04cbc5dd9f8530c1ac802ac246803949c9be8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000509",
+      "fingerprint": "8f0f60017bda94631221872833f48eb8e87b41f544fd8a36eecd4c2ffd5859de"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000510",
+      "fingerprint": "a6bd7d4b54baa6ac0e7063321c96caff93d0cc4020f5a6248c5c68e2811280a2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000511",
+      "fingerprint": "1d1cdd2939b0efcb15564f363dfcdd60a9f436877356d43fdb464d3818236190"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000512",
+      "fingerprint": "1835d887ecc492521c556f48c96acd16e611403f981e93fe98cb2660f36ebac5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000513",
+      "fingerprint": "f6f52a8323fabd7ec520f04173c7e75f427a1811a18feee59d5fb64ba47a2927"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000514",
+      "fingerprint": "396433f43fbe981c20949c1ebeccb673ec2643c7b7c648adc7e2b91eaf3ff00c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000515",
+      "fingerprint": "7b91e1e6c81d97f117c6493a9878be2952db368c40b72516dd352cc4289cdae6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000516",
+      "fingerprint": "f690de459915b8d1f472c125bcf8c6ae4687d2b831200de0bdfab71ea6f7cff3"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000517",
+      "fingerprint": "5858096ac226dfffef16666fb9a126b3d8402f90387e4f5462575697a03ffb18"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000518",
+      "fingerprint": "edfb4d6a997d0f56777071ff588b321917ac01ce2ad9b270d45d10e083b660c0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000519",
+      "fingerprint": "9d9e8b5273852676ffe12889c833afb197dd26184e347dd25ce62f2a4be2934b"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000520",
+      "fingerprint": "39b3e88eabf4d13f5eeaa34506eefd35cb825ebeb952b95a3fb14250a9f38deb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000521",
+      "fingerprint": "0ea051a074ac9dd7d9767bb7a8d8b035dfffec1be10ba695368b09e3655defab"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000522",
+      "fingerprint": "82ea8f3756c26ff0c692a8c3055cc87f7ca1ee021e08416588198a43595019c9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000523",
+      "fingerprint": "0f97229dbf71314aad42587d2615773f088ed1d2ab0783564045a9c636ae665f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000524",
+      "fingerprint": "6ad0e239917a20624853657a09cbb12921a48c58eb916f6f08a75d84f9b09566"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000525",
+      "fingerprint": "1f63ce9dbf138a986bbdbe6736af5e907fdd0adbe7afa346863cb7d1c92d7318"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000526",
+      "fingerprint": "dfc78157a421bad848948efedb97a86990a84cf15624830767de61c8f7f54abf"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000527",
+      "fingerprint": "079ffe3881a9d5f7d940bb72b11512b60cec846e61e94bc554aee2dec73d7836"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000528",
+      "fingerprint": "0e8f2d4a615425d4ac2faa7932c680a84788bb702b46ea41bc69b31a53483ee5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000529",
+      "fingerprint": "045a10fb3129234bbc2b38b4bd1c104883fd4857c77e7bf10d4abca3b722ae41"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000530",
+      "fingerprint": "c0e0eaeaee9266b2514fbf69c2d75e185d5de40d39bcf23e0f49a3db2efdfb45"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000531",
+      "fingerprint": "a808f9e6e23e0416d3e6427ac3d1541fdb62a4bac86ad3c06c7f788318539c0c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000532",
+      "fingerprint": "a25356e8640689e834e3e8d51a079987dd9b57e20202802e24816a6f94ee5df5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000533",
+      "fingerprint": "d3c3be8196865b04cd04f6ee901c1abcd6047a7598e09c356664b4634c19b747"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000534",
+      "fingerprint": "0d393fb4bae5a9fb6e375d36b1f9f111f022ffe1d54989a934302464081fd27e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000535",
+      "fingerprint": "ccdcfb3e12ae7a5965da9dda4ea7e7ca2b9323a2538651da146eff9f791e60ca"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000536",
+      "fingerprint": "287ad3122a9b96af4034d4d14d0d3fe9917dc13253aa1bf6864077a4e1912c05"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000537",
+      "fingerprint": "91ff15f7a170ebe80e3c292e63cc3deee797d1f1de29ae46d990f357009ccbde"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000538",
+      "fingerprint": "393e19a95036df009fec6a5138bc16c7e3611c1b2d9b9cebd8aa6272bbf3ae37"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000539",
+      "fingerprint": "7a0a2c494b3059186add0d93c7277909b478c44a9cf94e749fa61ea9dbc02e42"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000540",
+      "fingerprint": "42e20c5764192954aa9eb7868eaa5ee19d757031d0e988f68e1249667f0d0177"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000541",
+      "fingerprint": "b0755ce30727b60b4f162ec1c40955fdd7985b647fd775bc4b899b1af1eb6755"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000542",
+      "fingerprint": "67b39714359c8af42f0672277aaea87ba74f8540f28f0061de1e121b8b1e0209"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000543",
+      "fingerprint": "b4d53f1d667b230f1418ad83b31e1c5ef1a803cbb4be2b8ad09efa99e4450ec0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000544",
+      "fingerprint": "30355c25d34a082c85443be67714312dc0015159525e587e6d36c13039ddd8d9"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000545",
+      "fingerprint": "1d6f64c300e65a8bf62886c91c545cd9901bb01a78120b6cd2e61544fa2d2bab"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000546",
+      "fingerprint": "b0d7462aa762771541e384b049b3afba92e48e15449235d265f28b3a2eb57a89"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000547",
+      "fingerprint": "6a3f039221c3bea77d2c66da3cac0c048892c04f86c405a98df130598925a695"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000548",
+      "fingerprint": "68aca7b6aa925ad49a6c8f1bd86dabd99bc6652317d210a93c7701efe09f10f4"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000549",
+      "fingerprint": "1067eae5cd0ed56375b5863d2306cb9780bc2737d6ce8ae8a189996e7ed998ff"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000550",
+      "fingerprint": "878b416cba4617d792f673ea9d37a7390ab2acb5ebd50ecc46d3f8c6585a587e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000551",
+      "fingerprint": "835dddb7e98c65eda00443738d59dca2d9c728ef50af4f521e2bf86478562947"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000552",
+      "fingerprint": "c5fa77df6f2c5ac37cb391288a457b09867d492e06d29634118c2fd94d7be4c8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000553",
+      "fingerprint": "9c525e89482ff43f7d614808610053100ae6ff75457cd67ff383476f4222582d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000554",
+      "fingerprint": "060bbad4a94456a9ee703492e55d293ae77248a3cce234067d342565dca8075f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000555",
+      "fingerprint": "f0a012d2f4cbb6e59f6cdc0a481d2bbe8b13cf0a37c7348af3efe9db54fb022c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000556",
+      "fingerprint": "e0f502c11ba06e5c251b218b8947b709123a040a6fb5870075b4be80694cbfed"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000557",
+      "fingerprint": "f5c2d216abd0dedddfd001768c1791bc1b6f6fd46341984c17688676f018e90c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000558",
+      "fingerprint": "01783a4fb8c5450c025ef8ecdea0f1999315f828be7970cb97b278a4795a1905"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000559",
+      "fingerprint": "44e067f0a1da62e1fb3866fcdb5504361d00078e1edd453470516f04bed08d19"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000560",
+      "fingerprint": "cf8f5ca4ad7e9353a28f122374fc126bddd6a1d71020de7cdcf40f43e96aab95"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000561",
+      "fingerprint": "457491404845b6769e667dfc3306cbb38351e89a0542127651b910629fdf743f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000562",
+      "fingerprint": "36153f56d8793c0c8fbe0095e8b455751fb78447b9db7acb654b9db286e80b97"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000563",
+      "fingerprint": "9ce5cfa2bf4bd5eb83616c56aa824911e9989dde33e6f02d22568c8b02c85c8d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000564",
+      "fingerprint": "741880bb413edac31cdbc2bcc736360314957d49dbe1806a8eab90f51f9f148c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000565",
+      "fingerprint": "7ad501cb633812a0d64eef408c728d41bda5e39dfdcc55791dd842302ba5179a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000566",
+      "fingerprint": "db070ad03a6d08ea994a51241e22604118f9750456d8f34d9d7609fa95cb8bc7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000567",
+      "fingerprint": "4cdcab018393e33af75d9d8d0801b19ca03df7c5a8cb80a94f06cf5ac4d516a5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000568",
+      "fingerprint": "293ea162ea5b21675346ec3446832e9973154df54c7a86dca8321514cccbda52"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000569",
+      "fingerprint": "72c537c93f9b40f038b6b18a68beb8719d6c965bbfc82e51a7bfe600ad15d601"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000570",
+      "fingerprint": "47f006fdedb996063098c2ce0066f52c4ac09bebf43bd91bb0f6ddfc135baf83"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000571",
+      "fingerprint": "5c2268da64aa5bb4c8158d526db382d2262105ad15cc257f6a93f3044ab69a2c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000572",
+      "fingerprint": "4b2c969c31dba203efb1ae2ed0f639e1a06f22ae31173cf6d856a0311ea0172c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000573",
+      "fingerprint": "e3146d61b3112b983604ad1a23c80da0b9aaed762ad21901611957cbba1faa3e"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000574",
+      "fingerprint": "e5261f6592a5061694f8dedd17f957e1ef1e75202a14d1de9ef0e45b83d1990f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000575",
+      "fingerprint": "262a7233baf64e74b99c7781862ded14e486a0118a72bf0c521d11bed7c4d5d6"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000576",
+      "fingerprint": "22f92326928ef9c1ee5702d994720ec6d6dab1e1fd8ed49a7e9eba856517a7fb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000577",
+      "fingerprint": "7a4f1522adc4fecbeac841d60e04b46a01d539f710a46cfed0ce0142cf4019ae"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000578",
+      "fingerprint": "d364def1f4c39f23753cd2c5e06b31e0829362142802a769ea377e005d82db73"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000579",
+      "fingerprint": "431257f28d4dc4bfc444e53b8c6ca4cee05ac22a5d03edb3b3270764ad94a135"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000580",
+      "fingerprint": "2bc3f578d2a7629dc48a08b4864c26d978f70b91aae150fc171cd9a7547dbfbc"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000581",
+      "fingerprint": "494cdf0d56b26535c0e347352a0e7fac4b568324d945b903b546924cf621bc68"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000582",
+      "fingerprint": "70b7de15df3c199013c4f76b5a9372ef07d62d178e8cab78acfcc7a99f1dc1fe"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000583",
+      "fingerprint": "a744fec11af9fa2b2469e36be7cff416d0c3e42c34531686b6e2a57fa543f3f8"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000584",
+      "fingerprint": "6d5e0479cae74795d7e49cc9db385411711d1586891443815aa569c832a91781"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000585",
+      "fingerprint": "5d427c0cace5d84b40e62e213eb8dff4fac94e323d1c399a31ab199573081568"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000586",
+      "fingerprint": "bb3855cba4cf348b7916c26aa8d48ec25d2c5085a6b91dc8a705417ff7ffea8c"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000587",
+      "fingerprint": "17f6f90a2cb35ef1e9d23b5b467d86612050a8c1e2c7d3df01535898836fae81"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000588",
+      "fingerprint": "b19965f45131ea8f69d2c7a77c85781fa1af4d8ddc19a5380bbb25b7f4d05ebb"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000589",
+      "fingerprint": "a0ee2b92bf37bb9b045ea60adeacdfea07fa699fb89f109e0c544bfaaba72a71"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000590",
+      "fingerprint": "640392a49d07d0738790ddf1ce085dfd32d3c59c104b7b6579df82fec069367f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000591",
+      "fingerprint": "6880b9d3a1121c2b29d37398be2ed55182c0fd29ce15d8b030ee5bc7ffbb6153"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000592",
+      "fingerprint": "8672b9cc6225d4a7c427fd2195e7c23069f8dfabf6698c7bcd447b58d51c40b7"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000593",
+      "fingerprint": "8bfe9bc3c36805ccec5538f3861073a370bf22101d80032f98bcacf4248a0ff0"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000594",
+      "fingerprint": "ada77ddc30c3b041b9a1c6dddc5d1ac62672c5d8115d1fcf217f69ebeb976124"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000595",
+      "fingerprint": "935326182164f7fd27815b6dfcd4f77851aeacd063995d22331e13e30fb1cfd2"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000596",
+      "fingerprint": "d062b49f9c81681d11c8c5be5340f7c51510639364031d0cba0da28fd5192e7f"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000597",
+      "fingerprint": "233e6f9aa45fcae0a39bf0c8042461c36fa57aa4a71ce324bc8f0a3b56333028"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000598",
+      "fingerprint": "2ad9649b5f4884d10a508a17c5249b11f78b17ebc8930f3ecb7bdb8dddfadb44"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000599",
+      "fingerprint": "6afb00b57a956b41945860ec5b8aa531c3313ad926231689661511b40b28ff29"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000600",
+      "fingerprint": "5eed66c52ec5b5e3e4394f545c6cfdfadb8ca35ef1a2e1c2ee8b59fe2643ff00"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000601",
+      "fingerprint": "ce21a2db3f53b875000660e8833314c4a98121c314460579f5ba8a9984f1e9b5"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000602",
+      "fingerprint": "2e79bb3981428654066a5a63f8dbbf272ffaef2fda74dc1ec6848b76a7707614"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000603",
+      "fingerprint": "ffc28efae9f452d99a5bb2313ca890402018edaa0d9f1388a2da06f5e83b651d"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000604",
+      "fingerprint": "558e019000cbc45e828caa3b27708550fa1a8cc3787c2866e1a0c6f2d045ea3a"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000605",
+      "fingerprint": "90d8fc788524081221a64616d3ae20bb08b22d9ebdc8929d71b7bbbd81b3e723"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000606",
+      "fingerprint": "d1283d650d7bd4dcc8e0053aca1ac5f876cb95304ee66abb1c23fc2636057878"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000607",
+      "fingerprint": "01e7bf01a4b4b9643fdb9789b6b8e1cb351b8d3b21f9e4bdcd4c5cb7a62c92fd"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000608",
+      "fingerprint": "9e9d11d02211d2e9e8fb1687da8320a84548fa2b2dfaff2bbb7c7a96d070e620"
+    },
+    {
+      "path": "aziende/NzXaCgyXxZWWehw1tSlo/tenants/AgvcnbuUMu7YhzSuUKTY/punti_consegna/DP000609",
+      "fingerprint": "bc80b98359f8f52e4d0cbe17c7c60a4a795169315ccb58b25be11f116302f092"
+    }
+  ]
+}

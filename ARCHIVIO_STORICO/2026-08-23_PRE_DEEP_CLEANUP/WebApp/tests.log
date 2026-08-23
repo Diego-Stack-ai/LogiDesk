@@ -1,0 +1,16 @@
+E..
+======================================================================
+ERROR: test_execute_clean_start (tests.test_m5_delivery_points_write.TestM5Write609)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "H:\Il mio Drive\App\LogiDesk\tests\test_m5_delivery_points_write.py", line 83, in test_execute_clean_start
+    audit.run()
+  File "H:\Il mio Drive\App\LogiDesk\scripts\migrations\core_v1\m5_delivery_points_write.py", line 501, in run
+    sys.exit(1)
+SystemExit: 1
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.007s
+
+FAILED (errors=1)
+FATAL: Gates not passed.
