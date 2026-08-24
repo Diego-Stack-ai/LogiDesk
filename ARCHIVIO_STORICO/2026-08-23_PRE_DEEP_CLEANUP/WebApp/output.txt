@@ -1,0 +1,18 @@
+FATAL: Gates not passed.
+SystemExit: 1
+Manifest non-True gates: ['OVERALL_STATUS']
+E
+======================================================================
+ERROR: test_execute_clean_start (tests.test_m5_delivery_points_write.TestM5Write609)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "H:\Il mio Drive\App\LogiDesk\tests\test_m5_delivery_points_write.py", line 84, in test_execute_clean_start
+    audit.run()
+  File "H:\Il mio Drive\App\LogiDesk\scripts\migrations\core_v1\m5_delivery_points_write.py", line 501, in run
+    sys.exit(1)
+SystemExit: 1
+
+----------------------------------------------------------------------
+Ran 1 test in 0.252s
+
+FAILED (errors=1)

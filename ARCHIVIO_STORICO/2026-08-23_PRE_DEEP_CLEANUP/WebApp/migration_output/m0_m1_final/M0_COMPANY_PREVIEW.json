@@ -1,0 +1,13 @@
+{
+  "target_preview_id": "COMPANY_ID_LOGIDESK_001",
+  "target_path_preview": "aziende/COMPANY_ID_LOGIDESK_001",
+  "idempotency_key": "CORE_V1::COMPANY::PRIMARY",
+  "data": {
+    "nome": "LogiDesk Demo",
+    "attiva": true,
+    "schema_version": 1,
+    "tipo_ambiente": "DEVELOPMENT_DEMO",
+    "migration_status": "READY",
+    "migration_warnings": []
+  }
+}

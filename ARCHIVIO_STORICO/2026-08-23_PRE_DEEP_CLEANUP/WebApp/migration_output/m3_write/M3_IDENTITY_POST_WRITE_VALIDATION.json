@@ -1,0 +1,16 @@
+{
+  "post_write_validation_passed": false,
+  "details": {
+    "registry_exists": true,
+    "registry_status_complete": true,
+    "employee_target_count_25": false,
+    "user_target_count_23": false,
+    "test_record_absent": false,
+    "password_absent": false,
+    "legacy_unchanged": true,
+    "employee_fingerprint_parity": false,
+    "user_fingerprint_parity": false,
+    "employee_field_parity": false,
+    "user_field_parity": false
+  }
+}

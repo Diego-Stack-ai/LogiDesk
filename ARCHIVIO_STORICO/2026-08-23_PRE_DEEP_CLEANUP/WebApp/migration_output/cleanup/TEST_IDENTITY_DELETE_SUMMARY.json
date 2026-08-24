@@ -1,0 +1,20 @@
+{
+  "project": "log-solutions-cantiere",
+  "uid": "wrong-uid",
+  "mode": "PREFLIGHT",
+  "auth_exists": false,
+  "legacy_doc_exists": false,
+  "reference_total": -1,
+  "delete_eligibility": "BLOCKED",
+  "failed_gates": [
+    "GATE_UID"
+  ],
+  "auth_delete_executed": false,
+  "firestore_delete_executed": false,
+  "partial_cleanup": false,
+  "executed_at": "2026-08-21T09:26:06.599464",
+  "gates": {
+    "GATE_PROJECT": true,
+    "GATE_UID": false
+  }
+}

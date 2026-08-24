@@ -1,0 +1,737 @@
+[
+  {
+    "type": "employee",
+    "id": "Ws6G1rYXMpPPHEydxa3VkgJ4Weg2",
+    "expected_fingerprint": "ac3731559eca63469f0be3a5672242d381319df7a1b9be26beed6ddf52fda0bc",
+    "actual_fingerprint": "a63345d7ec15ccd126d0711673a10ecfb2754772c432a31df6424345a0801d7f",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "jDA7dUlEYEQ3XGDlGPh0gvm3vHb2",
+    "expected_fingerprint": "4c1628cb99b40a17c7af60adffa89bf367f8487660aded425137bb0ce5cbdf57",
+    "actual_fingerprint": "ab51482e4b9346592d2ce5e00c779605c0773f6354c8c49407de65b7cdbe37aa",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_2",
+    "expected_fingerprint": "7e96e599ec8447014665e7f2a7906f22eadaa6b639f9b24b6b197cc5fecc7909",
+    "actual_fingerprint": "8f1d73294b54134ee79bd6aa1a2e062323ce8befd7e1ed16f6e5e9562ca4f420",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_3",
+    "expected_fingerprint": "be8feeb49f693be8d33d00e72f2493574e9fab87ddbcf561a8e687862d8b8ced",
+    "actual_fingerprint": "2124b76e7140824500a38dbe989c24f8b1e551af751e6954fddff7160ac70b3e",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_4",
+    "expected_fingerprint": "0305b17e752b77a392847bd50580743e85034577bf2ed271be34dbb3ae8c95ed",
+    "actual_fingerprint": "394af7b9782e608bedc9642c26ad153731b984859a8d5b686f6d12ecdc938d93",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_5",
+    "expected_fingerprint": "34127e04d9e26b7fd52d36ba5e304340a62a80d53408f3540c160d4cb71cc389",
+    "actual_fingerprint": "315d33c9938526fb58399ae0a3018c3459a776e604af5ffad4db02d9d27f008b",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_6",
+    "expected_fingerprint": "23b84580907bcf836bccef3fc5adb377b8adee382508934fa81389f64e77d5cb",
+    "actual_fingerprint": "301be875e9717803d657413fa67ad72ca88b97419a7bc0b4d9cd50cb5f2ade6d",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_7",
+    "expected_fingerprint": "6aeb771d345492a63fd2a230bca76cd7b4f857a17cf24c604b6e7cdef43cec82",
+    "actual_fingerprint": "4bafe4befb654c4e8efaf2cfd41a4ec97a73b05c823c17b861f9c6ff50fe0dac",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_8",
+    "expected_fingerprint": "dffb4c9ab59fbc68945f2b84027a8e13fc093bacc4b7802fde9d7bdcaf28b9ea",
+    "actual_fingerprint": "2428ee8e0e4e66c132eb7efbc5b9acd4381c402cc17f521047916a5eec13e9f9",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_9",
+    "expected_fingerprint": "535a9a1449d1f1112ad9476506129053a4d33587fd51dd37b86e8cd8af0a1ebd",
+    "actual_fingerprint": "b1dda049e579b4c90b41052e3e14102cc864ac4e9a1a57f98db8ee7e40821d58",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_10",
+    "expected_fingerprint": "2ffec331493171d69ba6596275b18b96a3d1734014f0201006807219d69c9699",
+    "actual_fingerprint": "3b0339f3d2277a7f9294462c22a7d6ff61b96f3cbbe345fd432177bcd6117148",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_11",
+    "expected_fingerprint": "0b6aeadc982eb341572110e827bf1184a625dfc645a7f27857fa52f776511876",
+    "actual_fingerprint": "2feafbb83fe498fb73c466b93f6b2d01bf3f70deae729641b86712699c9f733c",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_12",
+    "expected_fingerprint": "5650314867fe68a78f491b7331bf27cf1d9547270b9b75c8ac71c8cf76996a5e",
+    "actual_fingerprint": "fbb2eaf31881f06dddf598a952c1a2f653e7bc2d5e97af42888d7af619156ce6",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_13",
+    "expected_fingerprint": "ee52fbda433349b9e00bc7b5945e4a26c5d1b64a3492a69c477b0d285a195e62",
+    "actual_fingerprint": "06a795bc808d760a31f30dd0c003f87788e53c5a683a43f4da65b77a97f98fdc",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_14",
+    "expected_fingerprint": "806c42ba7a90e73811d65b932d8e974b7d23fd2308c84ba5072d883b8d6db476",
+    "actual_fingerprint": "c3468bbd91a53ae56b8561c38076581eef14167295657c3ed3de3d0cd5d16f22",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_15",
+    "expected_fingerprint": "e1e4daa9be6845cc6be40c3a8781da37db62dfd4209f3952bcb5e5373dc96f31",
+    "actual_fingerprint": "fec135e8b298a6154adcbc3b55555e2b80aa9db066ac4880a2a8be12f2a4531a",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_16",
+    "expected_fingerprint": "f9bd4d37712d64343f8aad950710d06c6cf62f678950e9c2f9fae4f41f3e6ed1",
+    "actual_fingerprint": "89f7a890dda97c17ba26242f22117a7dc32d995b256ac1ec10b102d48a1ac48d",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_17",
+    "expected_fingerprint": "b868f249772888a39ac91ebacafdb6d16af2f86a128c1f51f9c1a70c690009cd",
+    "actual_fingerprint": "f892fdda68e2666b7997489701cabc5110cff98d479517c40fed035663f4e757",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_18",
+    "expected_fingerprint": "e13082870ec2934bf6a0a17d09da73674162d761f0e4e84d62e985b8b4ee65d7",
+    "actual_fingerprint": "18fa9fa4eda5ea3828cb0e9e78a04523a8a6e5a856e4823c73c50d41c9264e98",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_19",
+    "expected_fingerprint": "be83ca8d9c14a91353a3ccbfc5dda6e183ce69763f3eb508ffa80577f95d3acc",
+    "actual_fingerprint": "22fa5e935766289ccab308001af015ef7e1500173399d16f86261032bb191382",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_20",
+    "expected_fingerprint": "74bf89edfbeab44508373c16647d0c80d11915f76e73e6e14bf34dc59243ff85",
+    "actual_fingerprint": "6c47aba5fa86c602c8101fe121c0e9fde46cb01bcc1686796d4e3de198244ff9",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_21",
+    "expected_fingerprint": "fb8eeb7e1e038fb804bf6abab91a10b1fb5254bdfc6083b0b852fe3afa10d310",
+    "actual_fingerprint": "fb88f33aa7dcd228f2d500f4f2073d0f91d0209912bf83774fb310bead22fe29",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "auth_uid_22",
+    "expected_fingerprint": "1173d241fe5f7cc05a777358c0fcbcd301eecaf43dc6ad0c76ea816f2bd386a4",
+    "actual_fingerprint": "2154b908753e3e41504c9019b50e82afe4eda250d09b32d3d926571545d2a1e5",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "email",
+      "uid",
+      "ruolo",
+      "schema_version",
+      "password"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "emp_0",
+    "expected_fingerprint": "d0596d2598f04d5d8a9cd21cdeac89dea7dc00ea5bb5ba81466a5662f170b616",
+    "actual_fingerprint": "e35a7e8dfc949ba73f1251aefb0cbe08f3a2652001d86350568314632475449c",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "ruolo",
+      "schema_version"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "emp_1",
+    "expected_fingerprint": "3265ebdde81f80165f2271472c357bb0f2fc779e5bc87f0cc253bd7ac4235748",
+    "actual_fingerprint": "1eab08db750bcb17233eb110c98b1a45c8793e3990de9ca50427cf20612ca823",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "ruolo",
+      "schema_version"
+    ]
+  },
+  {
+    "type": "employee",
+    "id": "qtQWKWaJRMZNv0UzhOETC0t2hdU2",
+    "expected_fingerprint": null,
+    "actual_fingerprint": "902c74811e06871954621935e0822209634eb6b28c3eb93f45c0553f7ad20aa2",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "MISSING_EXPECTED"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "Ws6G1rYXMpPPHEydxa3VkgJ4Weg2",
+    "expected_fingerprint": "88fd621688aa03571a2ac85f7bfba0cd66e39999547095ec9ea5ed92fecc73c0",
+    "actual_fingerprint": "a63345d7ec15ccd126d0711673a10ecfb2754772c432a31df6424345a0801d7f",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "jDA7dUlEYEQ3XGDlGPh0gvm3vHb2",
+    "expected_fingerprint": "40481b59f34ebd2b18576b907e1ffc7034fcd4471471f8b6bdca9c11765cc742",
+    "actual_fingerprint": "ab51482e4b9346592d2ce5e00c779605c0773f6354c8c49407de65b7cdbe37aa",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_2",
+    "expected_fingerprint": "decd6c2f2a4140350ccb4e1797df49d2769744ca30a3d8407713bb0cd1faf670",
+    "actual_fingerprint": "8f1d73294b54134ee79bd6aa1a2e062323ce8befd7e1ed16f6e5e9562ca4f420",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_3",
+    "expected_fingerprint": "2c0fe985a2e748b89e689b4bb1c8b5902529f9e95839f1812e9d0378f8c33b57",
+    "actual_fingerprint": "2124b76e7140824500a38dbe989c24f8b1e551af751e6954fddff7160ac70b3e",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_4",
+    "expected_fingerprint": "811300f638c2efd92f5e1f3d2a77d85cc521eabd7e337864879960835c51cdce",
+    "actual_fingerprint": "394af7b9782e608bedc9642c26ad153731b984859a8d5b686f6d12ecdc938d93",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_5",
+    "expected_fingerprint": "16472a7493992ebf3cd021ed9d2e428e35ef4080ed38ac436014c1da88afd656",
+    "actual_fingerprint": "315d33c9938526fb58399ae0a3018c3459a776e604af5ffad4db02d9d27f008b",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_6",
+    "expected_fingerprint": "841ebce5f301d2c73c03384baf8afcf1019f72cde2e0ba3c9068b269ade52803",
+    "actual_fingerprint": "301be875e9717803d657413fa67ad72ca88b97419a7bc0b4d9cd50cb5f2ade6d",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_7",
+    "expected_fingerprint": "03a038a3898f2e12056ec3d8bccb94429103f17d05f6fe004bea2f615736508b",
+    "actual_fingerprint": "4bafe4befb654c4e8efaf2cfd41a4ec97a73b05c823c17b861f9c6ff50fe0dac",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_8",
+    "expected_fingerprint": "6a4f44493e9e79f2c0713e91ca6a2f39947f83f1e96305ac46330c59e3682d49",
+    "actual_fingerprint": "2428ee8e0e4e66c132eb7efbc5b9acd4381c402cc17f521047916a5eec13e9f9",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_9",
+    "expected_fingerprint": "f738c1a46ce0dcf8aaf34edd7050b44d5b1913380b14c43394447eede49c7eae",
+    "actual_fingerprint": "b1dda049e579b4c90b41052e3e14102cc864ac4e9a1a57f98db8ee7e40821d58",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_10",
+    "expected_fingerprint": "1567bdb10d63fb4cc13ced556e1f5d39992972c1a08fad917a5341ce54f807cd",
+    "actual_fingerprint": "3b0339f3d2277a7f9294462c22a7d6ff61b96f3cbbe345fd432177bcd6117148",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_11",
+    "expected_fingerprint": "040b0c33a9ae2996536246cc806285c6658b46efc4772d0df778d606a8d2d1c8",
+    "actual_fingerprint": "2feafbb83fe498fb73c466b93f6b2d01bf3f70deae729641b86712699c9f733c",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_12",
+    "expected_fingerprint": "a86e3b49223e20f5e4bafb5d7c71ec06692819b6a1eef773be10c10087443371",
+    "actual_fingerprint": "fbb2eaf31881f06dddf598a952c1a2f653e7bc2d5e97af42888d7af619156ce6",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_13",
+    "expected_fingerprint": "6ce7168ba3b184f45e91d7854929683ff57c842ef15571aae84833ce7db66239",
+    "actual_fingerprint": "06a795bc808d760a31f30dd0c003f87788e53c5a683a43f4da65b77a97f98fdc",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_14",
+    "expected_fingerprint": "1ea425b02fadc60644ff402cde032d109d0aff2d8482f737f5187f7cd841d192",
+    "actual_fingerprint": "c3468bbd91a53ae56b8561c38076581eef14167295657c3ed3de3d0cd5d16f22",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_15",
+    "expected_fingerprint": "74958a10fde4021d53d400ebeaf070f3c82b6206194249bfeb78766701274dbe",
+    "actual_fingerprint": "fec135e8b298a6154adcbc3b55555e2b80aa9db066ac4880a2a8be12f2a4531a",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_16",
+    "expected_fingerprint": "d3c218396824957318e35afe02d1a54938c6f5ee73521955d0a2f512c011d6a6",
+    "actual_fingerprint": "89f7a890dda97c17ba26242f22117a7dc32d995b256ac1ec10b102d48a1ac48d",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_17",
+    "expected_fingerprint": "89c330a5f69935f704d3b57e7231cdd3adf23780d344fa68e28d8c0a2de2383a",
+    "actual_fingerprint": "f892fdda68e2666b7997489701cabc5110cff98d479517c40fed035663f4e757",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_18",
+    "expected_fingerprint": "054a23812e2d9f72c42be3f7c920c7eecbab02f862c6ee98b08d9b7756ff38db",
+    "actual_fingerprint": "18fa9fa4eda5ea3828cb0e9e78a04523a8a6e5a856e4823c73c50d41c9264e98",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_19",
+    "expected_fingerprint": "d342a3ec3c8cd1fbf46337b5b33d5c8ed9ad4d11a917a6d821053105088c17af",
+    "actual_fingerprint": "22fa5e935766289ccab308001af015ef7e1500173399d16f86261032bb191382",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_20",
+    "expected_fingerprint": "493bda9961539a32b1c1119db1670154a53433bbe16aa2125f35ff46bc50b538",
+    "actual_fingerprint": "6c47aba5fa86c602c8101fe121c0e9fde46cb01bcc1686796d4e3de198244ff9",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_21",
+    "expected_fingerprint": "d8bf187b772a07c01ab39f46129a94e0f085942a81742193e6df35d4eb910a40",
+    "actual_fingerprint": "fb88f33aa7dcd228f2d500f4f2073d0f91d0209912bf83774fb310bead22fe29",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "auth_uid_22",
+    "expected_fingerprint": "6c16c47bd82d76c9969672e185e8a6e010862501248a0822e7b0ee6ada5949c2",
+    "actual_fingerprint": "2154b908753e3e41504c9019b50e82afe4eda250d09b32d3d926571545d2a1e5",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "dipendente_id",
+      "schema_version",
+      "nome",
+      "password"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "emp_0",
+    "expected_fingerprint": null,
+    "actual_fingerprint": "e35a7e8dfc949ba73f1251aefb0cbe08f3a2652001d86350568314632475449c",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "MISSING_EXPECTED"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "emp_1",
+    "expected_fingerprint": null,
+    "actual_fingerprint": "1eab08db750bcb17233eb110c98b1a45c8793e3990de9ca50427cf20612ca823",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "MISSING_EXPECTED"
+    ]
+  },
+  {
+    "type": "user",
+    "id": "qtQWKWaJRMZNv0UzhOETC0t2hdU2",
+    "expected_fingerprint": null,
+    "actual_fingerprint": "902c74811e06871954621935e0822209634eb6b28c3eb93f45c0553f7ad20aa2",
+    "fingerprint_match": false,
+    "payload_equal": false,
+    "differing_fields": [
+      "MISSING_EXPECTED"
+    ]
+  }
+]
