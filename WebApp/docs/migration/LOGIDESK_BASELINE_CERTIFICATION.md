@@ -10,11 +10,11 @@ CERTIFICATION_DATE = 2026-08-18
 - auth-service.js: redirect auth pubblico -> dashboard
 - documentazione approvata:
   - AGENTS.md
-  - DATA_PIPELINE_HARDENING_PLAN.md
-  - DEBT_ISOLAMENTO_TENANT_DNR.md
+  - docs/active-plans/DATA_PIPELINE_HARDENING_PLAN.md
+  - docs/active-plans/DEBT_ISOLAMENTO_TENANT_DNR.md
   - DOMAIN_MODEL.md
   - PROJECT_MANIFEST.md
-  - ROADMAP_OTTIMIZZAZIONE_FRONTEND.md
+  - docs/active-plans/ROADMAP_OTTIMIZZAZIONE_FRONTEND.md
   - report_clienti_non_abbinati.md
 
 ## EXCLUDED_CHANGES:

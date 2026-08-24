@@ -18,8 +18,8 @@ rimane la Source of Truth superiore di dominio.
 
 La governance operativa specifica del Cantiere è definita da:
 
-CANTIERE_GOVERNANCE/README_CANTIERE.md
-CANTIERE_GOVERNANCE/AGENTS_CANTIERE.md
+docs/architecture/CANTIERE_GOVERNANCE/README_CANTIERE.md
+docs/architecture/CANTIERE_GOVERNANCE/AGENTS_CANTIERE.md
 
 I documenti Produzione non devono essere riscritti per riflettere
 lo stato sperimentale del Cantiere.

@@ -212,7 +212,7 @@ Prima di tale momento Produzione e Cantiere restano separati.
 
 È prevista una futura directory:
 
-CANTIERE_GOVERNANCE/AI_BRIDGE/
+docs/architecture/CANTIERE_GOVERNANCE/AI_BRIDGE/
 
 per la comunicazione controllata:
 
