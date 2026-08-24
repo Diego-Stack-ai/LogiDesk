@@ -61,10 +61,11 @@
 
 ## 🏛️ GOVERNANCE E REGOLE DEL MANIFESTO
 
-### G.1 Source of Truth e Primato Costituzionale
-Il documento `PROJECT_MANIFEST.md` costituisce la **Fonte Primaria (Source of Truth - Livello 0)** dell'intero progetto AppLogSolutionsWeb, stabilizzata e soggetta alle procedure di revisione previste dal Manifesto.
-* Tutti gli altri documenti Core di Livello 1 (`README.md`, `AGENTS.md`, `DOMAIN_MODEL.md`, `ARCHITECTURE.md`, `OPERATIONS.md`) e tutta la documentazione specialistica di Livello 2 derivano dal Manifesto e devono rimanere strettamente coerenti con esso.
-* In caso di qualsiasi conflitto tra documenti di livello diverso, **prevale tassativamente ed incondizionatamente il PROJECT_MANIFEST.md**.
+### G.1 Source of Truth e Primato Costituzionale (Scope-Based Authority)
+Il documento PROJECT_MANIFEST.md costituisce il **Project Orchestrator (Livello 0)** dell'intero progetto LogiDesk. È AUTHORITATIVE per: visione generale, governance, domain registry, roadmap macro, project status, conflict routing e document lifecycle.
+* **AUTHORITY IS SCOPE-BASED**: La precedenza documentale non è assoluta ma basata sull'ambito di competenza.
+* Ogni documento (es. DOMAIN_MODEL.md per la semantica, ARCHITECTURE.md per l'architettura software, AGENTS.md per il comportamento degli agenti, OPERATIONS.md per le procedure, e i vari Domain Authority Document per i loro rispettivi ambiti) è sovrano nel proprio dominio.
+* PROJECT_MANIFEST.md prevale sugli altri ESCLUSIVAMENTE per i temi esplicitamente appartenenti alla governance di progetto. Non è un documento che "vince sempre su tutto".
 
 ### G.2 Principio di Primato del Dominio sulla Tecnologia
 Il Dominio applicativo rappresenta l'elemento permanente e sovrano del progetto; la tecnologia costituisce uno strumento evolutivo e temporaneo.
@@ -641,3 +642,145 @@ La futura sostituzione non sarà un deploy sopra l'esistente, ma un **CUTOVER_PL
 ## AGGIORNAMENTO LOGIDESK
 - PRODUCT_NAME = LogiDesk
 - TARGET_REPOSITORY = LogiDesk
+
+## 🛡️ PROJECT DOCUMENTATION & AI AGENT GOVERNANCE
+
+### 1. GERARCHIA DOCUMENTALE
+
+La documentazione è strutturata in 5 livelli gerarchici per separare visione, regole di dominio e implementazione:
+
+**LIVELLO 0 — PROJECT ORCHESTRATOR**
+- PROJECT_MANIFEST.md (Governa la visione globale, roadmap, domini, registro e governance)
+
+**LIVELLO 1 — CORE PROJECT DOCUMENTS**
+- README.md
+- AGENTS.md
+- DOMAIN_MODEL.md
+- ARCHITECTURE.md
+- OPERATIONS.md
+
+**LIVELLO 2 — DOMAIN AUTHORITIES**
+Documenti specialistici e prescrittivi per specifici domini architetturali (esempi):
+- LOGIDESK_DATA_ARCHITECTURE_PLAN.md
+- LOGIDESK_COMPANY_TENANT_MODEL.md (PLANNED)
+- LOGIDESK_INGESTION_AI_PLAN.md (PLANNED)
+- LOGIDESK_JOURNEY_ARCHITECTURE.md (PLANNED)
+- LOGIDESK_BILLING_MODEL.md (PLANNED)
+- LOGIDESK_SECURITY_MODEL.md (PLANNED)
+- LOGIDESK_AI_AGENT_ARCHITECTURE.md (PLANNED)
+
+**LIVELLO 3 — IMPLEMENTATION / MIGRATION DOCUMENTS**
+- Specifiche tecniche per M5/M6/M6A, hardening plans, piani di migrazione tecnici.
+
+**LIVELLO 4 — HISTORICAL / ARCHIVED**
+- Documenti conservati sotto ARCHIVIO_STORICO (non sono più fonti operative di verità).
+
+### 2. AUTHORITY SCOPE E STANDARD DOCUMENTALE
+
+Per ogni documento di Livello 2 (Domain Authority) deve essere compilato uno standard header prescrittivo, ad esempio:
+
+**DOCUMENT ROLE**: Domain authority
+**Authority Scope**: Target Data Architecture, Master vs Operational Data, Migration Policy
+**Upstream**: PROJECT_MANIFEST.md, DOMAIN_MODEL.md
+**Downstream**: LOGIDESK_INGESTION_AI_PLAN.md, LOGIDESK_JOURNEY_ARCHITECTURE.md
+**Related Agents**: IngestionAgent, PlanningAgent
+**Status**: ACTIVE
+**Version**: 1.0
+**Last Reviewed**: Data corrente
+**Supersedes**: (opzionale)
+**Superseded By**: (opzionale)
+
+*(Le limitazioni "CAN_OVERRIDE" / "CANNOT_OVERRIDE" tutelano i confini di ciascun dominio; ad esempio il piano dati non può sovrascrivere regole di sicurezza esterne allo scope dati).*
+
+### 3. DOCUMENTATION & DOMAIN REGISTRY
+
+| DOMAIN | AUTHORITATIVE_DOCUMENT | STATUS | OWNER | UPSTREAM | DOWNSTREAM |
+|---|---|---|---|---|---|
+| PROJECT GOVERNANCE | PROJECT_MANIFEST.md | ACTIVE | Project Owner | - | Livello 1 |
+| DOMAIN MODEL | DOMAIN_MODEL.md | ACTIVE | Domain Expert | PROJECT_MANIFEST | Livello 2 |
+| DATA ARCHITECTURE | LOGIDESK_DATA_ARCHITECTURE_PLAN.md | ACTIVE | Data Architect | PROJECT_MANIFEST, DOMAIN_MODEL | INGESTION, JOURNEY |
+| COMPANY/TENANT | LOGIDESK_COMPANY_TENANT_MODEL.md | PLANNED | Domain Expert | DATA ARCHITECTURE | BILLING, SECURITY |
+| INGESTION | LOGIDESK_INGESTION_AI_PLAN.md | PLANNED | System Arch | DATA ARCHITECTURE | JOURNEY ENGINE |
+| AI AGENTS | LOGIDESK_AI_AGENT_ARCHITECTURE.md| PLANNED | AI Lead | PROJECT_MANIFEST | OPERATION |
+| JOURNEY ENGINE | LOGIDESK_JOURNEY_ARCHITECTURE.md | PLANNED | Domain Expert | DATA ARCHITECTURE | PLANNING/MAPS |
+| PLANNING/MAPS | LOGIDESK_PLANNING_MAPS_PLAN.md | PLANNED | Routing Eng | JOURNEY ENGINE | DRIVER EXECUTION |
+| DRIVER EXECUTION| LOGIDESK_DRIVER_EXECUTION.md | PLANNED | Domain Expert | JOURNEY ENGINE | OPERATIONS |
+| BILLING | LOGIDESK_BILLING_MODEL.md | PLANNED | Domain Expert | JOURNEY ENGINE | REPORTS |
+| SECURITY/PERMISSIONS| LOGIDESK_SECURITY_MODEL.md | PLANNED | Security Arch | PROJECT_MANIFEST | Livello 3 |
+| OFFLINE/SYNC | LOGIDESK_OFFLINE_SYNC_MODEL.md | PLANNED | System Arch | DATA ARCHITECTURE | DRIVER EXECUTION |
+| OPERATIONS | OPERATIONS.md | ACTIVE | DevOps | PROJECT_MANIFEST | IMPLEMENTATION |
+| UI/BRANDING | LOGIDESK_UI_BRANDING_MODEL.md | PLANNED | UX/UI Lead | COMPANY/TENANT | - |
+| MIGRATION | LOGIDESK_MIGRATION_POLICY.md | PLANNED | Data Architect | DATA ARCHITECTURE | IMPLEMENTATION |
+
+### 4. CONFLICT RESOLUTION RULES
+
+Le regole per la risoluzione dei conflitti tra documenti e le relative competenze sono inflessibili:
+1. **PROJECT_MANIFEST governa**: visione globale, domini, roadmap, registry, governance e regole d'ingaggio degli agenti.
+2. **DOMAIN_MODEL governa**: semantica delle entità, relazioni e tassonomia.
+3. **Documento Domain Authority governa**: esclusivamente il proprio ambito tecnico (scope).
+4. **AGENTS.md governa**: il comportamento operativo standard, l'etica e i vincoli degli agenti AI nel repository.
+5. **ARCHITECTURE.md governa**: l'architettura software generale e la topologia dei sistemi.
+6. **OPERATIONS.md governa**: procedure operative, deploy, monitoring e manutenzione.
+7. **Documenti migration/spec**: NON possono cambiare autonomamente il modello target del DB. Se divergono, sono in errore.
+8. **Documenti storici**: NON sono fonti di verità operative e non devono essere usati per estrarre regole correnti.
+
+Se due documenti autorevoli sembrano contraddirsi: CONFLICT_FOUND → L'agente si **FERMA (STOP)** → identifica gli scope coinvolti → verifica quale documento ha authority su quel tema → se il conflitto attraversa più domini: HUMAN ARCHITECTURAL DECISION REQUIRED → attende decisione umana → procede all'aggiornamento di tutti i documenti coinvolti. (N.B. NON si applica la regola "vince sempre PROJECT_MANIFEST" salvo su temi esplicitamente appartenenti alla governance di progetto).
+
+### 5. AI AGENT GOVERNANCE
+
+**Principio Assoluto: AI AGENTS ARE DOMAIN WORKERS, NOT SOURCES OF TRUTH.**
+Gli agenti artificiali assistono l'umano applicando i Domain Authorities, ma NON inventano regole non mappate.
+
+Ciascun agente previsto (implementato o futuro) deve possedere un perimetro d'azione chiaro, con:
+- AGENT_NAME: Identificativo
+- MISSION: Scopo operativo
+- AUTHORITY: Su quali flussi può deliberare (senza sovrascrivere i master document)
+- READS: Documenti da cui estrae regole
+- WRITES: Codice o documenti che è autorizzato a manipolare
+- CANNOT_CHANGE: Perimetro di read-only (es. le policy di sicurezza)
+- HUMAN_APPROVAL_REQUIRED: Flag per operazioni irreversibili (es. migrazioni master data)
+- AUDIT_OUTPUT: Metrica obbligatoria di resoconto (es. report post-esecuzione)
+
+*(Esempi di futuri sub-agenti: IngestionAgent, TenantOnboardingAgent, DataQualityAgent, PlanningAgent, RoutingAgent, BillingAssistant, DocumentationAgent, ProjectOrchestratorAgent)*.
+
+### 6. PROJECT ORCHESTRATOR AGENT
+
+Concettualmente viene istituito il ruolo del **PROJECT_ORCHESTRATOR_AGENT**.
+**Responsabilità:**
+- Individuare sempre il documento autorevole corretto per lo scope in esame (incluso PROJECT_MANIFEST.md per la governance).
+- Rilevare preventivamente i conflitti tra gli MD e bloccare le derivazioni di codice.
+- Coordinare i sub-task o i prompt all'agente di dominio più corretto.
+- **NON poter sovrascrivere autonomamente una Domain Authority**.
+- Richiedere obbligatoriamente una decisione umana (HUMAN ARCHITECTURAL DECISION REQUIRED) per i conflitti cross-domain.
+
+### 7. AGENT ↔ DOCUMENT MATRIX (Concettuale)
+
+| AGENT | PRIMARY_DOCUMENT | SECONDARY_DOCUMENTS | WRITE_SCOPE | HUMAN_APPROVAL |
+|---|---|---|---|---|
+| **IngestionAgent** | LOGIDESK_INGESTION_AI_PLAN.md | DATA_ARCHITECTURE_PLAN.md, DOMAIN_MODEL.md | Scrive dati normalizzati da parser | Approval required per config permanenti/onboarding tenant. |
+| **PlanningAgent** | LOGIDESK_JOURNEY_ARCHITECTURE.md | DATA_ARCHITECTURE_PLAN.md, Config routing | Propone viaggi da fermate | Approval policy su salvataggio definitivo. |
+| **BillingAssistant**| LOGIDESK_BILLING_MODEL.md | JOURNEY_ARCHITECTURE, Config tariffarie | Calcolo assistito | Deterministic core; l'approvazione è la freeze snapshot. |
+
+### 8. DOCUMENT LIFECYCLE
+
+Ogni documento (specialmente di Livello 2 e 3) ha uno stato codificato nel proprio Header:
+- **DRAFT**: In stesura. Non può mai prevalere su un Authoritative.
+- **ACTIVE / AUTHORITATIVE**: Fonte formale di verità attiva per il suo dominio. (Ogni Domain Authority ha UN SOLO documento Authoritative alla volta).
+- **DEPRECATED**: Da non usare per i nuovi sviluppi, in attesa di sostituzione.
+- **SUPERSEDED**: Sostituito. Deve contenere il link esplicito al nuovo documento che ne ha preso il posto.
+- **ARCHIVED**: Sotto ARCHIVIO_STORICO. Non ha valenza operativa per le scelte attuali.
+
+### 9. CHANGE CONTROL
+
+Qualsiasi futura decisione o variazione strutturale è soggetta alla seguente pipeline di controllo del cambiamento (Change Control Flow):
+PROPOSAL → IMPACT ANALYSIS (Agenti leggono le regole upstream/downstream) → DOCUMENT UPDATE (Redazione nel file di competenza) → HUMAN APPROVAL (Validazione dell'utente) → IMPLEMENTATION (Modifica del codice / runtime) → VALIDATION (Test) → STATUS UPDATE.
+
+*Vincolo:* Nessun agente è autorizzato a manipolare *contemporaneamente* il codice runtime, il modello architetturale target e la policy di migrazione senza l'esplicita e frazionata autorizzazione umana in passaggi successivi.
+
+### 10. PROJECT STATUS REGISTER
+
+| DOMAIN | CURRENT_PHASE | STATUS | NEXT_STEP | BLOCKERS | AUTHORITATIVE_DOC |
+|---|---|---|---|---|---|
+| DATA ARCHITECTURE | A2 | ACTIVE | A3 Physical Firestore/Storage Design | None | LOGIDESK_DATA_ARCHITECTURE_PLAN.md |
+| DOCUMENT GOVERNANCE | GOV-1 | ACTIVE | Approvazione nuovi template specialistici | None | PROJECT_MANIFEST.md |
+
