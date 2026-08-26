@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.448">
+    <link rel="stylesheet" href="styles.css?v=6.449">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -282,7 +282,7 @@
                     </div>
                     <div class="form-group">
                         <label>Longitudine (Geolocalizzazione)</label>
-                        <input type="text" id="editLng">
+                        <input type="text" id="editLon">
                     </div>
                 </form>
             </div>
@@ -430,7 +430,6 @@
                                 </button>
                                 <button class="btn-edit" data-action="delete" data-point-id="${d.id}" title="Elimina punto di consegna">
                                     <span class="material-icons-round" style="font-size:18px; color:#ef4444; pointer-events:none;">delete</span>
-                                    <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
                                 </button>
                             </div>
                         </div>
@@ -608,6 +607,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.448"></script>
+    <script src="script.js?v=6.449"></script>
 </body>
 </html>

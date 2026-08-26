@@ -740,37 +740,33 @@
             }
         };
 
-        // Gestione focus specifico se arrivo da una card
-        function checkDeepLink() {
+        // Gestione focus specifico se arrivo da una card.
+        // IMPORTANTE: FOCUS_ID e FOCUS_TENANT vengono letti SUBITO dall'URL,
+        // prima che i listener Firestore inizino, così il filtro è già attivo
+        // quando updateListAndMap() viene chiamato per la prima volta.
+        (function initDeepLink() {
             const urlParams = new URLSearchParams(window.location.search);
             const focusId = urlParams.get('id');
             const focusTenant = urlParams.get('tenant');
-            if(focusId) {
-                console.log("[Map] Deep link rilevato per ID:", focusId, "Tenant:", focusTenant);
-                setTimeout(() => {
-                    const item = ALL_POINTS.find(p => p.id === focusId && (!focusTenant || p.tenant === focusTenant));
-                    if(item) {
-                        // Invece di usare la casella di ricerca (che potrebbe fallire se i campi sono diversi),
-                        // usiamo una variabile globale per forzare il filtro esatto.
-                        window.FOCUS_ID = focusId;
-                        window.FOCUS_TENANT = focusTenant;
-                        updateListAndMap();
-                        
-                        // Centratura forzata sul marker
-                        setTimeout(() => {
-                            if (gMarkers.length > 0) {
-                                const targetMarker = gMarkers[0]; 
-                                map.setCenter(targetMarker.position);
-                                map.setZoom(18);
-                                google.maps.event.trigger(targetMarker, 'click');
-                            }
-                        }, 500);
-
-                        // Sblocca se è per un singolo punto
-                        if(IS_LOCKED) toggleLock();
-                    }
-                }, 1500);
+            if (focusId) {
+                console.log("[Map] Deep link attivato - ID:", focusId, "Tenant:", focusTenant);
+                window.FOCUS_ID = focusId;
+                window.FOCUS_TENANT = focusTenant || null;
             }
+        })();
+
+        function checkDeepLink() {
+            if (!window.FOCUS_ID) return;
+            // Aspetta che i marker siano stati disegnati, poi centra la mappa
+            setTimeout(() => {
+                if (gMarkers.length > 0) {
+                    const targetMarker = gMarkers[0];
+                    map.setCenter(targetMarker.position);
+                    map.setZoom(18);
+                    google.maps.event.trigger(targetMarker, 'click');
+                }
+                if (IS_LOCKED) toggleLock();
+            }, 2000);
         }
 
         window.onload = () => {
