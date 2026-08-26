@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.442">
+    <link rel="stylesheet" href="styles.css?v=6.443">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -292,7 +292,7 @@
         import "./core/auth-service.js";
         import { db, auth } from "./core/firebase-init.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { CompanyContext } from "./core/CompanyContext.js";
         // CONFIGURATION FLAGS
         const GEOLOCATION_WRITE_READY = true; // Abilitato scrittura sicura su lat/lng
@@ -428,6 +428,10 @@
                                 <button class="btn-edit" data-action="geo" data-point-id="${d.id}" title="Geolocalizza (Google Maps)">
                                     <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
                                 </button>
+                                <button class="btn-edit" data-action="delete" data-point-id="${d.id}" title="Elimina punto di consegna">
+                                    <span class="material-icons-round" style="font-size:18px; color:#ef4444; pointer-events:none;">delete</span>
+                                    <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
+                                </button>
                             </div>
                         </div>
 
@@ -486,6 +490,98 @@
                 statsEl.innerText = "Errore di caricamento: " + err.message;
             }
         }
+        
+        window.openEditModal = function(id) {
+            const modal = document.getElementById("editModal");
+            if (!modal) return;
+            const form = document.getElementById("editForm");
+            form.reset();
+            
+            if (id) {
+                const pt = fullData.find(x => x.id === id);
+                if (pt) {
+                    document.getElementById("editId").value = pt.id || "";
+                    document.getElementById("editNome").value = pt.nome || "";
+                    document.getElementById("editIndirizzo").value = pt.indirizzo || "";
+                    document.getElementById("editCap").value = pt.cap || "";
+                    document.getElementById("editCitta").value = pt.citta || "";
+                    document.getElementById("editProvincia").value = pt.provincia || "";
+                    document.getElementById("editLat").value = (pt.geolocalizzazione && (pt.geolocalizzazione.lat || pt.geolocalizzazione.latitude)) ? (pt.geolocalizzazione.lat || pt.geolocalizzazione.latitude) : "";
+                    document.getElementById("editLon").value = (pt.geolocalizzazione && (pt.geolocalizzazione.lon || pt.geolocalizzazione.longitude || pt.geolocalizzazione.lng)) ? (pt.geolocalizzazione.lon || pt.geolocalizzazione.longitude || pt.geolocalizzazione.lng) : "";
+                    document.getElementById("editModalSubtitle").innerText = "ID: " + id;
+                }
+            } else {
+                document.getElementById("editId").value = "";
+                document.getElementById("editModalSubtitle").innerText = "Nuovo Punto";
+            }
+            modal.style.display = "flex";
+        };
+
+        window.closeEditModal = function() {
+            const modal = document.getElementById("editModal");
+            if (modal) modal.style.display = "none";
+        };
+
+        window.saveEdit = async function() {
+            const id = document.getElementById("editId").value;
+            const nome = document.getElementById("editNome").value;
+            if (!nome) return alert("Inserisci il nome");
+            
+            const lat = document.getElementById("editLat").value;
+            const lon = document.getElementById("editLon").value;
+            
+            const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+            try {
+                if (id) {
+                    await setDoc(doc(db, path, id), {
+                        nome: nome,
+                        indirizzo: document.getElementById("editIndirizzo").value,
+                        cap: document.getElementById("editCap").value,
+                        citta: document.getElementById("editCitta").value,
+                        provincia: document.getElementById("editProvincia").value,
+                        geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) }
+                    }, { merge: true });
+                } else {
+                    await addDoc(collection(db, path), {
+                        nome: nome,
+                        indirizzo: document.getElementById("editIndirizzo").value,
+                        cap: document.getElementById("editCap").value,
+                        citta: document.getElementById("editCitta").value,
+                        provincia: document.getElementById("editProvincia").value,
+                        geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) },
+                        tenant_id: activeTenantId
+                    });
+                }
+                closeEditModal();
+                init(auth.currentUser); // Reload
+            } catch (e) {
+                console.error(e);
+                alert("Errore salvataggio: " + e.message);
+            }
+        };
+
+        window.deletePoint = async function(id) {
+            if(!confirm("Sei sicuro di voler eliminare questo punto di consegna? L'operazione è irreversibile.")) return;
+            try {
+                const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+                await deleteDoc(doc(db, path, id));
+                init(auth.currentUser); // Reload
+                alert("Punto di consegna eliminato.");
+            } catch(e) {
+                console.error(e);
+                alert("Errore durante l'eliminazione: " + e.message);
+            }
+        };
+
+        window.openMapModal = function(id) {
+            window.navigateWithState('mappa_google.html?id=' + id);
+        };
+
+        window.closeMapModal = function() {
+            const modal = document.getElementById("mapModal");
+            if (modal) modal.style.display = "none";
+        };
+
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("searchInput").addEventListener("input", renderList);
             document.getElementById("typeFilter").addEventListener("change", renderList);
@@ -511,6 +607,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.442"></script>
+    <script src="script.js?v=6.443"></script>
 </body>
 </html>
