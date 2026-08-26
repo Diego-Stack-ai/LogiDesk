@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.450">
+    <link rel="stylesheet" href="styles.css?v=6.451">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -163,7 +163,7 @@
                 style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
                 <span class="material-icons-round">dashboard</span>
             </button>
-            <div class="nav-title" style="flex: 1;">Punti di Consegna <span id="tenantDisplay" style="font-size: 12px; opacity: 0.8; font-weight:normal; margin-left:8px;"></span></div>
+            <div class="nav-title" style="flex: 1;">Punti di Consegna</div>
             <a href="#" onclick="window.AuthService.logout(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
         </div>
     </nav>
@@ -172,6 +172,11 @@
             <div class="filters-container" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <div class="input-group" style="flex:1; min-width: 250px;">
                     <input type="text" id="searchInput" placeholder="Cerca cliente, codice o citt ..." style="width:100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div class="input-group">
+                    <select id="tenantSelectBox" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px; font-weight: 600; color: #0f172a; background: white;">
+                        <option value="" style="color: black;">Seleziona tenant...</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <select id="typeFilter" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
@@ -474,27 +479,22 @@
                     ...doc.data()
                 }));
                 
-                // Ensure selector exists in the nav title area
-                let tenantDisplaySpan = document.getElementById("tenantDisplay");
-                if (tenantDisplaySpan.tagName.toLowerCase() !== 'select') {
-                    const selectEl = document.createElement("select");
-                    selectEl.id = "tenantDisplay";
-                    selectEl.style.cssText = "font-size: 13px; font-weight: 600; margin-left: 12px; padding: 4px 8px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; background: rgba(255,255,255,0.2); color: inherit; cursor: pointer;";
-                    
-                    selectEl.addEventListener("change", (e) => {
+                let tenantSelectBox = document.getElementById("tenantSelectBox");
+                
+                // Pulisci i listener precedenti clonando se necessario, oppure aggiungi uno nuovo solo la prima volta
+                if (!tenantSelectBox.hasAttribute('data-listener-attached')) {
+                    tenantSelectBox.addEventListener("change", (e) => {
                         const val = e.target.value;
                         if (val) {
                             localStorage.setItem("activeTenant", val);
                             window.location.reload();
                         }
                     });
-                    
-                    tenantDisplaySpan.parentNode.replaceChild(selectEl, tenantDisplaySpan);
-                    tenantDisplaySpan = selectEl;
+                    tenantSelectBox.setAttribute('data-listener-attached', 'true');
                 }
                 
                 // Populate options
-                tenantDisplaySpan.innerHTML = '<option value="" style="color: black;">Seleziona tenant...</option>';
+                tenantSelectBox.innerHTML = '<option value="" style="color: black;">Seleziona tenant...</option>';
                 dynamicTenants.forEach(t => {
                     const code = t.nome || t.name || t.id;
                     const opt = document.createElement("option");
@@ -502,7 +502,7 @@
                     opt.text = code;
                     opt.style.color = "black";
                     opt.dataset.tenantId = t.id;
-                    tenantDisplaySpan.appendChild(opt);
+                    tenantSelectBox.appendChild(opt);
                 });
                 
                 const activeTenantCode = localStorage.getItem("activeTenant");
@@ -511,14 +511,14 @@
                 const selectedTenant = dynamicTenants.find(t => (t.nome || t.name || t.id) === activeTenantCode);
                 
                 if (!selectedTenant) {
-                    tenantDisplaySpan.value = "";
+                    tenantSelectBox.value = "";
                     listContainer.innerHTML = `<div class="empty-state">Seleziona un tenant dal menu in alto per visualizzare i punti di consegna.</div>`;
                     listContainer.classList.remove("cards-container");
                     statsEl.innerText = "In attesa di selezione tenant...";
                     return;
                 }
                 
-                tenantDisplaySpan.value = activeTenantCode;
+                tenantSelectBox.value = activeTenantCode;
                 activeTenantId = selectedTenant.id;
                 
                 const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
@@ -659,6 +659,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.450"></script>
+    <script src="script.js?v=6.451"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.450">
+    <link rel="stylesheet" href="styles.css?v=6.451">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json">
@@ -482,12 +482,12 @@
         </div>
     </div>
 
-    <script src="script.js?v=6.450"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.450"></script>
+    <script src="script.js?v=6.451"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.451"></script>
     <script type="module">
-        import { saveTrip, checkPendingTrip, closeTripWithAnomaly, deleteTrip } from "./firestore-service.js?v=6.450";
-        import { auth } from "./firestore-service.js?v=6.450";
-        import "./gps-tracker.js?v=6.450";
+        import { saveTrip, checkPendingTrip, closeTripWithAnomaly, deleteTrip } from "./firestore-service.js?v=6.451";
+        import { auth } from "./firestore-service.js?v=6.451";
+        import "./gps-tracker.js?v=6.451";
 
         const presenzeForm = document.getElementById('presenzeForm');
         const btnStartTrip = document.getElementById('btnStartTrip');
@@ -887,7 +887,7 @@
                 // Se ci sono foto offline da caricare, le accodiamo in SyncManager
                 if (tripId && window.offlinePhotoBlobs && Object.keys(window.offlinePhotoBlobs).length > 0) {
                     try {
-                        const { syncManager } = await import("./core/sync-manager.js?v=6.450");
+                        const { syncManager } = await import("./core/sync-manager.js?v=6.451");
                         for (const index in window.offlinePhotoBlobs) {
                             const fileBlob = window.offlinePhotoBlobs[index];
                             const photoId = `foto_ddt_${tripId}_${index}`;
