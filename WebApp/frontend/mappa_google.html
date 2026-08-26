@@ -406,9 +406,13 @@
             // Nuovi filtri
             const filterStato = document.getElementById('sel-stato') ? document.getElementById('sel-stato').value : 'tutti';
             const filterCanale = document.getElementById('sel-canale') ? document.getElementById('sel-canale').value : 'tutti';
-            
             // Se c'è una data, filtriamo solo chi ha un DDT
             const filtered = ALL_POINTS.filter(p => {
+                // Filtro Esatto per Deep Link
+                if (window.FOCUS_ID && p.id !== window.FOCUS_ID) {
+                    return false;
+                }
+
                 // Filtro Canale
                 if (filterCanale !== 'tutti' && p.tenant !== filterCanale) {
                     return false;
@@ -744,14 +748,15 @@
                 setTimeout(() => {
                     const item = ALL_POINTS.find(p => p.id === focusId);
                     if(item) {
-                        const search = document.getElementById('search-box');
-                        search.value = item.codice_frutta || item.codice_latte || "";
+                        // Invece di usare la casella di ricerca (che potrebbe fallire se i campi sono diversi),
+                        // usiamo una variabile globale per forzare il filtro esatto.
+                        window.FOCUS_ID = focusId;
                         updateListAndMap();
                         
                         // Centratura forzata sul marker
                         setTimeout(() => {
                             if (gMarkers.length > 0) {
-                                const targetMarker = gMarkers[0]; // Dovrebbe essere l'unico se il filtro ha funzionato
+                                const targetMarker = gMarkers[0]; 
                                 map.setCenter(targetMarker.position);
                                 map.setZoom(18);
                                 google.maps.event.trigger(targetMarker, 'click');
