@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.451">
+    <link rel="stylesheet" href="styles.css?v=6.452">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -179,14 +179,14 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <select id="typeFilter" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
-                        <option value="ALL">Tutte le Competenze</option>
+                    <select id="typeFilter" style="width: auto; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
+                        <option value="ALL">Tutti i canali</option>
                         <option value="FRUTTA">Frutta</option>
                         <option value="LATTE">Latte</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <select id="statusFilter" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
+                    <select id="statusFilter" style="width: auto; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px;">
                         <option value="ALL">Tutti gli stati</option>
                         <option value="ATTIVI">Attivi</option>
                         <option value="INATTIVI">Inattivi</option>
@@ -406,12 +406,15 @@
                         let sibType = resolvePointType(sibling);
                         let sibRaw = sibling.codice_esterno || sibling.codice_punto || "-";
                         let sibCode = formatExternalCode(sibRaw);
-                        assocHTML = `<div style="font-size: 12px; color: #64748b; margin-top: 4px;">&#128279; Associato a ${sibType}: ${sibCode}</div>`;
+                        assocHTML = `<span class="badge" style="background:#f8fafc; color:#64748b; border:1px dashed #cbd5e1;">&#128279; ${sibType}: ${sibCode}</span>`;
                     }
                 }
                 let tenantLabel = "N/A";
                 if (d.tenant_name) tenantLabel = d.tenant_name;
-                else if (d.tenant_id === 'AgvcnbuUMu7YhzSuUKTY') tenantLabel = "DNR";
+                else if (TENANT_ID_MAP) {
+                    const foundKey = Object.keys(TENANT_ID_MAP).find(k => TENANT_ID_MAP[k] === d.tenant_id);
+                    if (foundKey) tenantLabel = foundKey;
+                }
                 let channelHTML = `<div style="font-size: 12px; font-weight: 600; color: #475569; margin-top: 2px;">CANALE: ${type}</div>`;
                 let windows = formatTimeWindows(d.finestre_consegna);
                 html += `
@@ -421,19 +424,24 @@
                                 <h4 class="card-title" style="margin:0; font-size:16px; font-weight:700; color:#1e293b; text-transform:uppercase;">${d.nome || 'Senza Nome'}</h4>
                                 <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
                                     ${primaryBadge}
-                                    <span class="badge" style="background:#f1f5f9; color:#64748b">ZONA: ${d.codice_zona || '-'}</span>
-                                    <span class="badge" style="background:var(--primary); color:white">${tenantLabel}</span>
+                                    ${assocHTML}
                                 </div>
-                                ${assocHTML}
+                                <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
+                                    <span class="badge" style="background:${d.attivo ? '#10b981' : '#ef4444'}; color:white; font-size:10px;">
+                                        ${d.attivo ? 'ATTIVO' : 'INATTIVO'}
+                                    </span>
+                                    <span class="badge" style="background:var(--primary); color:white; font-size:10px;">TENANT: ${tenantLabel}</span>
+                                    <span class="badge" style="background:#f1f5f9; color:#64748b; font-size:10px;">ZONA: ${d.codice_zona || '-'}</span>
+                                </div>
                             </div>
                             <div class="item-actions" style="display:flex; gap:8px;">
-                                <button class="btn-edit" data-action="edit" data-point-id="${d.id}" title="Modifica dati">
+                                <button class="btn-edit" onclick="window.openEditModal('${d.id}')" title="Modifica dati">
                                     <span class="material-icons-round" style="font-size:18px; pointer-events:none;">edit</span>
                                 </button>
-                                <button class="btn-edit" data-action="geo" data-point-id="${d.id}" title="Geolocalizza (Google Maps)">
+                                <button class="btn-edit" onclick="window.openMapModal('${d.id}')" title="Geolocalizza (Google Maps)">
                                     <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
                                 </button>
-                                <button class="btn-edit" data-action="delete" data-point-id="${d.id}" title="Elimina punto di consegna">
+                                <button class="btn-edit" onclick="window.deletePoint('${d.id}')" title="Elimina punto di consegna">
                                     <span class="material-icons-round" style="font-size:18px; color:#ef4444; pointer-events:none;">delete</span>
                                 </button>
                             </div>
@@ -525,6 +533,29 @@
                 const snapshot = await getDocs(collection(db, path));
                 fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
+                // --- INIZIO AGGIORNAMENTO DINAMICO CANALI ---
+                const typesFound = new Set();
+                fullData.forEach(d => {
+                    const t = resolvePointType(d);
+                    if(t) typesFound.add(t);
+                });
+                const typeFilter = document.getElementById("typeFilter");
+                if (typeFilter) {
+                    const currentVal = typeFilter.value;
+                    typeFilter.innerHTML = '<option value="ALL">Tutti i canali</option>';
+                    if (typesFound.size > 0) {
+                        typeFilter.style.display = "inline-block";
+                        Array.from(typesFound).sort().forEach(t => {
+                            typeFilter.innerHTML += `<option value="${t}">${t.charAt(0) + t.slice(1).toLowerCase()}</option>`;
+                        });
+                        if (typesFound.has(currentVal)) typeFilter.value = currentVal;
+                    } else {
+                        typeFilter.style.display = "none"; // Hide if no channels
+                    }
+                }
+                // --- FINE AGGIORNAMENTO DINAMICO CANALI ---
+
+                
                 buildAssociationMap(fullData);
                 
                 if (fullData.length === 0) {
@@ -590,6 +621,7 @@
                         cap: document.getElementById("editCap").value,
                         citta: document.getElementById("editCitta").value,
                         provincia: document.getElementById("editProvincia").value,
+                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true,
                         geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) }
                     }, { merge: true });
                 } else {
@@ -599,6 +631,7 @@
                         cap: document.getElementById("editCap").value,
                         citta: document.getElementById("editCitta").value,
                         provincia: document.getElementById("editProvincia").value,
+                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true,
                         geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) },
                         tenant_id: activeTenantId
                     });
@@ -659,6 +692,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.451"></script>
+    <script src="script.js?v=6.452"></script>
 </body>
 </html>
