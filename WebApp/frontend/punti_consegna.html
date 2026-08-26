@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.452">
+    <link rel="stylesheet" href="styles.css?v=6.453">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -410,9 +410,11 @@
                     }
                 }
                 let tenantLabel = "N/A";
-                if (d.tenant_name) tenantLabel = d.tenant_name;
-                else if (TENANT_ID_MAP) {
-                    const foundKey = Object.keys(TENANT_ID_MAP).find(k => TENANT_ID_MAP[k] === d.tenant_id);
+                if (d.tenant_name) { 
+                    tenantLabel = d.tenant_name;
+                } else if (typeof TENANT_ID_MAP !== "undefined") {
+                    const currentId = d.tenant_id || activeTenantId;
+                    const foundKey = Object.keys(TENANT_ID_MAP).find(k => TENANT_ID_MAP[k] === currentId);
                     if (foundKey) tenantLabel = foundKey;
                 }
                 let channelHTML = `<div style="font-size: 12px; font-weight: 600; color: #475569; margin-top: 2px;">CANALE: ${type}</div>`;
@@ -425,12 +427,10 @@
                                 <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
                                     ${primaryBadge}
                                     ${assocHTML}
-                                </div>
-                                <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
-                                    <span class="badge" style="background:${d.attivo ? '#10b981' : '#ef4444'}; color:white; font-size:10px;">
-                                        ${d.attivo ? 'ATTIVO' : 'INATTIVO'}
+                                    <span class="badge" style="background:${d.attivo !== false ? '#10b981' : '#ef4444'}; color:white; font-size:10px;">
+                                        ${d.attivo !== false ? 'ATTIVO' : 'INATTIVO'}
                                     </span>
-                                    <span class="badge" style="background:var(--primary); color:white; font-size:10px;">TENANT: ${tenantLabel}</span>
+                                    <span class="badge" style="background:var(--primary); color:white; font-size:10px;">${tenantLabel}</span>
                                     <span class="badge" style="background:#f1f5f9; color:#64748b; font-size:10px;">ZONA: ${d.codice_zona || '-'}</span>
                                 </div>
                             </div>
@@ -692,6 +692,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.452"></script>
+    <script src="script.js?v=6.453"></script>
 </body>
 </html>
