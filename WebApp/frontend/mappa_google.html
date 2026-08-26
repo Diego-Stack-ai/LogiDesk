@@ -110,7 +110,7 @@
 
     <div id="sidebar">
         <div id="sidebar-header">
-            <button onclick="window.navigateWithState('gestione.html')" style="background:none; border:none; color:white; cursor:pointer;">
+            <button onclick="window.history.length > 1 ? window.history.back() : window.navigateWithState('dashboard.html')" style="background:none; border:none; color:white; cursor:pointer;">
                 <span class="material-icons-round">arrow_back</span>
             </button>
             <div>
