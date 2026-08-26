@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.454">
+    <link rel="stylesheet" href="styles.css?v=6.455">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -523,6 +523,29 @@
                     tenantSelectBox.appendChild(opt);
                 });
                 
+                
+                // --- INIZIO DIAGNOSTICA TENANT_ID ---
+                let missingTenant = 0;
+                let invalidTenant = 0;
+                fullData.forEach(d => {
+                    if (!d.tenant_id) {
+                        missingTenant++;
+                    } else if (typeof TENANT_ID_MAP !== "undefined" && !Object.keys(TENANT_ID_MAP).find(k => TENANT_ID_MAP[k] === d.tenant_id)) {
+                        invalidTenant++;
+                    }
+                });
+                const diagMsg = (missingTenant > 0 || invalidTenant > 0) 
+                    ? ` ⚠️ ATTENZIONE: ${missingTenant} record SENZA tenant_id, ${invalidTenant} con tenant_id SCONOSCIUTO.` 
+                    : ` ✅ Tutti i record hanno un tenant_id valido.`;
+                // --- FINE DIAGNOSTICA ---
+
+                // Appendi il messaggio di diagnostica nelle statistiche
+                const originalRenderList = renderList;
+                renderList = function() {
+                    originalRenderList();
+                    document.getElementById("stats").innerText += diagMsg;
+                };
+
                 const activeTenantCode = localStorage.getItem("activeTenant");
                 
                 // No silent fallback to DNR. If not selected or not found, stop.
@@ -702,6 +725,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.454"></script>
+    <script src="script.js?v=6.455"></script>
 </body>
 </html>
