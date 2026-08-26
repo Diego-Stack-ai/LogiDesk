@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.447">
+    <link rel="stylesheet" href="styles.css?v=6.448">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -574,7 +574,8 @@
         };
 
         window.openMapModal = function(id) {
-            window.navigateWithState('mappa_google.html?id=' + id);
+            const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
+            window.navigateWithState('mappa_google.html?id=' + encodeURIComponent(id) + '&tenant=' + encodeURIComponent(tenantLabel));
         };
 
         window.closeMapModal = function() {
@@ -607,6 +608,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.447"></script>
+    <script src="script.js?v=6.448"></script>
 </body>
 </html>
