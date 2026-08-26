@@ -218,11 +218,19 @@
         import { db, app } from "./core/firebase-init.js";
         import { getFirestore, collection, onSnapshot, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { firebaseConfig } from "./firebase-config.js";
+        import { CompanyContext } from "./core/CompanyContext.js";
 
 
 
         let map;
         let ALL_POINTS = [];
+        const TENANT_ID_MAP = {
+            "DNR": "AgvcnbuUMu7YhzSuUKTY",
+            "GRAN CHEF": "UZC65YbnIbXsei88xNBX",
+            "CATTEL": "bSomOWB7pieGNej2KdJA",
+            "BAUER": "bXOveycf4bEXv2aCkyMU"
+        };
+
         let DDT_POINTS = []; // DDT filtrati per data
         let MODIFIED = {};
         let IS_LOCKED = true;
@@ -279,60 +287,64 @@
                     if (user) {
                         console.log("[Map] Utente autenticato, avvio listener Firestore...");
                         
-                        onSnapshot(collection(db, "clienti_fatturazione"), (snapTenants) => {
-                            const TENANTS = snapTenants.docs.map(doc => doc.data().nome || doc.id);
-                            const loadedTenants = new Set();
-                            let allPointsDict = {};
-                            
-                            
-
-                            function mergeAndRender() {
-                                ALL_POINTS = [];
-                                const activeTenants = [];
-                                TENANTS.forEach(t => {
-                                    if (allPointsDict[t] && allPointsDict[t].length > 0) {
-                                        ALL_POINTS = ALL_POINTS.concat(allPointsDict[t]);
-                                        activeTenants.push(t);
-                                    }
-                                });
-                                
-                                const selCanale = document.getElementById('sel-canale');
-                                if(selCanale) {
-                                    const curr = selCanale.value;
-                                    selCanale.innerHTML = '<option value="tutti">Tutti</option>' + activeTenants.map(t => '<option value="'+t+'">'+t+'</option>').join('');
-                                    selCanale.value = curr;
+                        const TENANTS = Object.keys(TENANT_ID_MAP);
+                        const loadedTenants = new Set();
+                        let allPointsDict = {};
+                        
+                        function mergeAndRender() {
+                            ALL_POINTS = [];
+                            const activeTenants = [];
+                            TENANTS.forEach(t => {
+                                if (allPointsDict[t] && allPointsDict[t].length > 0) {
+                                    ALL_POINTS = ALL_POINTS.concat(allPointsDict[t]);
+                                    activeTenants.push(t);
                                 }
-                                
-                                console.log(`[Map] Totale clienti caricati: ${ALL_POINTS.length} (Tenants: ${Array.from(loadedTenants).join(', ')})`);
-                                initFilters();
-                                updateListAndMap();
-                                
-                                if (loadedTenants.size === TENANTS.length) {
-                                    clearTimeout(loadingTimeout);
-                                    document.getElementById('loading-overlay').style.display = 'none';
-                                }
+                            });
+                            
+                            const selCanale = document.getElementById('sel-canale');
+                            if(selCanale) {
+                                const curr = selCanale.value;
+                                selCanale.innerHTML = '<option value="tutti">Tutti</option>' + activeTenants.map(t => '<option value="'+t+'">'+t+'</option>').join('');
+                                selCanale.value = curr;
                             }
+                            
+                            console.log(`[Map] Totale clienti caricati: ${ALL_POINTS.length} (Tenants: ${Array.from(loadedTenants).join(', ')})`);
+                            initFilters();
+                            updateListAndMap();
+                            
+                            if (loadedTenants.size === TENANTS.length) {
+                                clearTimeout(loadingTimeout);
+                                document.getElementById('loading-overlay').style.display = 'none';
+                            }
+                        }
 
-                            TENANTS.forEach(tenant => {
-                                onSnapshot(collection(db, `clienti/${tenant}/raccolta clienti`), { includeMetadataChanges: true }, (snapshot) => {
-                                    console.log(`[Map] Ricevuti ${snapshot.size} punti ${tenant}`);
-                                    allPointsDict[tenant] = snapshot.docs.map(doc => {
-                                        const d = doc.data();
-                                        return {
-                                            ...d,
-                                            id: doc.id,
-                                            tenant: tenant,
-                                            lat: parseFloat(d.lat) || 0,
-                                            lon: parseFloat(d.lon) || 0
-                                        };
-                                    });
-                                    loadedTenants.add(tenant);
-                                    mergeAndRender();
-                                }, (error) => {
-                                    console.error(`[Map] Errore Firestore ${tenant}:`, error);
-                                    loadedTenants.add(tenant); 
-                                    mergeAndRender();
+                        TENANTS.forEach(tenantLabel => {
+                            const tenantId = TENANT_ID_MAP[tenantLabel];
+                            const path = CompanyContext.getDeliveryPointsPath(tenantId);
+                            
+                            onSnapshot(collection(db, path), { includeMetadataChanges: true }, (snapshot) => {
+                                console.log(`[Map] Ricevuti ${snapshot.size} punti ${tenantLabel}`);
+                                allPointsDict[tenantLabel] = snapshot.docs.map(doc => {
+                                    const d = doc.data();
+                                    return {
+                                        ...d,
+                                        id: doc.id,
+                                        tenant: tenantLabel,
+                                        cliente: d.nome || "Senza Nome",
+                                        nome_consegna: d.nome || "",
+                                        indirizzo: d.indirizzo || "",
+                                        citta: d.citta || "",
+                                        prov: d.provincia || "",
+                                        lat: (d.geolocalizzazione && (d.geolocalizzazione.lat || d.geolocalizzazione.latitude)) ? parseFloat(d.geolocalizzazione.lat || d.geolocalizzazione.latitude) : 0,
+                                        lon: (d.geolocalizzazione && (d.geolocalizzazione.lon || d.geolocalizzazione.longitude || d.geolocalizzazione.lng)) ? parseFloat(d.geolocalizzazione.lon || d.geolocalizzazione.longitude || d.geolocalizzazione.lng) : 0
+                                    };
                                 });
+                                loadedTenants.add(tenantLabel);
+                                mergeAndRender();
+                            }, (error) => {
+                                console.error(`[Map] Errore Firestore ${tenantLabel}:`, error);
+                                loadedTenants.add(tenantLabel); 
+                                mergeAndRender();
                             });
                         });
                     } else {
@@ -719,10 +731,10 @@
                 for (const id in MODIFIED) {
                     const data = MODIFIED[id];
                     const tenant = data.tenant || 'DNR';
-                    const ref = doc(db, 'clienti', tenant, 'raccolta clienti', id);
+                    const tenantId = TENANT_ID_MAP[tenant] || "AgvcnbuUMu7YhzSuUKTY";
+                    const ref = doc(db, CompanyContext.getDeliveryPointsPath(tenantId), id);
                     batch.update(ref, {
-                        lat: data.lat,
-                        lon: data.lon,
+                        geolocalizzazione: { lat: parseFloat(data.lat), lon: parseFloat(data.lon) },
                         stato: 'ok'
                     });
                 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.449">
+    <link rel="stylesheet" href="styles.css?v=6.450">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -463,29 +463,81 @@
             container.innerHTML = html;
         }
         async function init(user) {
-            const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
-            activeTenantId = resolveTenantId(tenantLabel);
             const statsEl = document.getElementById("stats");
-            document.getElementById("tenantDisplay").innerText = "Tenant: " + tenantLabel;
-            if (!activeTenantId) {
-                statsEl.innerText = "Errore: Tenant non riconosciuto.";
-                statsEl.style.color = "#ef4444";
-                return;
-            }
-            const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+            const listContainer = document.getElementById("listContainer");
+            
             try {
+                // Fetch dynamic tenants from Firestore
+                const tenantsSnap = await getDocs(collection(db, CompanyContext.getCompanyPath() + "/tenants"));
+                const dynamicTenants = tenantsSnap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                // Ensure selector exists in the nav title area
+                let tenantDisplaySpan = document.getElementById("tenantDisplay");
+                if (tenantDisplaySpan.tagName.toLowerCase() !== 'select') {
+                    const selectEl = document.createElement("select");
+                    selectEl.id = "tenantDisplay";
+                    selectEl.style.cssText = "font-size: 13px; font-weight: 600; margin-left: 12px; padding: 4px 8px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; background: rgba(255,255,255,0.2); color: inherit; cursor: pointer;";
+                    
+                    selectEl.addEventListener("change", (e) => {
+                        const val = e.target.value;
+                        if (val) {
+                            localStorage.setItem("activeTenant", val);
+                            window.location.reload();
+                        }
+                    });
+                    
+                    tenantDisplaySpan.parentNode.replaceChild(selectEl, tenantDisplaySpan);
+                    tenantDisplaySpan = selectEl;
+                }
+                
+                // Populate options
+                tenantDisplaySpan.innerHTML = '<option value="" style="color: black;">Seleziona tenant...</option>';
+                dynamicTenants.forEach(t => {
+                    const code = t.nome || t.name || t.id;
+                    const opt = document.createElement("option");
+                    opt.value = code;
+                    opt.text = code;
+                    opt.style.color = "black";
+                    opt.dataset.tenantId = t.id;
+                    tenantDisplaySpan.appendChild(opt);
+                });
+                
+                const activeTenantCode = localStorage.getItem("activeTenant");
+                
+                // No silent fallback to DNR. If not selected or not found, stop.
+                const selectedTenant = dynamicTenants.find(t => (t.nome || t.name || t.id) === activeTenantCode);
+                
+                if (!selectedTenant) {
+                    tenantDisplaySpan.value = "";
+                    listContainer.innerHTML = `<div class="empty-state">Seleziona un tenant dal menu in alto per visualizzare i punti di consegna.</div>`;
+                    listContainer.classList.remove("cards-container");
+                    statsEl.innerText = "In attesa di selezione tenant...";
+                    return;
+                }
+                
+                tenantDisplaySpan.value = activeTenantCode;
+                activeTenantId = selectedTenant.id;
+                
+                const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
                 const snapshot = await getDocs(collection(db, path));
                 fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
                 buildAssociationMap(fullData);
+                
                 if (fullData.length === 0) {
-                    document.getElementById("listContainer").innerHTML = "<div class=\"empty-state\">Nessun punto di consegna presente per questo tenant.</div>";
-                    document.getElementById("listContainer").classList.remove("cards-container");
+                    listContainer.innerHTML = `<div class="empty-state">Nessun punto di consegna presente per questo tenant.</div>`;
+                    listContainer.classList.remove("cards-container");
                     statsEl.innerText = "0 record";
                 } else {
+                    listContainer.classList.add("cards-container");
                     renderList();
                 }
+                
             } catch (err) {
-                console.error("[Punti di Consegna] Errore lettura:", err);
+                console.error("[Punti di Consegna] Errore inizializzazione:", err);
                 statsEl.innerText = "Errore di caricamento: " + err.message;
             }
         }
@@ -573,7 +625,7 @@
         };
 
         window.openMapModal = function(id) {
-            const tenantLabel = localStorage.getItem("activeTenant") || "DNR";
+            const tenantLabel = localStorage.getItem("activeTenant");
             window.navigateWithState('mappa_google.html?id=' + encodeURIComponent(id) + '&tenant=' + encodeURIComponent(tenantLabel));
         };
 
@@ -607,6 +659,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.449"></script>
+    <script src="script.js?v=6.450"></script>
 </body>
 </html>
