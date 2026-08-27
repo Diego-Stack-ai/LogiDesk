@@ -130,6 +130,11 @@ service cloud.firestore {
         allow read: if isAuthenticated();
         allow write: if isAuthenticated() && isCoreAdmin(company_id);
         
+        match /configurazioni/{config_id} {
+          allow read: if isAuthenticated();
+          allow write: if isAuthenticated() && isCoreAdmin(company_id);
+        }
+        
         match /settings/{setting_id} {
           allow read: if isAuthenticated();
           allow write: if isAuthenticated() && isCoreAdmin(company_id);

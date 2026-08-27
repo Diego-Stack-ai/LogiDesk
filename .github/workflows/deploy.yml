@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting
+name: Unified Firebase Release Pipeline
 
 on:
   push:
@@ -6,10 +6,93 @@ on:
       - main
 
 jobs:
-  deploy:
-    name: Deploy su Firebase Hosting
+  detect_changes:
+    name: Detect Path Changes
     runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      rules: ${{ steps.filter.outputs.rules }}
+      functions: ${{ steps.filter.outputs.functions }}
+    steps:
+      - name: Checkout codice
+        uses: actions/checkout@v4
 
+      - name: Paths Filter
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'WebApp/frontend/**'
+            rules:
+              - 'WebApp/firestore.rules'
+            functions:
+              - 'WebApp/functions/**'
+
+  deploy_rules:
+    name: Deploy Firestore Rules
+    needs: detect_changes
+    if: ${{ needs.detect_changes.outputs.rules == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codice
+        uses: actions/checkout@v4
+
+      - name: SECURITY BLOCK - MISSING IAM ROLES
+        run: |
+          echo "========================================="
+          echo "SECURITY BLOCK: MISSING IAM ROLES"
+          echo "L'attuale FIREBASE_SERVICE_ACCOUNT (github-action-logidesk) possiede solo il ruolo Firebase Hosting Admin."
+          echo "Per deploare Firestore Rules, MANCA IL RUOLO: roles/firebaserules.admin"
+          echo "========================================="
+          exit 1
+
+      - name: Setup Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy Firestore Rules
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo $FIREBASE_SERVICE_ACCOUNT > /tmp/sa.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json
+          cd WebApp
+          firebase deploy --only firestore:rules --project log-solutions-cantiere
+
+  deploy_functions:
+    name: Deploy Cloud Functions
+    needs: [detect_changes, deploy_rules]
+    if: ${{ always() && needs.detect_changes.outputs.functions == 'true' && (needs.deploy_rules.result == 'success' || needs.deploy_rules.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codice
+        uses: actions/checkout@v4
+
+      - name: SECURITY BLOCK - MISSING IAM ROLES
+        run: |
+          echo "========================================="
+          echo "SECURITY BLOCK: MISSING IAM ROLES"
+          echo "Per deploare Cloud Functions, MANCANO I RUOLI: roles/cloudfunctions.admin e roles/iam.serviceAccountUser"
+          echo "========================================="
+          exit 1
+
+      - name: Setup Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy Cloud Functions
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo $FIREBASE_SERVICE_ACCOUNT > /tmp/sa.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json
+          cd WebApp
+          firebase deploy --only functions --project log-solutions-cantiere
+
+  deploy_hosting:
+    name: Deploy Firebase Hosting
+    needs: [detect_changes, deploy_rules, deploy_functions]
+    if: ${{ always() && needs.detect_changes.outputs.frontend == 'true' && (needs.deploy_rules.result == 'success' || needs.deploy_rules.result == 'skipped') && (needs.deploy_functions.result == 'success' || needs.deploy_functions.result == 'skipped') }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout codice
         uses: actions/checkout@v4
