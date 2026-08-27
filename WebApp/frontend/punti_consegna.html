@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.459">
+    <link rel="stylesheet" href="styles.css?v=6.460">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -175,7 +175,7 @@
                 </div>
                 <div class="input-group">
                     <select id="tenantSelectBox" style="min-width: 160px; height: 45px; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 12px; font-weight: 600; color: #0f172a; background: white;">
-                        <option value="" style="color: black;">Seleziona tenant...</option>
+                        <option value="ALL" style="color: black;">Tutti</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -246,6 +246,7 @@
             <div class="modal-body">
                 <form id="editForm" class="form-grid">
                     <input type="hidden" id="editId">
+                    <input type="hidden" id="editTenantId">
                     <div class="form-group">
                         <label>Codice Interno (ID)</label>
                         <input type="text" id="editCodicePunto" readonly style="background:#f1f5f9; color:#64748b; cursor:not-allowed;">
@@ -443,13 +444,13 @@
                                 </div>
                             </div>
                             <div class="item-actions" style="display:flex; gap:8px;">
-                                <button class="btn-edit" data-action="edit" data-point-id="${d.id}" title="Modifica dati">
+                                <button class="btn-edit" data-action="edit" data-point-id="${d.id}" data-tenant-id="${d.tenant_id}" title="Modifica dati">
                                     <span class="material-icons-round" style="font-size:18px; pointer-events:none;">edit</span>
                                 </button>
-                                <button class="btn-edit" data-action="geo" data-point-id="${d.id}" title="Geolocalizza (Google Maps)">
+                                <button class="btn-edit" data-action="geo" data-point-id="${d.id}" data-tenant-id="${d.tenant_id}" title="Geolocalizza (Google Maps)">
                                     <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
                                 </button>
-                                <button class="btn-edit" data-action="delete" data-point-id="${d.id}" title="Elimina punto di consegna">
+                                <button class="btn-edit" data-action="delete" data-point-id="${d.id}" data-tenant-id="${d.tenant_id}" title="Elimina punto di consegna">
                                     <span class="material-icons-round" style="font-size:18px; color:#ef4444; pointer-events:none;">delete</span>
                                 </button>
                             </div>
@@ -545,25 +546,37 @@
                     : ` ✅ Tutti i record hanno un tenant_id valido.`;
                 // --- FINE DIAGNOSTICA ---
 
-                const activeTenantCode = localStorage.getItem("activeTenant");
+                const activeTenantCode = localStorage.getItem("activeTenant") || "ALL";
                 
-                // No silent fallback to DNR. If not selected or not found, stop.
-                const selectedTenant = dynamicTenants.find(t => (t.nome || t.name || t.id) === activeTenantCode);
-                
-                if (!selectedTenant) {
-                    tenantSelectBox.value = "";
-                    listContainer.innerHTML = `<div class="empty-state">Seleziona un tenant dal menu in alto per visualizzare i punti di consegna.</div>`;
-                    listContainer.classList.remove("cards-container");
-                    statsEl.innerText = "In attesa di selezione tenant...";
-                    return;
+                // Gestione ALL mode vs singola tenant
+                if (activeTenantCode === "ALL") {
+                    tenantSelectBox.value = "ALL";
+                    activeTenantId = "ALL";
+                    fullData = [];
+                    for (const t of dynamicTenants) {
+                        const path = CompanyContext.getDeliveryPointsPath(t.id);
+                        const snapshot = await getDocs(collection(db, path));
+                        snapshot.docs.forEach(doc => {
+                            fullData.push({ id: doc.id, tenant_id: t.id, tenant_name: t.nome || t.name || t.id, ...doc.data() });
+                        });
+                    }
+                } else {
+                    const selectedTenant = dynamicTenants.find(t => (t.nome || t.name || t.id) === activeTenantCode);
+                    
+                    if (!selectedTenant) {
+                        tenantSelectBox.value = "ALL";
+                        localStorage.setItem("activeTenant", "ALL");
+                        window.location.reload();
+                        return;
+                    }
+                    
+                    tenantSelectBox.value = activeTenantCode;
+                    activeTenantId = selectedTenant.id;
+                    
+                    const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+                    const snapshot = await getDocs(collection(db, path));
+                    fullData = snapshot.docs.map(doc => ({ id: doc.id, tenant_id: activeTenantId, tenant_name: activeTenantCode, ...doc.data() }));
                 }
-                
-                tenantSelectBox.value = activeTenantCode;
-                activeTenantId = selectedTenant.id;
-                
-                const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
-                const snapshot = await getDocs(collection(db, path));
-                fullData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 // --- INIZIO AGGIORNAMENTO DINAMICO CANALI ---
                 const typesFound = new Set();
@@ -608,7 +621,7 @@
             }
         }
         
-        window.openEditModal = function(id) {
+        window.openEditModal = function(id, tenantId) {
             const modal = document.getElementById("editModal");
             if (!modal) return;
             const form = document.getElementById("editForm");
@@ -618,6 +631,7 @@
                 const pt = fullData.find(x => x.id === id);
                 if (pt) {
                     document.getElementById("editId").value = pt.id || "";
+                    document.getElementById("editTenantId").value = pt.tenant_id || tenantId || "";
                     document.getElementById("editCodicePunto").value = pt.codice_punto || "";
                     document.getElementById("editCodiceEsterno").value = pt.codice_esterno || "";
                     document.getElementById("editSottocodice").value = pt.sottocodice || "";
@@ -629,9 +643,13 @@
                     document.getElementById("editLat").value = (pt.geolocalizzazione && (pt.geolocalizzazione.lat || pt.geolocalizzazione.latitude)) ? (pt.geolocalizzazione.lat || pt.geolocalizzazione.latitude) : "";
                     document.getElementById("editLon").value = (pt.geolocalizzazione && (pt.geolocalizzazione.lon || pt.geolocalizzazione.longitude || pt.geolocalizzazione.lng)) ? (pt.geolocalizzazione.lon || pt.geolocalizzazione.longitude || pt.geolocalizzazione.lng) : "";
                     document.getElementById("editModalSubtitle").innerText = "ID: " + id;
+                    if (document.getElementById("editStato")) {
+                        document.getElementById("editStato").value = pt.attivo !== false ? "true" : "false";
+                    }
                 }
             } else {
                 document.getElementById("editId").value = "";
+                document.getElementById("editTenantId").value = activeTenantId === "ALL" ? "" : activeTenantId;
                 document.getElementById("editModalSubtitle").innerText = "Nuovo Punto";
             }
             modal.style.display = "flex";
@@ -647,22 +665,33 @@
             const nome = document.getElementById("editNome").value;
             if (!nome) return alert("Inserisci il nome");
             
-            const lat = document.getElementById("editLat").value;
-            const lon = document.getElementById("editLon").value;
+            const latStr = document.getElementById("editLat").value;
+            const lonStr = document.getElementById("editLon").value;
+            const lat = parseFloat(latStr);
+            const lon = parseFloat(lonStr);
             
-            const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+            let saveTenantId = document.getElementById("editTenantId").value;
+            if (!saveTenantId) saveTenantId = activeTenantId;
+            if (saveTenantId === "ALL") {
+                return alert("Impossibile salvare: tenant non specificato.");
+            }
+            
+            const path = CompanyContext.getDeliveryPointsPath(saveTenantId);
             try {
                 if (id) {
-                    await setDoc(doc(db, path, id), {
+                    const dataToUpdate = {
                         nome: nome,
                         codice_esterno: document.getElementById("editCodiceEsterno").value,
                         indirizzo: document.getElementById("editIndirizzo").value,
                         cap: document.getElementById("editCap").value,
                         citta: document.getElementById("editCitta").value,
                         provincia: document.getElementById("editProvincia").value,
-                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true,
-                        geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) }
-                    }, { merge: true });
+                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true
+                    };
+                    if (!isNaN(lat) && !isNaN(lon)) {
+                        dataToUpdate.geolocalizzazione = { lat: lat, lon: lon };
+                    }
+                    await setDoc(doc(db, path, id), dataToUpdate, { merge: true });
                 } else {
                     alert("Creazione nuovo punto temporaneamente sospesa durante l'allineamento del sistema.");
                     return;
@@ -675,10 +704,12 @@
             }
         };
 
-        window.deletePoint = async function(id) {
+        window.deletePoint = async function(id, tenantId) {
             if(!confirm("Sei sicuro di voler eliminare questo punto di consegna? L'operazione è irreversibile.")) return;
             try {
-                const path = CompanyContext.getDeliveryPointsPath(activeTenantId);
+                const targetTenant = tenantId || activeTenantId;
+                if (targetTenant === "ALL") return alert("Errore: tenant non identificato.");
+                const path = CompanyContext.getDeliveryPointsPath(targetTenant);
                 await deleteDoc(doc(db, path, id));
                 init(auth.currentUser); // Reload
                 alert("Punto di consegna eliminato.");
@@ -688,8 +719,14 @@
             }
         };
 
-        window.openMapModal = function(id) {
-            const tenantLabel = localStorage.getItem("activeTenant");
+        window.openMapModal = function(id, tenantId) {
+            let tenantLabel = "ALL";
+            if (tenantId && tenantId !== "ALL") {
+                const tCode = Object.keys(TENANT_ID_MAP).find(k => TENANT_ID_MAP[k] === tenantId);
+                tenantLabel = tCode || tenantId;
+            } else {
+                tenantLabel = localStorage.getItem("activeTenant");
+            }
             window.navigateWithState('mappa_google.html?id=' + encodeURIComponent(id) + '&tenant=' + encodeURIComponent(tenantLabel));
         };
 
@@ -708,12 +745,13 @@
                 if (!btn) return;
                 const action = btn.getAttribute("data-action");
                 const pointId = btn.getAttribute("data-point-id");
+                const tenantId = btn.getAttribute("data-tenant-id");
                 if (action === "geo" && pointId) {
-                    window.openMapModal(pointId);
+                    window.openMapModal(pointId, tenantId);
                 } else if (action === "edit" && pointId) {
-                    window.openEditModal(pointId);
+                    window.openEditModal(pointId, tenantId);
                 } else if (action === "delete" && pointId) {
-                    window.deletePoint(pointId);
+                    window.deletePoint(pointId, tenantId);
                 }
             });
         });
@@ -723,7 +761,7 @@
             }
         });
     </script>
-    <script src="script.js?v=6.459"></script>
+    <script src="script.js?v=6.460"></script>
 </body>
 </html>
 
