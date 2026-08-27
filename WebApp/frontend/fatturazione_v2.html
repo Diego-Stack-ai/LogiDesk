@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.457">
+    <link rel="stylesheet" href="styles.css?v=6.458">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -39,9 +39,9 @@
                 style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
                 <span class="material-icons-round">dashboard</span>
             </button>
-            <div class="nav-title" style="flex: 1;">Nuovo Modulo Fatturazione (V2)</div>
-            <button class="glass-btn" onclick="window.navigateWithState('fatturazione_clienti.html')" style="margin-right: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; color: var(--primary); border: 1.5px solid var(--primary); cursor: pointer; background: white; outline: none; transition: all 0.2s;">
-                <span class="material-icons-round" style="font-size: 18px; vertical-align: middle;">people</span> Fatturazione Clienti
+            <div class="nav-title" style="flex: 1;">Fatturazione</div>
+            <button class="glass-btn" onclick="window.navigateWithState('fatturazione_committenti.html')" style="margin-right: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; color: var(--primary); border: 1.5px solid var(--primary); cursor: pointer; background: white; outline: none; transition: all 0.2s;">
+                <span class="material-icons-round" style="font-size: 18px; vertical-align: middle;">people</span> Fatturazione Committenti
             </button>
             <a href="#" onclick="window.logoutFirebase(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
         </div>
@@ -144,8 +144,8 @@
     </main>
 
     <!-- Inclusione script base di sistema (Navigazione, Auth, UI) -->
-    <script src="script.js?v=6.457"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.457"></script>
+    <script src="script.js?v=6.458"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.458"></script>
 
     <script type="module">
         import { db, app } from "./core/firebase-init.js";
@@ -204,10 +204,31 @@
             }
         });
 
+        async function fetchCanonicalConfigs() {
+            const tenantsSnap = await getDocs(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants"));
+            const fakeDocs = [];
+            for (const tDoc of tenantsSnap.docs) {
+                const tData = tDoc.data();
+                if (!tData.nome) continue;
+                const confSnap = await getDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + tDoc.id + "/configurazioni/fatturazione"));
+                const confData = confSnap.exists() ? confSnap.data() : {};
+                fakeDocs.push({
+                    id: tDoc.id,
+                    data: () => ({
+                        nome: tData.nome,
+                        referenti: tData.referenti || [],
+                        visibile_presenze: confData.visibile_presenze,
+                        zone_fatturazione: confData.rules ? confData.rules.zone_fatturazione : []
+                    })
+                });
+            }
+            return { forEach: (cb) => fakeDocs.forEach(cb), docs: fakeDocs };
+        }
+
         async function caricaClienti() {
             try {
                 const sel = document.getElementById('client-selector');
-                const snap = await getDocs(collection(db, "clienti_fatturazione"));
+                const snap = await fetchCanonicalConfigs();
                 window.listaProgettiCache = [];
                 window.listaNavetteClientiCache = [];
                 sel.innerHTML = '<option value="">-- Seleziona --</option>';
@@ -222,11 +243,11 @@
                 
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
-                    if (!d.nome) return;
                     window.listaProgettiCache.push({ id: docSnap.id, ...d });
                     
                     const opt = document.createElement('option');
-                    opt.value = d.nome;
+                    opt.value = docSnap.id; // Tenant ID come chiave tecnica
+                    opt.dataset.nome = d.nome;
                     opt.textContent = d.nome;
                     opt.dataset.metodo = d.metodo_fatturazione || 'Non Impostato';
                     sel.appendChild(opt);
@@ -234,7 +255,7 @@
                 
                 const optNav = document.createElement('option');
                 optNav.value = 'NAVETTA';
-                optNav.textContent = '🚛 GESTIONE NAVETTE';
+                optNav.textContent = '⏱ GESTIONE NAVETTE';
                 sel.appendChild(optNav);
 
                 sel.addEventListener('change', (e) => {
@@ -259,10 +280,13 @@
         }
 
         document.getElementById('btn-analizza').addEventListener('click', async () => {
-            let clientName = document.getElementById('client-selector').value;
-            const month = document.getElementById('month-selector').value;
+            const selEl = document.getElementById('client-selector');
+            let clientName = selEl.value;
+            if (selEl.value !== 'NAVETTA' && selEl.value) {
+                clientName = selEl.options[selEl.selectedIndex].dataset.nome;
+            }
             
-            if (clientName === 'NAVETTA') {
+            if (selEl.value === 'NAVETTA') {
                 const subNav = document.getElementById('navette-sub-selector').value;
                 if (!subNav) {
                     Swal.fire('Attenzione', 'Seleziona quale Filtro Navetta analizzare', 'warning');
@@ -271,24 +295,21 @@
                 clientName = 'NAVETTA::' + subNav;
             }
             
-            if (!clientName || !month) {
-                Swal.fire('Attenzione', 'Seleziona Cliente e Mese', 'warning');
-                return;
-            }
+            const month = document.getElementById('month-selector').value;
 
-            Swal.fire({
-                title: 'Analisi in corso...',
-                text: 'Recupero dati in corso...',
-                didOpen: () => Swal.showLoading(),
-                allowOutsideClick: false
-            });
+            if (!clientName || !month) return Swal.fire('Errore', 'Seleziona un Cliente e un Mese.', 'error');
+            
+            Swal.fire({ title: 'Analisi in corso...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             try {
-                // Leggiamo il metodo direttamente dalla tendina selezionata dall'utente
+                const activeTenant = selEl.value !== 'NAVETTA' ? selEl.value : (localStorage.getItem("activeTenant") || "DNR");
+                const engine = new BillingEngine();
+                let currentClientData = null;
+
                 const metodo = document.getElementById('metodo-selector').value;
 
                 // 1. Fetch configurazione Cliente (per le tariffe)
-                const progSnap = await getDocs(collection(db, "clienti_fatturazione"));
+                const progSnap = await fetchCanonicalConfigs();
                 
                 let realClientNameForConfig = clientName;
                 if (clientName.startsWith('NAVETTA::')) {
@@ -921,7 +942,11 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            const clientName = document.getElementById('client-selector').value;
+            const selEl = document.getElementById('client-selector');
+            let clientName = selEl.value;
+            if (selEl.value !== 'NAVETTA' && selEl.value) {
+                clientName = selEl.options[selEl.selectedIndex].dataset.nome;
+            }
             const monthVal = document.getElementById('month-selector').value;
             if (!clientName || !monthVal) {
                 Swal.fire('Errore', 'Seleziona un Cliente e un Mese di riferimento prima di caricare il KPI.', 'error');
@@ -1323,7 +1348,8 @@
               XLSX.writeFile(wb, `Matrice_Verticale_${mData.clientName}_${mData.month}.xlsx`);
           });
     </script>
-    <script type="module" src="firebase-auth-sync.js?v=6.457"></script>
-    <script src="script.js?v=6.457"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.458"></script>
+    <script src="script.js?v=6.458"></script>
 </body>
 </html>
+

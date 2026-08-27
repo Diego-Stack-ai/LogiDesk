@@ -781,6 +781,32 @@ PROPOSAL → IMPACT ANALYSIS (Agenti leggono le regole upstream/downstream) → 
 
 | DOMAIN | CURRENT_PHASE | STATUS | NEXT_STEP | BLOCKERS | AUTHORITATIVE_DOC |
 |---|---|---|---|---|---|
-| DATA ARCHITECTURE | A2 | ACTIVE | A3 Physical Firestore/Storage Design | None | LOGIDESK_DATA_ARCHITECTURE_PLAN.md |
+| DATA ARCHITECTURE | A4 | ACTIVE | Modello UI Punti -> Articoli -> AI Ingestion | None | LOGIDESK_DATA_ARCHITECTURE_PLAN.md |
 | DOCUMENT GOVERNANCE | GOV-1 | ACTIVE | Approvazione nuovi template specialistici | None | PROJECT_MANIFEST.md |
 
+### 11. CURRENT DEVELOPMENT SCOPE
+L'attuale fase di sviluppo segue un ordine rigoroso per evitare entanglement:
+1. Definizione e consolidamento **Punti di Consegna** (completamento relativo modello/UI).
+2. Classificazione del futuro flusso dei nuovi Delivery Points ("Da Verificare" nel dominio specifico).
+3. Successiva classificazione/gestione dei nuovi **Articoli** ("Da Verificare" nel dominio specifico).
+4. Progettazione progressiva dell'**AI Ingestion Agent**.
+
+*Nota Bene*: NON anticipare in questa fase il Journey Engine definitivo, il matching Rientri DDT <-> viaggio, logiche di associazione completa, fatturazione viaggio, o refactoring massivo delle vecchie pagine legacy (`gestione.html`, `gestione_anomalie.html`).
+
+
+### 12. PRINCIPLE: COMMITTENTE/TENANT SINGLE SOURCE OF TRUTH
+
+Registriamo come requisito architetturale assoluto la Single Source of Truth per l'anagrafica dei committenti/tenant:
+\COMMITTENTE_TENANT_SINGLE_SOURCE_OF_TRUTH = REQUIRED\
+
+NON devono esistere due anagrafiche indipendenti (es. una lista committenti usata per la fatturazione e una lista tenant usata per i punti di consegna). Le diverse pagine e domini devono consumare la medesima anagrafica canonica, strutturata concettualmente come:
+
+- **AZIENDA**
+  - **COMMITTENTI / TENANT** (Single Source of Truth)
+    - Anagrafica del Committente
+    - Configurazione del Tenant
+    - Fatturazione Committente
+    - Punti di Consegna
+    - ...altri dati tenant-scoped
+
+*(Nota: la struttura fisica esatta su Firestore verra' definita tramite audit in fasi successive, ma il vincolo concettuale e' gia' sancito).*

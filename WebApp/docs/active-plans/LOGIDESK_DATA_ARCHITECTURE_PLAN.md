@@ -601,3 +601,41 @@ Alla luce dell'audit A4.1, si ufficializza il seguente stato:
 - `FALLBACK_DEFAULT_VALUES = 5`
 - `CURRENT_BILLING_SOURCE = MIXED` (Split-Brain)
 - `TARGET_BILLING_SOURCE = CANONICAL_TENANT_CONFIG`
+
+## A5 - AI INGESTION PIPELINE & ANOMALY HANDLING
+
+### 1. PRINCIPLES OF THE NEW INGESTION FLOW
+LogiDesk sta sostituendo progressivamente il vecchio modello di importazione basato su pulsanti/card specifici per tenant con un **AI INGESTION AGENT**. Il futuro ingresso dati seguira concettualmente questo flusso:
+FILE / DOCUMENTO -> AI INGESTION AGENT -> riconoscimento formato/sorgente -> identificazione tenant -> estrazione -> normalizzazione -> classificazione per dominio -> DATO CONOSCIUTO oppure DATO DA VERIFICARE.
+
+### 2. TECHNICAL QUARANTINE VS DOMAIN VALIDATION
+E' fondamentale chiarire la differenza tra la quarantena tecnica e il dato di dominio da verificare:
+- **QUARANTENA TECNICA** (\processing_jobs_quarantine\): Appartiene esclusivamente alla pipeline ingestion. Riguarda job, file o record che l'AI non riesce a interpretare con sufficiente affidabilita (es. file corrotto, template sconosciuto, errore di parsing).
+- **DATO DI DOMINIO DA VERIFICARE**: Il dato e' stato riconosciuto correttamente (es. nuovo codice cliente perfettamente estratto), ma non e' ancora approvato come master record. Questo NON e' un errore di parsing, ed appartiene al proprio dominio (es. nuovo Delivery Point, nuovo Articolo) per validazione, non ad una generica 'Gestione Anomalie'.
+
+### 3. LEGACY PAGES
+Le vecchie pagine (\gestione.html\, \gestione_anomalie.html\, \gestione_nuovi_clienti.html\) sono classificate come **LEGACY / UNDER_REVIEW**. Il loro codice potra' essere studiato per recuperare regole di matching, validazioni o edge case, ma il nuovo modello funzionale e' DOMAIN-SCOPED e non prevede la ricostruzione monolitica di queste vecchie interfacce.
+
+## A6 - COMMITTENTI / TENANTS: UI ALIGNMENT E FUTURE RECONCILIATION
+
+### 1. ALIGNMENT NOMENCLATURA UI: FATTURAZIONE
+La vecchia pagina/card denominata attualmente nel runtime (o conosciuta come) "Fatturazione Clienti Motore" assume formalmente il nome:
+**"Fatturazione Committenti"**
+
+- L'aggiornamento impattera' il nome della card/menu, l'header della pagina ed eventuali breadcrumbs.
+- Viene rimosso il termine fuorviante "Motore".
+- *La pagina intitolata semplicemente "Fatturazione" (che assolve funzioni distinte) viene mantenuta inalterata (FATTURAZIONE_PAGE_CURRENT_ACTION = KEEP_UNCHANGED).*
+
+### 2. LOGICA TENANT SELECTOR (PUNTI DI CONSEGNA)
+Il selettore "Seleziona tenant" presente in Punti di Consegna (e future UI) non dovra' derivare da liste hardcoded.
+Regola: SHOW_IN_DELIVERY_POINT_SELECTOR = tenant con almeno 1 punto di consegna.
+Es. BAUER, pur potendo esistere nell'anagrafica committenti, non apparira' in quel selettore fintantoche' possiede 0 punti. 
+
+### 3. NEXT STEP: COMMITTENTE TENANT REGISTRY RECONCILIATION AUDIT
+Prima di poter convergere tecnicamente sulla Single Source of Truth indicata nel Manifesto, sara' necessario condurre un audit dedicato (COMMITTENTE_TENANT_REGISTRY_RECONCILIATION_AUDIT) volto a scoprire l'origine di:
+- I ~10 committenti attualmente visibili in Fatturazione
+- I tenant visibili nel selettore di Punti di Consegna
+- Eventuali TENANT_ID_MAP hardcoded nel frontend
+- L'ubicazione attuale delle configurazioni di fatturazione
+
+L'esito dell'audit sancira' formalmente l'azione di RECONCILIATION_REQUIRED unificando i dati in CANONICAL_COMMITTENTE_REGISTRY.

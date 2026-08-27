@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.457">
+    <link rel="stylesheet" href="styles.css?v=6.458">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -137,7 +137,7 @@
             style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
             <span class="material-icons-round">dashboard</span>
         </button>
-        <div class="nav-title" style="flex: 1;">Fatturazione Clienti (Motore Dinamico)</div>
+        <div class="nav-title" style="flex: 1;">Fatturazione Committenti</div>
         <a href="#" onclick="window.logoutFirebase(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
     </div>
 </nav>
@@ -158,7 +158,7 @@
         <!-- Container: Sedi Magazzino -->
         <div id="gestioneMagazziniContainer" style="display: none; background:#fffbeb; padding:20px; border-radius:12px; border:1px solid #fde68a; margin-bottom:24px;">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid #d97706; padding-left: 10px;">
-                📦 Liste per le <strong>Sedi Magazzino</strong>: utilizzate dai magazzinieri. I magazzini inseriti qui non verranno inclusi nella fatturazione clienti.
+                👉 Liste per le <strong>Sedi Magazzino</strong>: utilizzate dai magazzinieri. I magazzini inseriti qui non verranno inclusi nella fatturazione committenti.
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
                 <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #fde68a;">
@@ -455,7 +455,7 @@
 <!-- Logica di Base -->
 <script type="module">
     import { db } from './core/firebase-init.js';
-    import { collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, addDoc, doc, updateDoc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentReferenti = [];
     let currentZone = [];
@@ -774,21 +774,32 @@
 
         if (nome === 'CATTEL') {
             data.cattel_username = document.getElementById('cattelUsername').value.trim();
-            data.cattel_password = document.getElementById('cattelPassword').value.trim();
-            data.cattel_url = document.getElementById('cattelUrl').value.trim();
-        }
-
         const btn = document.getElementById('btnSalvaCliente');
         btn.disabled = true; btn.textContent = 'Salvataggio...';
-
         try {
+            const tenantData = {
+                nome: document.getElementById('clienteNomeInput').value.trim(),
+                referenti: currentReferenti,
+                updatedAt: new Date().toISOString()
+            };
+            const configData = {
+                legacy_billing_id: editingClientId || '',
+                visibile_presenze: document.getElementById('clienteVisibileInput').checked,
+                rules: {
+                    zone_fatturazione: currentZone
+                }
+            };
+
             if (editingClientId) {
-                await updateDoc(doc(db, "clienti_fatturazione", editingClientId), data);
+                await updateDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants", editingClientId), tenantData);
+                await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + editingClientId + "/configurazioni/fatturazione"), configData, { merge: true });
             } else {
-                await addDoc(collection(db, "clienti_fatturazione"), data);
+                const newTenantRef = await addDoc(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants"), tenantData);
+                await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + newTenantRef.id + "/configurazioni/fatturazione"), configData);
             }
             Swal.fire('Salvato!', 'Configurazione cliente salvata con successo.', 'success');
             nascondiFormCliente();
+            window.loadClienti();
         } catch(e) {
             console.error(e);
             Swal.fire('Errore', 'Impossibile salvare: ' + e.message, 'error');
@@ -797,21 +808,32 @@
         }
     };
 
-    // ----- Lettura Dati da Firestore -----
-    onSnapshot(collection(db, "clienti_fatturazione"), (snap) => {
+    // ----- Lettura Dati da Firestore (Canonico) -----
+    window.loadClienti = async function() {
         const container = document.getElementById('listaClientiContainer');
         container.innerHTML = '';
         window.appData = window.appData || {};
         window.appData.lista_clienti_fatturazione = [];
         
+        const snap = await getDocs(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants"));
+
         if (snap.empty) {
             container.innerHTML = '<div style="padding:20px; text-align:center; color:#64748b;">Nessun cliente configurato per la fatturazione.</div>';
             return;
         }
 
-        snap.docs.forEach(docSnap => {
-            const c = docSnap.data();
+        for (const docSnap of snap.docs) {
+            const t = docSnap.data();
             const cid = docSnap.id;
+            const confSnap = await getDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + cid + "/configurazioni/fatturazione"));
+            const conf = confSnap.exists() ? confSnap.data() : {};
+            
+            const c = {
+                nome: t.nome,
+                referenti: t.referenti || [],
+                visibile_presenze: conf.visibile_presenze,
+                zone_fatturazione: conf.rules ? conf.rules.zone_fatturazione : []
+            };
             window.appData.lista_clienti_fatturazione.push({ id: cid, nome: c.nome });
             
             const numZone = (c.zone_fatturazione || []).length;
@@ -881,23 +903,27 @@
                 </div>
             `;
             container.appendChild(wrapper);
-        });
-    });
+        }
+    };
+    window.loadClienti();
 
     window.modificaCliente = async (id) => {
-        // Lettura veloce, potremmo usare cache ma semplifichiamo leggendo on demand
-        // per evitare complessità.
+        // Lettura veloce dal tenant e configurazione
         import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js").then(async ({ getDoc, doc }) => {
-            const d = await getDoc(doc(db, "clienti_fatturazione", id));
-            if(!d.exists()) return;
-            const c = d.data();
+            const tDoc = await getDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants", id));
+            if(!tDoc.exists()) return;
+            const c = tDoc.data();
+            
+            const confDoc = await getDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + id + "/configurazioni/fatturazione"));
+            const confData = confDoc.exists() ? confDoc.data() : {};
+
             editingClientId = id;
             document.getElementById('formTitle').innerText = 'Modifica Cliente: ' + c.nome;
             document.getElementById('clienteNomeInput').value = c.nome;
-            document.getElementById('clienteVisibileInput').checked = (c.visibile_presenze !== false); // Default true per i vecchi
+            document.getElementById('clienteVisibileInput').checked = (confData.visibile_presenze !== false);
             currentReferenti = c.referenti || [];
             currentMagazziniCliente = c.magazzini || [];
-            currentZone = (c.zone_fatturazione || []).map(z => ({
+            currentZone = (confData.rules ? (confData.rules.zone_fatturazione || []) : []).map(z => ({
                 ...z,
                 id_dom: 'zona_' + Date.now() + '_' + Math.floor(Math.random()*1000)
             }));
@@ -918,26 +944,14 @@
     };
 
     window.eliminaCliente = (id) => {
-        Swal.fire({
-            title: 'Sei sicuro?',
-            text: "Vuoi davvero eliminare questo cliente dalla fatturazione?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#64748b',
-            confirmButtonText: 'Sì, elimina'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                await deleteDoc(doc(db, "clienti_fatturazione", id));
-            }
-        });
+        Swal.fire('Bloccato', 'L\'eliminazione dei tenant non è consentita in questa fase per regole di integrità del registro.', 'info');
     };
 
     window.toggleClientVisibility = async (id, checked) => {
         try {
-            await updateDoc(doc(db, "clienti_fatturazione", id), {
+            await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + id + "/configurazioni/fatturazione"), {
                 visibile_presenze: checked
-            });
+            }, { merge: true });
         } catch (error) {
             console.error("Errore aggiornamento visibilità:", error);
             alert("Errore: " + error.message);
@@ -1265,6 +1279,6 @@
         }, 500);
     });
 </script>
-<script type="module" src="firebase-auth-sync.js?v=6.457"></script>
+<script type="module" src="firebase-auth-sync.js?v=6.458"></script>
 </body>
 </html>

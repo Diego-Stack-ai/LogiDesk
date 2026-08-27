@@ -48,6 +48,25 @@ Per evitare qualsiasi malinteso tra sviluppatori, architetti ed agenti AI, i seg
 
 | Termine Ufficiale | Definizione Vincolante di Dominio | Appartenenza Dominio |
 | --- | --- | --- |
+| **Azienda** | Soggetto/organizzazione che utilizza LogiDesk come piattaforma operativa (es. Loge Solution). | Core |
+| **Committente** | Soggetto/azienda commerciale che affida attività o servizi di logistica all'azienda utilizzatrice di LogiDesk. | Client Tenant |
+| **Tenant** | Identità tecnica e boundary dei dati (scope) del committente all'interno dell'architettura LogiDesk. | Client Tenant |
+| **tenantId** | Identificativo stringa univoco del committente/tenant. | Client Tenant |
+| **sourceChannel** | Canale documentale sorgente del committente (\"FRUTTA"\, \"LATTE"\, \"EXCEL_CATTEL"\). | Client Tenant |
+| **parserType** | Adattatore di parsing specifico utilizzato per estrarre i dati dal file. | System Ingestion |
+| **Punto di Consegna** | Destinazione operativa fisica appartenente a uno specifico committente/tenant. | Territorio |
+| **Fermata** | Arresto fisico del veicolo in un Punto di Consegna per scaricare la merce di uno o più committenti. | Operatività Vettore |
+| **pointUUID** | Identificativo univoco immutabile assegnato a ciascuna fermata per garantirne il Data Lineage. | Data Lineage |
+| **Zona Logistica** | Area distributiva o raggruppamento logico iniziale di consegne. | Pianificazione |
+| **Viaggio Iniziale** | Giro o proposta di carico fornito originariamente dal committente. | Sorgente Importata |
+| **Viaggio Operativo Finale** | Itinerario reale deciso ed ottimizzato dall'Azienda ed assegnato al veicolo. | Operatività Vettore |
+| **ORIGINAL_DDT** | Documento digitale originale di trasporto estratto dai file sorgente PDF. | Documentale |
+| **DELIVERY_PLACEHOLDER** | Segnaposto A4 generato dal sistema quando il committente usa bolle cartacee fisiche. | Documentale |
+| **Distinta di Viaggio** | Documento riepilogativo PDF generato per l'autista contenente la sequenza ufficiale delle tappe. | Output Operativo |
+| **Navetta** | Spostamento secondario o collegamento di merce tra magazzini o depositi. | Operatività Vettore |
+| **Presenza HR** | Registro dell'attività lavorativa dell'autista. | HR Vettore |
+
+--- | --- | --- |
 | **Loge Solution** | Società proprietaria dell'applicazione web ed esecutrice del servizio distributivo come Vettore Operativo. | Core Vettore |
 | **Committente / Tenant** | Cliente aziendale (es. DNR, Cattel, GranChef, Bauer) che affida le merci ed i punti di consegna a Loge Solution. | Client Tenant |
 | **tenantId** | Identificativo stringa univoco del committente (`"DNR"`, `"CATTEL"`, `"GRAN CHEF"`). | Client Tenant |
@@ -110,17 +129,17 @@ Distinzione vincolante tra i 4 livelli del Viaggio:
 2. **Preservazione del Valore Commerciale**: La riorganizzazione dei viaggi operativi da parte di Loge Solution non deve mai alterare il calcolo contabile delle tariffe pattuite con ciascun committente.
 3. **Divieto Fallback DNR**: Se un dato arriva senza `tenantId`, non deve mai essere assegnato automaticamente a DNR, ma bloccato o posto in quarantena (`processing_jobs_quarantine`).
 
-
+---
 
 ## TARGET_LOGIDESK: Modello Target dei Punti di Consegna
 
 La vecchia struttura `clienti/{tenant}/raccolta clienti/{documento}` è considerata LEGACY.
 
 Il nuovo percorso target in Firestore è:
-`tenants/{tenant}/punti_consegna/{id_punto}`
+`aziende/{azienda_id}/tenants/{tenant_id}/punti_consegna/{DPxxxxxx}`
 
 ### Identità e Anagrafica
-- **id_punto**: ID interno, univoco, immutabile, indipendente dal nome o codice committente (es. DP00123).
+- **id_punto**: ID interno, univoco, immutabile, indipendente dal nome o codice committente (es. DP000001).
 - **Identità esterna**: `tenant`, `canale` (es. FRUTTA/LATTE, o null), `codice_esterno`.
 - **Dati anagrafici**: `cliente`, `indirizzo`, `citta`, `cap` (string), `provincia` (2 caratteri), `lat` (float), `lon` (float).
 - **Note**: Divise in `nota_anagrafica` (stabile) e `nota_consegna` (per singola importazione).
@@ -133,7 +152,49 @@ Il nuovo percorso target in Firestore è:
 - **Configurazione Routing (`modalita_creazione_viaggi`)**: ZONA vs IMPORTAZIONE a livello di tenant (es. DNR -> ZONA).
 - **Geocoding (`stato_geocoding`)**: Auto-geocodificato ma 'da verificare' fino a supervisione umana.
 
+### Presentazione Codici Punto di Consegna (UI)
+Il codice_esterno (ufficiale) deve essere presentato nella UI senza prefissi spurii o fallback (es. vietati F:, L:, o ?:).
+Esempio di visualizzazione canonica:
+- **Codice interno**: DP000123
+- **Codice**: p10047
+- **Canale**: FRUTTA (Trattato come attributo descrittivo separato dal codice ufficiale).
+Se un tenant non possiede canale o sottocodice, il canale non viene mostrato e non si inventano fallback.
 
+### AI Ingestion - Gate Nuovo Committente
+Durante l'importazione (AI Ingestion), se viene riconosciuto un nuovo dataset appartenente a un committente sconosciuto:
+- **HARD STOP**: l'ingestion viene temporaneamente sospesa.
+- **Creazione Manuale**: Non vengono creati tenant impliciti al volo. È richiesta la registrazione del nuovo Committente/Tenant nell'anagrafica canonica (Single Source of Truth).
+- **Ripresa**: L'ingestion può riprendere e associare i dati solo dopo che il tenant esiste formalmente.
+
+---
+
+## 7. ANOMALY OWNERSHIP E TIME WINDOWS
+
+### Anomaly Ownership Model
+Registriamo ufficialmente il seguente principio: `ANOMALY_OWNERSHIP_MODEL = DOMAIN_SCOPED`.
+Una anomalia o un nuovo dato da validare (emerso durante l'ingestion) **appartiene al dominio del dato stesso**.
+Non esiste più una pagina monolitica generale "Gestione Anomalie".
+
+- **Delivery Points Pending Review**: Se durante l'importazione viene rilevato un nuovo punto di consegna, non viene inserito automaticamente come master definitivo se richiede validazione umana. Viene invece *parcheggiato come dato DA VERIFICARE* nell'area funzionale proprietaria dei "Punti di Consegna", distinguendolo dai master canonici. Dopo validazione/promozione, diventerà un punto canonico (`DPxxxxxx`).
+- **Articles Pending Review**: Stesso principio. `ARTICLE_ANOMALY_OWNER = ARTICLES_DOMAIN`. I nuovi articoli saranno resi disponibili nell'area/pagina Articoli per la validazione, senza creare seconde anagrafiche parallele né dirottarli ad un modulo anomalie generico.
+
+### Regole per l'estrazione e l'aggiornamento degli Orari (Time Windows)
+- **Campi Orario Ufficiali**: (`OFFICIAL_TIME_FIELD = AUTOMATIC_PROCESSING_ALLOWED`). Se l'orario si trova in un campo ufficiale (es. colonna dedicata nel formato atteso), il dato può essere elaborato automaticamente per aggiornare il master canonico.
+- **Orari nelle Note (Testo libero)**: (`NOTE_TIME_WINDOW = DAILY_OPERATIONAL_CONTEXT`). Gli orari estratti da testo libero/note **NON devono essere automaticamente promossi** a orario master permanente. Servono esclusivamente come informazione per il contesto operativo giornaliero (`NOTE_TIME_WINDOW_AUTO_MASTER_UPDATE = FALSE`).
+
+---
+
+## 8. FLUSSO RIENTRI DDT (MANUAL ONLY)
+
+I Rientri DDT derivano dal ritorno fisico/cartaceo della documentazione e vengono registrati MANUALMENTE dall'operatore.
+- `DDT_RETURN_IMPORT_ENABLED = FALSE`
+- `DDT_RETURN_SOURCE = MANUAL_ONLY`
+
+I rientri DDT **NON** vengono importati né dedotti dall'AI Ingestion Agent. Non esisterà un import automatico o un "parser AI" dedito al rilevamento del rientro.
+
+**FUTURE_JOURNEY_REQUIREMENT**: In una fase futura e successiva, l'elaborazione dei viaggi potrà verificare la presenza di Rientri DDT pendenti per le fermate (match Delivery Point <-> Rientro DDT), per mostrare l'informazione alla partenza o nel flusso del viaggio.
+
+---
 
 ## LOGIDESK CORE DATA MODEL V1 E MODELLO AUTORIZZATIVO TARGET
 LOGIDESK_CORE_DATA_MODEL_VERSION = 1
@@ -142,3 +203,5 @@ Vedere report output per il dettaglio.
 
 ## TERMINOLOGIA DEFINITIVA CORE V1
 Azienda (Loge Solution) -> Serve i **Tenant** (Clienti Commerciali) -> I quali gestiscono i **Punti_Consegna** (Destinazioni Fisiche).
+
+

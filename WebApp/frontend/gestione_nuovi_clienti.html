@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.457">
+    <link rel="stylesheet" href="styles.css?v=6.458">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
@@ -284,7 +284,8 @@
             if(id) {
                 await setDoc(doc(db, ...COLL_PATH, id), data, { merge: true });
             } else {
-                await addDoc(collection(db, ...COLL_PATH), data);
+                alert("Creazione nuovo punto temporaneamente sospesa durante l'allineamento del sistema.");
+                return;
             }
             closeModal();
         });

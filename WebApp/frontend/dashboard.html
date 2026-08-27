@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.457">
+    <link rel="stylesheet" href="styles.css?v=6.458">
     <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"></noscript>
     <!-- PWA & Mobile Optimization -->
@@ -143,14 +143,7 @@
                 <p>Gestisci le presenze, gli orari, le ore lavorate e gli straordinari.</p>
             </a>
 
-            <!-- Fatturazione -->
-            <a href="javascript:void(0)" onclick="alert(\'DISABLED_PENDING_REFACTOR\')" class="nav-card theme-amber" data-page="fatturazione.html" style="opacity: 0.5; cursor: not-allowed;" title="DISABLED_PENDING_REFACTOR">
-                <div class="icon-circle">
-                    <span class="material-icons-round" style="font-size: 32px;">request_quote</span>
-                </div>
-                <h3>Fatturazione (Vecchio)</h3>
-                <p>Calcolo fatturato viaggi (Gran Chef, Cattel, Bauer) e visualizzazione report.</p>
-            </a>
+
 
             <!-- Fatturazione V2 -->
             <a href="javascript:void(0)" onclick="alert(\'DISABLED_PENDING_REFACTOR\')" class="nav-card theme-rose" data-page="fatturazione_v2.html" style="opacity: 0.5; cursor: not-allowed;" title="DISABLED_PENDING_REFACTOR">
@@ -161,13 +154,13 @@
                 <p>Nuovo sistema modulare isolato per test presenze e viaggi.</p>
             </a>
 
-            <!-- Fatturazione Clienti (Motore Dinamico) -->
-            <a href="javascript:void(0)" onclick="window.navigateWithState('fatturazione_clienti.html')" class="nav-card theme-amber" data-page="fatturazione_clienti.html">
+            <!-- Fatturazione Committenti -->
+            <a href="javascript:void(0)" onclick="window.navigateWithState('fatturazione_committenti.html')" class="nav-card theme-amber" data-page="fatturazione_committenti.html">
                 <div class="icon-circle" style="background: rgba(245, 158, 11, 0.15); color: #d97706;">
                     <span class="material-icons-round" style="font-size: 32px;">monetization_on</span>
                 </div>
-                <h3 style="color: #d97706;">Fatturazione Clienti (Motore)</h3>
-                <p>Configura il nuovo motore dinamico di fatturazione a zone, a viaggi e a DDT.</p>
+                <h3 style="color: #d97706;">Fatturazione Committenti</h3>
+                <p>Configura il nuovo motore di fatturazione a zone, a viaggi e a DDT.</p>
             </a>
 
             <!-- Gestione Mezzi -->
@@ -191,8 +184,8 @@
     </main>
 
 
-    <script src="script.js?v=6.457"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.457"></script>
+    <script src="script.js?v=6.458"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.458"></script>
     <script>
         // Funzione centrale di rendering della dashboard
         let _dashRendered = false;
@@ -283,5 +276,7 @@
     </script>
 </body>
 </html>
+
+
 
 

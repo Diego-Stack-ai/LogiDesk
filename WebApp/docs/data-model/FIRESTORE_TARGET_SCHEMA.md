@@ -67,3 +67,7 @@ Tutto il dominio LogiDesk e racchiuso sotto la root:
 `/aziende/{azienda_id}/tenants/{tenant_id}/magazzini/{magazzino_id}`
 - **ID**: AUTO_ID
 - **Campi Base**: `codice_punto` (interno sequenziale, es. DP000001), `codice_esterno`, `sottocodice` (es. FRUTTA/LATTE), `nome`, `indirizzo`, `cap`, `citta`, `provincia`, `codice_zona`, `note_anagrafiche`, `attivo`
+
+## 4. PRINCIPI DI IDENTITA' E RELAZIONE
+- **TENANT_RELATION_BY_ID = TRUE**: Le relazioni applicative devono utilizzare l'identita' canonica/ID del tenant (es. AgvcnbuUMu7YhzSuUKTY) e non dipendere dal nome visualizzato ("DNR", "CATTEL"). Il nome e' una proprieta' descrittiva mutabile.
+- **SINGLE SOURCE OF TRUTH**: Esiste un'unica anagrafica Tenant (/aziende/{azienda_id}/tenants). Non esistono registri paralleli o liste separate per punti di consegna vs fatturazione. Ogni elemento (Punti, Articoli, Viaggi, Fatturazione) eredita lo scope tecnico da questa identita'.

@@ -407,7 +407,7 @@ L'**Orchestratore Centrale AI** è una componente di evoluzione futura destinata
 
 1. **Contesto Esplicito**: Ricevere sempre `tenantId` e `sourceChannel` validati;
 2. **Idempotenza**: Poter ri-eseguire un lavoro di parsing o routing senza duplicare i dati in Firestore;
-3. **Quarantena Anomalie**: Spostare i record ambigui in `processing_jobs_quarantine` richiedendo l'intervento umano;
+3. **Quarantena Tecnica**: Spostare in `processing_jobs_quarantine` esclusivamente i job/file che il parser non riesce a interpretare (fallimenti tecnici). *Nota*: I dati estratti correttamente ma sconosciuti (es. nuovo Delivery Point o Articolo) NON vanno in quarantena, ma parcheggiati "Da Verificare" nel proprio Dominio di competenza (Domain-Scoped Anomaly Ownership);
 4. **Audit Trail**: Registrare ogni operazione con timestamp e modello utilizzato.
 
 ---

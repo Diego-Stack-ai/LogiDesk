@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.457">
+    <link rel="stylesheet" href="styles.css?v=6.458">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -246,6 +246,18 @@
             <div class="modal-body">
                 <form id="editForm" class="form-grid">
                     <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label>Codice Interno (ID)</label>
+                        <input type="text" id="editCodicePunto" readonly style="background:#f1f5f9; color:#64748b; cursor:not-allowed;">
+                    </div>
+                    <div class="form-group">
+                        <label>Codice Esterno (Committente)</label>
+                        <input type="text" id="editCodiceEsterno">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Canale (Sottocodice)</label>
+                        <input type="text" id="editSottocodice" readonly style="background:#f1f5f9; color:#64748b; cursor:not-allowed;" title="Modifica non sicura in questa fase">
+                    </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Nome Punto</label>
                         <input type="text" id="editNome" required>
@@ -297,7 +309,7 @@
         import "./core/auth-service.js";
         import { db, auth } from "./core/firebase-init.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, getCountFromServer, doc, updateDoc, deleteDoc, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { CompanyContext } from "./core/CompanyContext.js";
         // CONFIGURATION FLAGS
         const GEOLOCATION_WRITE_READY = true; // Abilitato scrittura sicura su lat/lng
@@ -392,26 +404,27 @@
                 const type = resolvePointType(d);
                 let isFrutta = type === "FRUTTA";
                 let isLatte = type === "LATTE";
-                let rawCode = d.codice_esterno || d.codice_punto || "-";
+                let rawCode = d.codice_esterno || "-";
                 let primaryCode = formatExternalCode(rawCode);
-                let primaryBadge = "";
-                if (isFrutta) primaryBadge = `<span class="badge badge-frutta">F: ${primaryCode}</span>`;
-                else if (isLatte) primaryBadge = `<span class="badge badge-latte">L: ${primaryCode}</span>`;
-                else primaryBadge = `<span class="badge" style="background:#e2e8f0; color:#475569">?: ${primaryCode}</span>`;
+                let primaryBadge = `<span class="badge" style="background:#e2e8f0; color:#475569">Codice: ${primaryCode}</span>`;
+                if (isFrutta || isLatte) {
+                    primaryBadge += ` <span class="badge" style="background:#f1f5f9; color:#0f172a;">Canale: ${type}</span>`;
+                }
+                primaryBadge += ` <span class="badge" style="background:#f8fafc; color:#64748b; border:1px dashed #cbd5e1;">Codice interno: ${d.codice_punto || "-"}</span>`;
+                
                 let assocHTML = "";
                 if (d.association_group_id && associationMap[d.association_group_id]) {
                     const siblings = associationMap[d.association_group_id].filter(sib => sib.id !== d.id);
                     if (siblings.length > 0) {
                         let sibling = siblings[0];
                         let sibType = resolvePointType(sibling);
-                        let sibRaw = sibling.codice_esterno || sibling.codice_punto || "-";
+                        let sibRaw = sibling.codice_esterno || "-";
                         let sibCode = formatExternalCode(sibRaw);
-                        assocHTML = `<span class="badge" style="background:#f8fafc; color:#64748b; border:1px dashed #cbd5e1;">&#128279; ${sibType}: ${sibCode}</span>`;
+                        assocHTML = `<span class="badge" style="background:#f8fafc; color:#64748b; border:1px dashed #cbd5e1;">&#128279; Associato: ${sibCode} ${sibType !== 'UNKNOWN' ? '('+sibType+')' : ''}</span>`;
                     }
                 }
                 // Tenant: cerca prima il nome nel campo dedicato, poi inverti la mappa ID→nome
                 const tenantLabel = d.tenant_name || Object.keys(TENANT_ID_MAP).find(k => TENANT_ID_MAP[k] === d.tenant_id) || d.tenant_id || "N/A";
-                let channelHTML = `<div style="font-size: 12px; font-weight: 600; color: #475569; margin-top: 2px;">CANALE: ${type}</div>`;
                 let windows = formatTimeWindows(d.finestre_consegna);
                 html += `
                     <div class="item-card" style="padding: 24px;">
@@ -477,10 +490,18 @@
             try {
                 // Fetch dynamic tenants from Firestore
                 const tenantsSnap = await getDocs(collection(db, CompanyContext.getCompanyPath() + "/tenants"));
-                const dynamicTenants = tenantsSnap.docs.map(doc => ({
+                const allTenants = tenantsSnap.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
+                
+                const dynamicTenants = [];
+                for (const t of allTenants) {
+                    const countSnap = await getCountFromServer(collection(db, CompanyContext.getCompanyPath() + "/tenants/" + t.id + "/punti_consegna"));
+                    if (countSnap.data().count > 0) {
+                        dynamicTenants.push(t);
+                    }
+                }
                 
                 let tenantSelectBox = document.getElementById("tenantSelectBox");
                 
@@ -597,6 +618,9 @@
                 const pt = fullData.find(x => x.id === id);
                 if (pt) {
                     document.getElementById("editId").value = pt.id || "";
+                    document.getElementById("editCodicePunto").value = pt.codice_punto || "";
+                    document.getElementById("editCodiceEsterno").value = pt.codice_esterno || "";
+                    document.getElementById("editSottocodice").value = pt.sottocodice || "";
                     document.getElementById("editNome").value = pt.nome || "";
                     document.getElementById("editIndirizzo").value = pt.indirizzo || "";
                     document.getElementById("editCap").value = pt.cap || "";
@@ -631,6 +655,7 @@
                 if (id) {
                     await setDoc(doc(db, path, id), {
                         nome: nome,
+                        codice_esterno: document.getElementById("editCodiceEsterno").value,
                         indirizzo: document.getElementById("editIndirizzo").value,
                         cap: document.getElementById("editCap").value,
                         citta: document.getElementById("editCitta").value,
@@ -639,16 +664,8 @@
                         geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) }
                     }, { merge: true });
                 } else {
-                    await addDoc(collection(db, path), {
-                        nome: nome,
-                        indirizzo: document.getElementById("editIndirizzo").value,
-                        cap: document.getElementById("editCap").value,
-                        citta: document.getElementById("editCitta").value,
-                        provincia: document.getElementById("editProvincia").value,
-                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true,
-                        geolocalizzazione: { lat: parseFloat(lat), lon: parseFloat(lon) },
-                        tenant_id: activeTenantId
-                    });
+                    alert("Creazione nuovo punto temporaneamente sospesa durante l'allineamento del sistema.");
+                    return;
                 }
                 closeEditModal();
                 init(auth.currentUser); // Reload
@@ -706,6 +723,7 @@
             }
         });
     </script>
-    <script src="script.js?v=6.457"></script>
+    <script src="script.js?v=6.458"></script>
 </body>
 </html>
+
