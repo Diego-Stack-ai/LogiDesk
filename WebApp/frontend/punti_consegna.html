@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk - Punti di Consegna</title>
-    <link rel="stylesheet" href="styles.css?v=6.456">
+    <link rel="stylesheet" href="styles.css?v=6.457">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <!-- Leaflet per mappa modale -->
@@ -430,13 +430,13 @@
                                 </div>
                             </div>
                             <div class="item-actions" style="display:flex; gap:8px;">
-                                <button class="btn-edit" onclick="window.openEditModal('${d.id}')" title="Modifica dati">
+                                <button class="btn-edit" data-action="edit" data-point-id="${d.id}" title="Modifica dati">
                                     <span class="material-icons-round" style="font-size:18px; pointer-events:none;">edit</span>
                                 </button>
-                                <button class="btn-edit" onclick="window.openMapModal('${d.id}')" title="Geolocalizza (Google Maps)">
+                                <button class="btn-edit" data-action="geo" data-point-id="${d.id}" title="Geolocalizza (Google Maps)">
                                     <span class="material-icons-round" style="font-size:18px; color:#10b981; pointer-events:none;">my_location</span>
                                 </button>
-                                <button class="btn-edit" onclick="window.deletePoint('${d.id}')" title="Elimina punto di consegna">
+                                <button class="btn-edit" data-action="delete" data-point-id="${d.id}" title="Elimina punto di consegna">
                                     <span class="material-icons-round" style="font-size:18px; color:#ef4444; pointer-events:none;">delete</span>
                                 </button>
                             </div>
@@ -706,6 +706,6 @@
             }
         });
     </script>
-    <script src="script.js?v=6.456"></script>
+    <script src="script.js?v=6.457"></script>
 </body>
 </html>
