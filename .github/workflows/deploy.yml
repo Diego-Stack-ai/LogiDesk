@@ -63,7 +63,7 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
-          echo $FIREBASE_SERVICE_ACCOUNT > /tmp/sa.json
+          echo "$FIREBASE_SERVICE_ACCOUNT" > /tmp/sa.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json
           cd WebApp
           firebase deploy --only firestore:rules --project log-solutions-cantiere
@@ -92,7 +92,7 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
-          echo $FIREBASE_SERVICE_ACCOUNT > /tmp/sa.json
+          echo "$FIREBASE_SERVICE_ACCOUNT" > /tmp/sa.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json
           cd WebApp
           firebase deploy --only functions --project log-solutions-cantiere
