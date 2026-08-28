@@ -333,7 +333,7 @@
                 // 2. Fetch mappa mezzi (Targa -> Patente)
                 let mezziMap = {};
                 try {
-                    const mezziSnap = await getDocs(collection(db, "mezzi"));
+                    const mezziSnap = await getDocs(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi"));
                     mezziSnap.forEach(d => {
                         const m = d.data();
                         if (m.targa) mezziMap[m.targa.toUpperCase()] = m.patente || 'B';
