@@ -196,7 +196,7 @@ onAuthStateChanged(auth, async (user) => {
                     localStorage.setItem('ls_cached_user', JSON.stringify(window.appData.currentUser));
                 } catch(e) { /* ignora errori storage */ }
 
-                console.log(`Auth: Profilo caricato [${userData.nome}], Ruolo: "${role}", IsAdmin: ${isAdmin}`);
+                console.log(`Auth: Profilo caricato [${finalNome}], Ruolo: "${role}", IsAdmin: ${isAdmin}`);
 
                 let permessiDoc = null;
                 if (isOffline) {

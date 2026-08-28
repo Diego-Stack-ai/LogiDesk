@@ -52,7 +52,21 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && isAdmin();
     }
+    match /aziende/{companyId}/tenants/{tenantId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isAdmin();
+      
+      match /punti_consegna/{puntoId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && (isAdmin() || isImpiegata());
+      }
 
+      match /configurazioni/{configId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && isAdmin();
+      }
+    }
+    
     match /aziende/{companyId}/mezzi/{mezzoId} {
       allow read, write: if isAuthenticated();
     }
