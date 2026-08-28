@@ -28,6 +28,15 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/aziende/NzXaCgyXxZWWehw1tSlo/utenti/$(request.auth.uid)).data.ruolo == 'soel';
     }
 
+    match /aziende/{companyId}/utenti/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata() || isSoel());
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata());
+    }
+
+    match /aziende/{companyId}/mezzi/{mezzoId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // Regole per i dipendenti (lettura/scrittura profilo)
     match /dipendenti/{userId} {
       allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata() || isSoel());

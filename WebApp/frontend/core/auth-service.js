@@ -353,14 +353,14 @@ onAuthStateChanged(auth, async (user) => {
                         alert("Impossibile ricreare il profilo. Controlla le regole Firestore. Dettaglio: " + e.message);
                     }
                 }
-                alert("ACCESSO NEGATO: Utente autenticato, ma manca il profilo nel Database (Collection 'dipendenti'). L'account potrebbe essere stato disabilitato o cancellato.");
+                alert("ACCESSO NEGATO: Utente autenticato, ma manca il profilo nel Database (Profilo Canonico). L'account potrebbe essere stato disabilitato o cancellato.");
                 await window.logoutFirebase();
             }
         } catch (err) {
             console.error("Auth: Errore recupero profilo Firestore:", err);
             let contextMsg = "";
             if (err.message && err.message.includes('permission')) {
-                contextMsg = " (Controllo permessi su dipendenti/" + user.uid + ")";
+                contextMsg = " (Controllo permessi su " + CompanyContext.getUsersPath() + "/" + user.uid + ")";
             }
             alert("Errore di connessione al database durante il login: " + err.message + contextMsg);
             await window.logoutFirebase();

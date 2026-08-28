@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const firestoreDb = firestoreModule.getFirestore(app);
             authModule.onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    const docSnap = await firestoreModule.getDoc(firestoreModule.doc(firestoreDb, "dipendenti", user.uid));
+                    const docSnap = await firestoreModule.getDoc(firestoreModule.doc(firestoreDb, "aziende/NzXaCgyXxZWWehw1tSlo/utenti", user.uid));
                     if (docSnap.exists() && docSnap.data().ruolo === 'amministratore') {
                         if (aiTab) aiTab.style.display = 'block';
                     }
