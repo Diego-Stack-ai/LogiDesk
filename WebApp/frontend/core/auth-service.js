@@ -173,7 +173,22 @@ onAuthStateChanged(auth, async (user) => {
                 const role = (userData.ruolo || 'autista').toString().toLowerCase().trim();
                 const isAdmin = role === 'amministratore' || role === 'impiegata';
 
-                window.appData.currentUser = { id: user.uid, email: user.email, ...userData, ruolo: role, isAdmin: isAdmin };
+                let dipendenteData = {};
+                if (userData.dipendente_id) {
+                    try {
+                        // Importiamo anche getDocWithTimeout per questo
+                        const dipDoc = await getDocWithTimeout(doc(db, CompanyContext.getEmployeesPath(), userData.dipendente_id), 1500);
+                        if (dipDoc && dipDoc.exists()) {
+                            dipendenteData = dipDoc.data();
+                        }
+                    } catch (e) {
+                        console.warn("Auth: Impossibile caricare dati HR del dipendente collegato", e);
+                    }
+                }
+                
+                const finalNome = userData.nome || dipendenteData.nome || user.email.split('@')[0];
+
+                window.appData.currentUser = { id: user.uid, email: user.email, ...dipendenteData, ...userData, nome: finalNome, ruolo: role, isAdmin: isAdmin };
                 profileAlreadyLoaded = true; // Segna il profilo come caricato
                 
                 // Persistenza del profilo in localStorage per il rendering immediato offline
@@ -336,23 +351,6 @@ onAuthStateChanged(auth, async (user) => {
 
             } else {
                 console.warn("Auth: Sessione attiva ma profilo Firestore mancante.");
-                const confirmCreate = confirm("ATTENZIONE: Il tuo utente Firebase esiste, ma il profilo nel database è stato cancellato.\n\nVuoi ricreare automaticamente il tuo profilo come AMMINISTRATORE per poter accedere?");
-                if (confirmCreate) {
-                    try {
-                        const newUserData = {
-                            email: user.email,
-                            nome: user.email.split('@')[0],
-                            ruolo: "amministratore",
-                            needsPasswordChange: false
-                        };
-                        await setDoc(doc(db, CompanyContext.getUsersPath(), user.uid), newUserData);
-                        alert("Profilo ricreato con successo! Ora ricaricheremo la pagina per farti entrare.");
-                        window.location.reload();
-                        return;
-                    } catch(e) {
-                        alert("Impossibile ricreare il profilo. Controlla le regole Firestore. Dettaglio: " + e.message);
-                    }
-                }
                 alert("ACCESSO NEGATO: Utente autenticato, ma manca il profilo nel Database (Profilo Canonico). L'account potrebbe essere stato disabilitato o cancellato.");
                 await window.logoutFirebase();
             }

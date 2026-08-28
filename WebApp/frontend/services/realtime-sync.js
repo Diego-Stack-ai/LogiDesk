@@ -84,31 +84,11 @@ function startRealtimeSync(isAdmin) {
         if (typeof window.renderMezzi === 'function') window.renderMezzi();
     });
     activeListeners.push(unsubMezzi);
+      // Listener per Clienti Fatturazione (Nuova Rubrica V2)
+      // DECOUPLED IN A4.16-C2A-LIVE-FIX5 - PENDING_CANONICAL_CONSUMER_MIGRATION (Tenants + Configurazioni)
+      window.appData.lista_clienti_fatturazione = [];
+      window.appData.lista_progetti = [];
 
-    // Listener per Clienti Fatturazione (Nuova Rubrica V2, usato per presenze operative e registrazioni turno)
-    const unsubClientiFatturazione = onSnapshot(collection(db, "clienti_fatturazione"), { includeMetadataChanges: true }, (snapshot) => {
-        const clientiFat = [];
-        const progettiMapped = [];
-        snapshot.forEach((d) => {
-            const data = d.data();
-            clientiFat.push({ id: d.id, ...data, isProgetto: true });
-            
-            // Mappatura per retrocompatibilità con la Registrazione Turno (script.js)
-            progettiMapped.push({
-                id: d.id,
-                nome: data.nome,
-                viaggi: (data.zone_fatturazione || []).map(z => z.nome_zona || ''),
-                isProgetto: true
-            });
-        });
-        window.appData.lista_clienti_fatturazione = clientiFat;
-        window.appData.lista_progetti = progettiMapped;
-        
-        if (typeof window.renderProgetti === 'function') window.renderProgetti();
-        if (typeof window.renderProgettiInserimento === 'function') window.renderProgettiInserimento();
-        if (typeof window.renderProgettiImpostazioni === 'function') window.renderProgettiImpostazioni();
-    });
-    activeListeners.push(unsubClientiFatturazione);
 
     // Listeners per le 4 liste delle Scalette Navette e Navette Pure (unificate con doppio flag)
     const setupUnifiedNavettaListener = (tipo, collectionPath, listPropName, legacyAutistiProp, legacyPuraProp) => {
