@@ -1,3 +1,5 @@
+
+from infrastructure.company_context import get_current_company_id
 from infrastructure.firebase_setup import BUCKET_NAME
 from core.utils import _genera_url_storage_token, _build_tripla_chiave
 from firebase_admin import storage, firestore
@@ -653,7 +655,7 @@ def genera_report_giornaliero(req: https_fn.CallableRequest):
         )
     
     caller_uid = req.auth.uid
-    dipendente_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    dipendente_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     if not dipendente_doc.exists:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -690,7 +692,7 @@ def handle_genera_riepiloghi_aziendali_light(req: https_fn.CallableRequest) -> t
             )
 
         caller_uid = req.auth.uid
-        caller_doc = get_db().collection("dipendenti").document(caller_uid).get()
+        caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
         if not caller_doc.exists or caller_doc.to_dict().get("ruolo") not in ["amministratore", "impiegata"]:
             raise https_fn.HttpsError(
                 code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,

@@ -1,3 +1,5 @@
+
+from infrastructure.company_context import get_current_company_id
 import io
 import re
 import json
@@ -349,7 +351,7 @@ def risolvi_tenant_consegna(req: https_fn.CallableRequest):
     cors=options.CorsOptions(cors_origins=ALLOWED_ORIGINS, cors_methods=["get", "post"]))
 def web_calcola_percorsi(req: https_fn.CallableRequest):
     if not req.auth or not req.auth.uid: raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.UNAUTHENTICATED, message="Non autorizzato.")
-    caller_doc = get_db().collection("dipendenti").document(req.auth.uid).get()
+    caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(req.auth.uid).get()
     if not caller_doc.exists or caller_doc.to_dict().get("ruolo") not in {"amministratore", "impiegata"}: raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.PERMISSION_DENIED, message="Negato.")
     from services.routing_service import handle_web_calcola_percorsi
     return handle_web_calcola_percorsi(req)
@@ -394,7 +396,7 @@ def genera_mappa_autista(req: https_fn.CallableRequest):
         )
 
     caller_uid = req.auth.uid
-    caller_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     if not caller_doc.exists or caller_doc.to_dict().get("ruolo") not in ["amministratore", "impiegata"]:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -500,7 +502,7 @@ def genera_report_giornaliero(req: https_fn.CallableRequest):
         )
     
     caller_uid = req.auth.uid
-    dipendente_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    dipendente_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     if not dipendente_doc.exists:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -542,7 +544,7 @@ def elimina_giornata_logistica(req: https_fn.CallableRequest):
     caller_uid = req.auth.uid
     caller_doc = (
         get_db()
-        .collection("dipendenti")
+        .collection("aziende").document(get_current_company_id()).collection("utenti")
         .document(caller_uid)
         .get()
     )
@@ -639,7 +641,7 @@ def ripristina_cache_backup(req: https_fn.CallableRequest):
         )
 
     caller_uid = req.auth.uid
-    caller_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     if not caller_doc.exists or caller_doc.to_dict().get("ruolo") != "amministratore":
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -662,7 +664,7 @@ def gestisci_archiviazione_mensile(req: https_fn.CallableRequest):
         )
 
     caller_uid = req.auth.uid
-    caller_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     allowed_roles = {"amministratore", "impiegata"}
     
     if not caller_doc.exists or caller_doc.to_dict().get("ruolo") not in allowed_roles:
@@ -692,7 +694,7 @@ def recupera_viaggio_storico(req: https_fn.CallableRequest):
         )
     
     caller_uid = req.auth.uid
-    dipendente_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    dipendente_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     if not dipendente_doc.exists:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -723,7 +725,7 @@ def rilascia_recupero_storico(req: https_fn.CallableRequest):
         )
     
     caller_uid = req.auth.uid
-    dipendente_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    dipendente_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     if not dipendente_doc.exists:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -889,7 +891,7 @@ def genera_riepiloghi_aziendali_light(req: https_fn.CallableRequest) -> typing.A
             )
 
         caller_uid = req.auth.uid
-        caller_doc = get_db().collection("dipendenti").document(caller_uid).get()
+        caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
         if not caller_doc.exists or caller_doc.to_dict().get("ruolo") not in ["amministratore", "impiegata"]:
             raise https_fn.HttpsError(
                 code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -941,7 +943,7 @@ def agent_extractor(req: https_fn.CallableRequest) -> typing.Any:
     
     uid = req.auth.uid
     db = firestore.client()
-    doc = db.collection("dipendenti").document(uid).get()
+    doc = db.collection("aziende").document(get_current_company_id()).collection("utenti").document(uid).get()
     if not doc.exists or doc.to_dict().get("ruolo") != "amministratore":
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.PERMISSION_DENIED, message="Operazione non consentita.")
         
@@ -955,7 +957,7 @@ def agent_chat_assistant(req: https_fn.CallableRequest) -> typing.Any:
         
     uid = req.auth.uid
     db = firestore.client()
-    doc = db.collection("dipendenti").document(uid).get()
+    doc = db.collection("aziende").document(get_current_company_id()).collection("utenti").document(uid).get()
     if not doc.exists or doc.to_dict().get("ruolo") != "amministratore":
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.PERMISSION_DENIED, message="Operazione non consentita.")
         

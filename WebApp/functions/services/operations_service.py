@@ -1,3 +1,5 @@
+
+from infrastructure.company_context import get_current_company_id
 from firebase_admin import firestore
 import datetime
 from firebase_functions import https_fn
@@ -199,7 +201,7 @@ def handle_elimina_giornata_logistica(req: https_fn.CallableRequest):
     caller_uid = req.auth.uid
     caller_doc = (
         get_db()
-        .collection("dipendenti")
+        .collection("aziende").document(get_current_company_id()).collection("utenti")
         .document(caller_uid)
         .get()
     )
@@ -383,7 +385,7 @@ def handle_gestisci_archiviazione_mensile(req: https_fn.CallableRequest):
         )
 
     caller_uid = req.auth.uid
-    caller_doc = get_db().collection("dipendenti").document(caller_uid).get()
+    caller_doc = get_db().collection("aziende").document(get_current_company_id()).collection("utenti").document(caller_uid).get()
     allowed_roles = {"amministratore", "impiegata"}
     
     if not caller_doc.exists or caller_doc.to_dict().get("ruolo") not in allowed_roles:

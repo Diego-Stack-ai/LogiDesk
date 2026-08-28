@@ -1,3 +1,5 @@
+
+from infrastructure.company_context import get_current_company_id
 import logging
 from firebase_functions import https_fn
 from infrastructure.firebase_setup import get_db
@@ -20,7 +22,7 @@ def handle_admin_reset_password(req: https_fn.CallableRequest) -> dict:
                 message="Utente non autenticato."
             )
             
-        caller_doc = db.collection('dipendenti').document(caller_uid).get()
+        caller_doc = db.collection('aziende').document(get_current_company_id()).collection('utenti').document(caller_uid).get()
         if not caller_doc.exists:
             raise https_fn.HttpsError(
                 code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -62,7 +64,7 @@ def handle_admin_reset_password(req: https_fn.CallableRequest) -> dict:
         auth.update_user(user.uid, password=new_password)
         
         # Sblocchiamo anche l'utente nel caso fosse disabilitato o avesse needsPasswordChange
-        db.collection('dipendenti').document(user.uid).update({
+        db.collection('aziende').document(get_current_company_id()).collection('utenti').document(user.uid).update({
             'needsPasswordChange': False
         })
 
@@ -135,7 +137,7 @@ def handle_admin_update_role(req: https_fn.CallableRequest) -> typing.Any:
     db = get_db()
     caller_uid = req.auth.uid
     
-    caller_doc = db.collection('dipendenti').document(caller_uid).get()
+    caller_doc = db.collection('aziende').document(get_current_company_id()).collection('utenti').document(caller_uid).get()
     if not caller_doc.exists or caller_doc.to_dict().get('ruolo') != 'amministratore':
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.PERMISSION_DENIED, message="Privilegi insufficienti")
         
@@ -148,7 +150,7 @@ def handle_admin_update_role(req: https_fn.CallableRequest) -> typing.Any:
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT, message="Dati mancanti")
         
     sys_status_ref = db.collection('config').document('system_status')
-    user_ref = db.collection('dipendenti').document(target_uid)
+    user_ref = db.collection('aziende').document(get_current_company_id()).collection('utenti').document(target_uid)
     
     transaction = db.transaction()
     

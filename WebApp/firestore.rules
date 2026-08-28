@@ -1,7 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
+    
     // Funzione helper per controllare autenticazione
     function isAuthenticated() {
       return request.auth != null;
@@ -12,59 +12,26 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Funzione helper per verificare se utente e' amministratore
+    // Funzione helper per verificare se utente e' amministratore o impiegata con privilegi elevati
     function isAdmin() {
-      let userData = get(/databases/$(database)/documents/dipendenti/$(request.auth.uid)).data;
-      return userData.ruolo == 'amministratore';
+      let userData = get(/databases/$(database)/documents/aziende/NzXaCgyXxZWWehw1tSlo/utenti/$(request.auth.uid)).data;
+      return userData.ruolo == 'amministratore' || (userData.ruolo == 'impiegata' && userData.canElevate == true);
     }
 
     // Funzione helper per verificare se utente e' impiegata base
     function isImpiegata() {
-      return get(/databases/$(database)/documents/dipendenti/$(request.auth.uid)).data.ruolo == 'impiegata';
+      return get(/databases/$(database)/documents/aziende/NzXaCgyXxZWWehw1tSlo/utenti/$(request.auth.uid)).data.ruolo == 'impiegata';
     }
 
     // Funzione helper per verificare se utente e' soel
     function isSoel() {
-      return get(/databases/$(database)/documents/dipendenti/$(request.auth.uid)).data.ruolo == 'soel';
-    }
-
-    // Helper per chiavi modificate
-    function getAffectedKeys() {
-      return request.resource.data.diff(resource.data).affectedKeys();
-    }
-
-    // Campi anagrafici e contatto primario
-    function selfEditableFields() {
-      return ['nome', 'cognome', 'emailPersonale', 'cellulare', 'sesso', 'data_nascita', 'luogo_nascita', 'residenza'];
+      return get(/databases/$(database)/documents/aziende/NzXaCgyXxZWWehw1tSlo/utenti/$(request.auth.uid)).data.ruolo == 'soel';
     }
 
     // Regole per i dipendenti (lettura/scrittura profilo)
     match /dipendenti/{userId} {
       allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata() || isSoel());
-
-      allow update: if isAuthenticated() && request.auth.uid == userId &&
-        getAffectedKeys().hasOnly(selfEditableFields());
-
-      allow update: if isAuthenticated() && isAdmin() &&
-        !getAffectedKeys().hasAny(['ruolo', 'canElevate', 'uid', 'email', 'createdAt']);
-
-      allow create: if isAuthenticated() && isAdmin() &&
-        request.resource.data.ruolo in ['autista', 'fornitore', 'impiegata', 'soel'] &&
-        request.resource.data.canElevate != true;
-
-      allow delete: if false;
-    }
-
-    // Protezione registro amministratori atomico
-    match /config/system_status {
-      allow read: if isAuthenticated() && isAdmin();
-      allow write: if false;
-    }
-
-    // Protezione audit logs
-    match /audit_logs_admin/{logId} {
-      allow read: if isAuthenticated() && isAdmin();
-      allow write: if false;
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata());
     }
 
     match /mezzi/{docId} {
@@ -72,10 +39,6 @@ service cloud.firestore {
     }
 
     match /progetti/{docId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    match /clienti_fatturazione/{docId} {
       allow read, write: if isAuthenticated();
     }
 
@@ -87,69 +50,6 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    match /costi_carburante/{docId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    match /costi_personale/{docId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    
-    // Funzione helper per verificare se utente e' amministratore in Core V1
-    function isCoreAdmin(company_id) {
-      let userData = get(/databases/$(database)/documents/aziende/$(company_id)/utenti/$(request.auth.uid)).data;
-      return userData.ruolo == 'amministratore';
-    }
-
-    // --- LOGIDESK CORE V1 RULES ---
-    match /aziende/{company_id} {
-      allow read: if isAuthenticated();
-      
-      match /utenti/{uid} {
-        allow read: if isAuthenticated() && (request.auth.uid == uid || isCoreAdmin(company_id));
-        allow write: if isAuthenticated() && isCoreAdmin(company_id);
-      }
-      
-      match /dipendenti/{employee_id} {
-        allow read: if isAuthenticated();
-        allow write: if isAuthenticated() && isCoreAdmin(company_id);
-      }
-      
-      match /mezzi/{vehicle_id} {
-        allow read: if isAuthenticated();
-        allow write: if isAuthenticated() && isCoreAdmin(company_id);
-      }
-      
-      match /settings/{setting_id} {
-        allow read: if isAuthenticated();
-        allow write: if isAuthenticated() && isCoreAdmin(company_id);
-      }
-      
-      match /tenants/{tenant_id} {
-        allow read: if isAuthenticated();
-        allow write: if isAuthenticated() && isCoreAdmin(company_id);
-        
-        match /configurazioni/{config_id} {
-          allow read: if isAuthenticated();
-          allow write: if isAuthenticated() && isCoreAdmin(company_id);
-        }
-        
-        match /settings/{setting_id} {
-          allow read: if isAuthenticated();
-          allow write: if isAuthenticated() && isCoreAdmin(company_id);
-        }
-        
-        match /punti_consegna/{point_id} {
-          allow read, write: if isAuthenticated();
-        }
-        
-        match /import_mappings/{mapping_id} {
-          allow read, write: if isAuthenticated();
-        }
-      }
-    }
-    // -----------------------------
     // Regole per il nuovo sistema Tenant (DNR)
     match /customers/{tenant}/{collection=**} {
       allow read, write: if isAuthenticated();
@@ -162,13 +62,7 @@ service cloud.firestore {
     // Legacy (mantenute per compatibilita, da rimuovere in futuro)
     match /mappatura/{docId} { allow read, write: if isAuthenticated(); }
     match /articoli/{docId} { allow read, write: if isAuthenticated(); }
-    match /config/permessi_dashboard {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && isAdmin();
-    }
-    match /config/{docId} {
-      allow read, write: if isAuthenticated() && docId != 'permessi_dashboard';
-    }
+    match /config/{docId} { allow read, write: if isAuthenticated(); }
     match /viaggi/{document=**} { allow read, write: if isAuthenticated(); }
     match /ddt/{docId} { allow read, write: if isAuthenticated(); }
   }

@@ -1,3 +1,5 @@
+
+from infrastructure.company_context import get_current_company_id
 from firebase_functions import https_fn
 from infrastructure.firebase_setup import get_db
 
@@ -17,7 +19,7 @@ def require_page_permission(req: https_fn.CallableRequest, page_key: str, requir
     db = get_db()
     
     # 1. Recupera ruolo utente
-    caller_doc = db.collection("dipendenti").document(uid).get()
+    caller_doc = db.collection("aziende").document(get_current_company_id()).collection("utenti").document(uid).get()
     if not caller_doc.exists:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
