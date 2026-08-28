@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.460">
+    <link rel="stylesheet" href="styles.css?v=6.461">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -425,8 +425,8 @@
     </div>
 </main>
 
-<script src="script.js?v=6.460"></script>
-<script type="module" src="firebase-auth-sync.js?v=6.460"></script>
+<script src="script.js?v=6.461"></script>
+<script type="module" src="firebase-auth-sync.js?v=6.461"></script>
 
 <script type="module">
         import { db, app } from "./core/firebase-init.js";
@@ -1286,14 +1286,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.setCopertina = async function(targa, url) {
             try {
-                const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
                 const m = mezzi.find(x => x.targa === targa);
                 if (!m) throw new Error("Mezzo non trovato in memoria");
-                
-                const docId = m.id || targa;
-                const db = window.db; // inizializzato globalmente in script.js / realtime-sync.js
-                
-                await updateDoc(doc(db, 'mezzi', docId), { copertinaUrl: url });
+                if (!m.id) throw new Error("AUTO_ID mezzo mancante");
+                if (typeof window.updateVehicle !== 'function') {
+                    throw new Error("API canonica mezzi non disponibile");
+                }
+
+                await window.updateVehicle(m.id, { ...m, copertinaUrl: url });
                 
                 m.copertinaUrl = url;
                 if (typeof window.appData !== 'undefined' && window.appData.lista_mezzi) {
@@ -1578,9 +1578,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const m = mezzi[idx];
             if (confirm('Eliminare definitivamente ' + m.targa + '? (I file su Storage non verranno eliminati automaticamente)')) {
                 try {
-                    if (window.deleteFromFirebase && m.id) {
-                        await window.deleteFromFirebase("aziende/NzXaCgyXxZWWehw1tSlo/mezzi", m.id);
+                    if (!m.id) throw new Error("AUTO_ID mezzo mancante");
+                    if (typeof window.deleteVehicle !== 'function') {
+                        throw new Error("API canonica mezzi non disponibile");
                     }
+                    await window.deleteVehicle(m.id);
                     alert("Mezzo eliminato dal Cloud!");
                 } catch (e) {
                     alert("Errore eliminazione: " + e.message);
@@ -1646,12 +1648,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
                 
-                if (window.updateMezzo) await window.updateMezzo(id, mezzoData);
-                else {
-                    // Fallback
-                    const mRef = doc(window.db, "mezzi", id || targa);
-                    await setDoc(mRef, mezzoData, {merge: true});
+                if (typeof window.updateMezzo !== 'function') {
+                    throw new Error("API canonica mezzi non disponibile: salvataggio interrotto.");
                 }
+                await window.updateMezzo(id, mezzoData);
                 
                 alert("Mezzo salvato correttamente su Firebase!");
                 chiudiForm();

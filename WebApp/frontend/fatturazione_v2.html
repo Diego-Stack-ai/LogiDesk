@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.460">
+    <link rel="stylesheet" href="styles.css?v=6.461">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -144,8 +144,8 @@
     </main>
 
     <!-- Inclusione script base di sistema (Navigazione, Auth, UI) -->
-    <script src="script.js?v=6.460"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.460"></script>
+    <script src="script.js?v=6.461"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.461"></script>
 
     <script type="module">
         import { db, app } from "./core/firebase-init.js";
@@ -333,7 +333,7 @@
                 // 2. Fetch mappa mezzi (Targa -> Patente)
                 let mezziMap = {};
                 try {
-                    const mezziSnap = await getDocs(collection(db, "mezzi"));
+                    const mezziSnap = await getDocs(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi"));
                     mezziSnap.forEach(d => {
                         const m = d.data();
                         if (m.targa) mezziMap[m.targa.toUpperCase()] = m.patente || 'B';
@@ -1348,8 +1348,8 @@
               XLSX.writeFile(wb, `Matrice_Verticale_${mData.clientName}_${mData.month}.xlsx`);
           });
     </script>
-    <script type="module" src="firebase-auth-sync.js?v=6.460"></script>
-    <script src="script.js?v=6.460"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.461"></script>
+    <script src="script.js?v=6.461"></script>
 </body>
 </html>
 

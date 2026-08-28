@@ -2,7 +2,10 @@ import { app, db } from "../core/firebase-init.js";
 import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { firebaseConfig } from "../firebase-config.js";
 import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { collection, onSnapshot, query, where, doc, updateDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, onSnapshot, query, where, doc, getDocs, updateDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { CompanyContext } from "../core/CompanyContext.js";
+
+const VEHICLES_PATH = CompanyContext.getVehiclesPath();
 // Inizializzazione Listener Realtime (Condizionali ai permessi)
 window.activeListeners = window.activeListeners || [];
 function startRealtimeSync(isAdmin) {
@@ -71,7 +74,7 @@ function startRealtimeSync(isAdmin) {
     }
 
     // Listener per Mezzi (mezzi)
-    const unsubMezzi = onSnapshot(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/mezzi"), { includeMetadataChanges: true }, (snapshot) => {
+    const unsubMezzi = onSnapshot(collection(db, VEHICLES_PATH), { includeMetadataChanges: true }, (snapshot) => {
         const mezzi = [];
         snapshot.forEach((d) => {
             if (!d.id.startsWith('_')) {
@@ -360,24 +363,81 @@ window.registerNewUserCloud = async function(email, password, nome, cognome, ruo
     }
 };
 
-// Funzione di salvataggio/creazione per i mezzi
-window.updateMezzo = async function(id, data) {
+// API canonica mezzi: l'identità Firestore è sempre l'AUTO_ID.
+// La targa è un attributo modificabile e non viene mai usata come document ID.
+async function normalizeAndValidateVehicleData(data, currentVehicleId = null) {
+    const { id: _, ...vehicleData } = data;
+    const normalizedPlate = (vehicleData.targa || '').trim().toUpperCase();
+    if (!normalizedPlate) {
+        throw new Error("Targa mancante.");
+    }
+
+    const duplicateQuery = query(
+        collection(db, VEHICLES_PATH),
+        where("targa", "==", normalizedPlate)
+    );
+    const duplicateSnapshot = await getDocs(duplicateQuery);
+    const duplicate = duplicateSnapshot.docs.find(d => d.id !== currentVehicleId);
+    if (duplicate) {
+        throw new Error(`Esiste già un mezzo con targa ${normalizedPlate}.`);
+    }
+
+    return { ...vehicleData, targa: normalizedPlate };
+}
+
+window.getVehicles = function() {
+    return getDocs(collection(db, VEHICLES_PATH));
+};
+
+window.getVehicleByPlate = async function(targa) {
+    const normalizedPlate = (targa || '').trim().toUpperCase();
+    if (!normalizedPlate) return null;
+    const snapshot = await getDocs(query(
+        collection(db, VEHICLES_PATH),
+        where("targa", "==", normalizedPlate)
+    ));
+    if (snapshot.empty) return null;
+    const vehicleDoc = snapshot.docs[0];
+    return { id: vehicleDoc.id, ...vehicleDoc.data() };
+};
+
+window.createVehicle = async function(data) {
     try {
-        const { id: _, ...updateData } = data;
-        const targetId = id || updateData.targa;
-        if (!targetId) {
-            throw new Error("Targa mancante.");
-        }
-        
-        const docRef = doc(db, "mezzi", targetId);
-        // Usa setDoc con merge per aggiornare o creare usando la targa come ID
-        await setDoc(docRef, updateData, { merge: true });
-        return true;
+        const vehicleData = await normalizeAndValidateVehicleData(data);
+        const createdRef = await addDoc(collection(db, VEHICLES_PATH), vehicleData);
+        return createdRef.id;
     } catch (e) {
-        console.error("Errore salvataggio Mezzo:", e);
+        console.error("Errore creazione Mezzo canonico:", e);
         throw e;
     }
-}
+};
+
+window.updateVehicle = async function(id, data) {
+    try {
+        if (!id) {
+            throw new Error("AUTO_ID mezzo mancante per l'aggiornamento.");
+        }
+        const vehicleData = await normalizeAndValidateVehicleData(data, id);
+        await updateDoc(doc(db, VEHICLES_PATH, id), vehicleData);
+        return id;
+    } catch (e) {
+        console.error("Errore aggiornamento Mezzo canonico:", e);
+        throw e;
+    }
+};
+
+window.deleteVehicle = async function(id) {
+    if (!id) {
+        throw new Error("AUTO_ID mezzo mancante per l'eliminazione.");
+    }
+    await deleteDoc(doc(db, VEHICLES_PATH, id));
+    return true;
+};
+
+// Alias temporaneo per i consumer UI esistenti.
+window.updateMezzo = function(id, data) {
+    return id ? window.updateVehicle(id, data) : window.createVehicle(data);
+};
 
 // Funzione di eliminazione generica
 window.deleteFromFirebase = async function(collectionName, id) {
