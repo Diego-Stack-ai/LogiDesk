@@ -376,8 +376,8 @@
                 // Tipo
                 if (typeF !== "ALL" && type !== typeF) return false;
                 // Stato
-                if (statusF === "ACTIVE" && d.attivo === false) return false;
-                if (statusF === "INACTIVE" && d.attivo !== false) return false;
+                if (statusF === "ATTIVI" && d.attivo === false) return false;
+                if (statusF === "INATTIVI" && d.attivo !== false) return false;
                 // Testo
                 if (search) {
                     const match = (
@@ -519,7 +519,7 @@
                 }
                 
                 // Populate options
-                tenantSelectBox.innerHTML = '<option value="" style="color: black;">Seleziona tenant...</option>';
+                tenantSelectBox.innerHTML = '<option value="ALL" style="color: black;">Tutti</option>';
                 dynamicTenants.forEach(t => {
                     const code = t.nome || t.name || t.id;
                     const opt = document.createElement("option");
