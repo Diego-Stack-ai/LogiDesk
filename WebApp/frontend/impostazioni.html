@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.461">
+    <link rel="stylesheet" href="styles.css?v=6.462">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -1275,13 +1275,13 @@
         }
     });
 </script>
-    <script src="script.js?v=6.461"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.461"></script>
+    <script src="script.js?v=6.462"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.462"></script>
 
     <script type="module">
     // ─── GESTIONE CLIENTI & VIAGGI (PROGETTI) — modulo autonomo ─────────────
     import { db, app } from "./core/firebase-init.js";
-    import { collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, getDoc, query, where, getDocs }
+    import { collection, doc, addDoc, setDoc, updateDoc, deleteDoc, deleteField, onSnapshot, getDoc, query, where, getDocs }
         from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
 const functions = getFunctions(app, "europe-west1");
@@ -1500,7 +1500,8 @@ const functions = getFunctions(app, "europe-west1");
             document.getElementById('emailImapHost').value = d.imap_host || '';
             document.getElementById('emailImapPort').value = d.imap_port || '';
             document.getElementById('emailUser').value = d.email_user || '';
-            document.getElementById('emailPassword').value = d.email_password || '';
+            document.getElementById('emailPassword').value = '';
+            document.getElementById('emailPassword').placeholder = 'Gestita in Secret Manager';
             document.getElementById('emailSenderName').value = d.sender_name || '';
             document.getElementById('emailSecurity').value = d.smtp_security || 'auto';
         }
@@ -1518,7 +1519,7 @@ const functions = getFunctions(app, "europe-west1");
             const sender_name = document.getElementById('emailSenderName').value.trim();
             const smtp_security = document.getElementById('emailSecurity').value;
 
-            if (!smtp_host || !smtp_port || !imap_host || !imap_port || !email_user || !email_password) {
+            if (!smtp_host || !smtp_port || !imap_host || !imap_port || !email_user) {
                 Swal.fire({ title: 'Errore', text: 'Tutti i campi contrassegnati con * sono obbligatori.', icon: 'error', confirmButtonColor: '#4f46e5' });
                 return;
             }
@@ -1536,12 +1537,12 @@ const functions = getFunctions(app, "europe-west1");
                     imap_host,
                     imap_port,
                     email_user,
-                    email_password,
+                    email_password: deleteField(),
                     sender_name,
                     smtp_security,
                     updatedAt: new Date()
                 }, { merge: true });
-                Swal.fire({ title: 'Salvato!', text: 'Impostazioni email salvate correttamente.', icon: 'success', confirmButtonColor: '#4f46e5' });
+                Swal.fire({ title: 'Salvato!', text: 'Impostazioni email salvate. La password resta protetta in Secret Manager.', icon: 'success', confirmButtonColor: '#4f46e5' });
             } catch (err) {
                 console.error("Errore salvataggio impostazioni email:", err);
                 Swal.fire({ title: 'Errore', text: 'Impossibile salvare i dati: ' + err.message, icon: 'error', confirmButtonColor: '#4f46e5' });
@@ -1841,8 +1842,8 @@ const functions = getFunctions(app, "europe-west1");
     
     // ─── CODICE JS GESTIONE DIAGNOSTICA OFFLINE ──────────────────────────────
     try {
-        const { connectivityService } = await import("./core/connectivity-service.js?v=6.461");
-        const { syncManager } = await import("./core/sync-manager.js?v=6.461");
+        const { connectivityService } = await import("./core/connectivity-service.js?v=6.462");
+        const { syncManager } = await import("./core/sync-manager.js?v=6.462");
 
         const elStato = document.getElementById("diagStatoConnessione");
         const elCoda = document.getElementById("diagElementiCoda");

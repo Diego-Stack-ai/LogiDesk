@@ -38,7 +38,13 @@ def require_page_permission(req: https_fn.CallableRequest, page_key: str, requir
         return
         
     # 2. Recupera config permessi
-    config_doc = db.collection("config").document("permessi_dashboard").get()
+    config_doc = (
+        db.collection("aziende")
+        .document(get_current_company_id())
+        .collection("settings")
+        .document("permissions")
+        .get()
+    )
     if not config_doc.exists:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,

@@ -8,6 +8,9 @@ from email.mime.base import MIMEBase
 from email import encoders
 from datetime import datetime
 import logging
+import os
+
+from infrastructure.company_context import get_current_company_id
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +135,13 @@ def handle_invia_email_fattura(data, db):
             return {"status": "errore", "message": "I campi destinatario, oggetto e corpo sono obbligatori."}
             
         try:
-            settings_doc = db.collection("config").document("email_settings").get()
+            settings_doc = (
+                db.collection("aziende")
+                .document(get_current_company_id())
+                .collection("settings")
+                .document("email")
+                .get()
+            )
             if not settings_doc.exists:
                 return {"status": "errore", "message": "Configura prima le credenziali email in Impostazioni."}
                 
@@ -142,12 +151,12 @@ def handle_invia_email_fattura(data, db):
             imap_host = d.get("imap_host")
             imap_port = d.get("imap_port")
             email_user = d.get("email_user")
-            email_password = d.get("email_password")
+            email_password = os.environ.get("EMAIL_PASSWORD")
             sender_name = d.get("sender_name", "")
             smtp_security = d.get("smtp_security", "auto")
             
             if not all([smtp_host, smtp_port, imap_host, imap_port, email_user, email_password]):
-                return {"status": "errore", "message": "Configurazione email su Firestore incompleta."}
+                return {"status": "errore", "message": "Configurazione email o segreto EMAIL_PASSWORD incompleti."}
                 
             attachments = []
             if allegato_pdf:

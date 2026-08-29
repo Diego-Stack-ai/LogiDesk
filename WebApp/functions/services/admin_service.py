@@ -149,7 +149,12 @@ def handle_admin_update_role(req: https_fn.CallableRequest) -> typing.Any:
     if not action or not target_uid:
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT, message="Dati mancanti")
         
-    sys_status_ref = db.collection('config').document('system_status')
+    sys_status_ref = (
+        db.collection('aziende')
+        .document(get_current_company_id())
+        .collection('settings')
+        .document('system')
+    )
     user_ref = db.collection('aziende').document(get_current_company_id()).collection('utenti').document(target_uid)
     
     transaction = db.transaction()

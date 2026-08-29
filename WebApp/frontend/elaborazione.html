@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.461">
+    <link rel="stylesheet" href="styles.css?v=6.462">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="theme-color" content="#4f46e5">
@@ -399,8 +399,8 @@
         </div>
     </main>
 
-    <script src="script.js?v=6.461"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.461"></script>
+    <script src="script.js?v=6.462"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.462"></script>
     <script type="module">
         import { db, app } from "./core/firebase-init.js";
         import { getStorage, ref, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
@@ -528,22 +528,25 @@
         });
 
         window.mostraPopupCattel = async () => {
-            let username = "cattel.somma";
-            let password = "HuhN28ci";
-            let loginUrl = "https://intime.lac-consulting.eu/webClient/login.xhtml";
-            
+            let username = "";
+            let password = "";
+            let loginUrl = "";
+
             try {
-                const { getDocs, collection, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-                const q = query(collection(db, "clienti_fatturazione"), where("nome", "==", "CATTEL"));
-                const snap = await window.getDocsConFallback(q);
-                if (!snap.empty) {
-                    const d = snap.docs[0].data();
-                    if (d.cattel_username) username = d.cattel_username;
-                    if (d.cattel_password) password = d.cattel_password;
-                    if (d.cattel_url) loginUrl = d.cattel_url;
-                }
+                const getCredentials = httpsCallable(functions, 'get_cattel_portal_credentials');
+                const response = await getCredentials({});
+                username = response.data?.username || "";
+                password = response.data?.password || "";
+                loginUrl = response.data?.url || "";
             } catch (err) {
-                console.warn("Impossibile caricare credenziali da progetti Firestore:", err);
+                console.error("Impossibile caricare le credenziali protette CATTEL:", err);
+                await Swal.fire({
+                    title: 'Credenziali non disponibili',
+                    text: err?.message || 'Configurazione CATTEL incompleta.',
+                    icon: 'error',
+                    confirmButtonColor: '#0ea5e9'
+                });
+                return;
             }
 
             Swal.fire({
