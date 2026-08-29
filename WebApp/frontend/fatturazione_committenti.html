@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.461">
+    <link rel="stylesheet" href="styles.css?v=6.462">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -369,7 +369,8 @@
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
                         <label style="font-size:11px; margin-bottom:4px; font-weight:600;">Cattel Password</label>
-                        <input type="password" id="cattelPassword" placeholder="Password" style="width:100%; padding:8px 12px; font-size:13px; border-radius:8px; border:1px solid #cbd5e1;">
+                        <input type="password" id="cattelPassword" value="••••••••" disabled style="width:100%; padding:8px 12px; font-size:13px; border-radius:8px; border:1px solid #cbd5e1; background:#f1f5f9;">
+                        <small style="color:#64748b;">Protetta in Secret Manager; non viene salvata in Firestore.</small>
                     </div>
                     <div class="input-group" style="grid-column: 1 / -1; margin-bottom:0;">
                         <label style="font-size:11px; margin-bottom:4px; font-weight:600;">Cattel URL Portale</label>
@@ -757,27 +758,6 @@
             }
         }
 
-        const data = {
-            nome: nome,
-            visibile_presenze: visibile,
-            referenti: currentReferenti,
-            magazzini: currentMagazziniCliente,
-            zone_fatturazione: currentZone.map(z => ({
-                nome_zona: z.nome_zona,
-                is_mensile: z.is_mensile,
-                tipo_calcolo: z.tipo_calcolo,
-                prezzo_viaggio: z.prezzo_viaggio ? parseFloat(z.prezzo_viaggio) : null,
-                prezzo_ddt: z.prezzo_ddt ? parseFloat(z.prezzo_ddt) : null
-            })),
-            updatedAt: new Date().toISOString()
-        };
-
-        if (nome === 'CATTEL') {
-            data.cattel_username = document.getElementById('cattelUsername').value.trim();
-            data.cattel_password = document.getElementById('cattelPassword').value.trim();
-            data.cattel_url = document.getElementById('cattelUrl').value.trim();
-        }
-
         const btn = document.getElementById('btnSalvaCliente');
         btn.disabled = true; btn.textContent = 'Salvataggio...';
         try {
@@ -794,12 +774,26 @@
                 }
             };
 
+            let savedTenantId;
             if (editingClientId) {
+                savedTenantId = editingClientId;
                 await updateDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants", editingClientId), tenantData);
                 await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + editingClientId + "/configurazioni/fatturazione"), configData, { merge: true });
             } else {
                 const newTenantRef = await addDoc(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants"), tenantData);
+                savedTenantId = newTenantRef.id;
                 await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + newTenantRef.id + "/configurazioni/fatturazione"), configData);
+            }
+
+            if (nome === 'CATTEL') {
+                await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + savedTenantId + "/configurazioni/integrazione"), {
+                    provider: 'CATTEL',
+                    username: document.getElementById('cattelUsername').value.trim(),
+                    url: document.getElementById('cattelUrl').value.trim(),
+                    password_secret: 'CATTEL_PORTAL_PASSWORD',
+                    schema_version: 1,
+                    updatedAt: new Date()
+                }, { merge: true });
             }
             Swal.fire('Salvato!', 'Configurazione cliente salvata con successo.', 'success');
             nascondiFormCliente();
@@ -938,9 +932,15 @@
             
             const isCattel = (c.nome || '').toUpperCase() === 'CATTEL';
             document.getElementById('cattelCredentialsContainer').style.display = isCattel ? 'block' : 'none';
-            document.getElementById('cattelUsername').value = c.cattel_username || '';
-            document.getElementById('cattelPassword').value = c.cattel_password || '';
-            document.getElementById('cattelUrl').value = c.cattel_url || '';
+            if (isCattel) {
+                const integrationDoc = await getDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/tenants/" + id + "/configurazioni/integrazione"));
+                const integrationData = integrationDoc.exists() ? integrationDoc.data() : {};
+                document.getElementById('cattelUsername').value = integrationData.username || '';
+                document.getElementById('cattelUrl').value = integrationData.url || '';
+            } else {
+                document.getElementById('cattelUsername').value = '';
+                document.getElementById('cattelUrl').value = '';
+            }
             
             document.getElementById('formClienteContainer').style.display = 'block';
             document.getElementById('listaClientiContainer').style.display = 'none';
@@ -1283,6 +1283,6 @@
         }, 500);
     });
 </script>
-<script type="module" src="firebase-auth-sync.js?v=6.461"></script>
+<script type="module" src="firebase-auth-sync.js?v=6.462"></script>
 </body>
 </html>
