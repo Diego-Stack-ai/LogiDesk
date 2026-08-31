@@ -1,5 +1,6 @@
-import { collection, getDocs, doc, getDoc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { app, db } from "../core/firebase-init.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { db } from "../core/firebase-init.js";
+import CompanyContext from "../core/CompanyContext.js";
 
 
 /**
@@ -7,7 +8,7 @@ import { app, db } from "../core/firebase-init.js";
  * @returns {Promise<Array>} Array di dipendenti (solo autisti attivi).
  */
 export async function getAutistiAttivi() {
-    const dipendentiSnap = await getDocs(collection(db, "dipendenti"));
+    const dipendentiSnap = await getDocs(collection(db, CompanyContext.getEmployeesPath()));
     let dipendenti = [];
     
     dipendentiSnap.forEach(d => {
