@@ -32,10 +32,10 @@ jobs:
       functions: ${{ steps.filter.outputs.functions }}
     steps:
       - name: Checkout codice
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Paths Filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout codice
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Firebase CLI
         run: npm install -g firebase-tools
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout codice
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python 3.12
         uses: actions/setup-python@v5
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout codice
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy su Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -117,3 +117,4 @@ jobs:
           projectId: log-solutions-cantiere
           channelId: live
           entryPoint: WebApp
+
