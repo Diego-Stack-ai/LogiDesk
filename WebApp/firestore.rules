@@ -71,12 +71,6 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    // Regole per i dipendenti (lettura/scrittura profilo)
-    match /dipendenti/{userId} {
-      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata() || isSoel());
-      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin() || isImpiegata());
-    }
-
     match /mezzi/{docId} {
       allow read, write: if isAuthenticated();
     }
