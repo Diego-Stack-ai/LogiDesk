@@ -15,6 +15,7 @@ const tenantName = id => {
 };
 const collectionPath = tenantId => isArticles ? CompanyContext.getImportMappingsPath(tenantId) : CompanyContext.getDdtReturnsPath(tenantId);
 const normalizeLabel = value => String(value || '').replaceAll('_', ' ').toUpperCase();
+const displayValue = value => value === undefined || value === null || value === '' || String(value).toLowerCase() === 'nan' ? '-' : value;
 
 function articleFields(record = {}) {
     return `
@@ -63,7 +64,7 @@ async function load() {
 }
 
 function articleCard(record) {
-    return `<article class="master-card"><div class="master-head"><div><div class="master-title">${escapeHtml(record.descrizione || record.id)}</div><div class="master-badges"><span class="master-badge">${escapeHtml(record.id)}</span><span class="master-badge">${escapeHtml(tenantName(record.tenant_id))}</span><span class="master-badge">${record.is_articolo_noto === false ? 'DA VERIFICARE' : 'RICONOSCIUTO'}</span></div></div>${editButton(record)}</div><div class="master-detail"><div class="master-label">Famiglia · Confezionamento</div><div class="master-value">${escapeHtml(record.famiglia || '-')} · ${escapeHtml(record.confezionamento || '-')}</div></div><div class="master-detail"><div class="master-label">Unità · Rapporto · Porzioni</div><div class="master-value">${escapeHtml(record.unita_principale || '-')} / ${escapeHtml(record.unita_secondaria || '-')} · ${escapeHtml(record.ratio ?? '-')} · ${escapeHtml(record.porzioni ?? record.per ?? '-')}</div></div></article>`;
+    return `<article class="master-card"><div class="master-head"><div><div class="master-title">${escapeHtml(record.descrizione || record.id)}</div><div class="master-badges"><span class="master-badge">${escapeHtml(record.id)}</span><span class="master-badge">${escapeHtml(tenantName(record.tenant_id))}</span><span class="master-badge">${record.is_articolo_noto === false ? 'DA VERIFICARE' : 'RICONOSCIUTO'}</span></div></div>${editButton(record)}</div><div class="master-detail"><div class="master-label">Famiglia · Confezionamento</div><div class="master-value">${escapeHtml(displayValue(record.famiglia))} · ${escapeHtml(displayValue(record.confezionamento))}</div></div><div class="master-detail"><div class="master-label">Unità · Rapporto · Porzioni</div><div class="master-value">${escapeHtml(displayValue(record.unita_principale))} / ${escapeHtml(displayValue(record.unita_secondaria))} · ${escapeHtml(displayValue(record.ratio))} · ${escapeHtml(displayValue(record.porzioni ?? record.per))}</div></div></article>`;
 }
 
 function ddtCard(record) {
