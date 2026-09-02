@@ -210,6 +210,79 @@
             cursor: not-allowed;
             color: #64748b;
         }
+
+        .review-actions {
+            flex: 1.15;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .review-btn {
+            min-width: 0;
+            justify-content: center;
+            padding: 9px 8px;
+            border-radius: 12px;
+            border: 2px solid #cbd5e1;
+            background: white;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.1;
+            cursor: pointer;
+        }
+
+        .review-btn .material-icons-round {
+            font-size: 19px;
+        }
+
+        .review-count {
+            display: none;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+        }
+
+        .review-btn.has-pending {
+            border-color: #ef4444;
+            color: #b91c1c;
+            background: #fff1f2;
+            animation: review-alert-pulse 1.15s ease-in-out infinite;
+        }
+
+        .review-btn.has-pending .review-count {
+            display: inline-flex;
+        }
+
+        @keyframes review-alert-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.15); }
+            50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.28); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .review-btn.has-pending { animation: none; }
+        }
+
+        @media (max-width: 600px) {
+            .workflow-date-actions {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .review-actions {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+        }
         
         .progress-container {
             margin-top: 24px;
@@ -272,10 +345,19 @@
                         <span class="material-icons-round" id="lock-icon">lock_open</span>
                     </button>
                 </div>
-            <div style="display: flex; gap: 12px; width: 100%;">
-                <button class="glass-btn" onclick="window.navigateWithState('gestione_anomalie.html')" style="flex: 1; justify-content: center; padding: 10px; border-radius: 12px; font-weight: 700; color: #ef4444; border: 2px solid #ef4444; background: white; display: flex; align-items: center; gap: 8px;" title="Risolvi clienti, articoli e orari non riconosciuti">
-                    <span class="material-icons-round">fact_check</span> ANOMALIE
-                </button>
+            <div class="workflow-date-actions" style="display: flex; gap: 12px; width: 100%;">
+                <div class="review-actions" aria-label="Elementi da supervisionare">
+                    <button id="btn-review-points" class="glass-btn review-btn" onclick="window.navigateWithState('punti_consegna.html?review=pending')" title="Controlla i nuovi punti di consegna">
+                        <span class="material-icons-round">location_on</span>
+                        <span>PUNTI NUOVI</span>
+                        <span id="count-review-points" class="review-count">0</span>
+                    </button>
+                    <button id="btn-review-articles" class="glass-btn review-btn" onclick="window.navigateWithState('articoli.html?review=pending')" title="Controlla i nuovi articoli">
+                        <span class="material-icons-round">category</span>
+                        <span>ARTICOLI NUOVI</span>
+                        <span id="count-review-articles" class="review-count">0</span>
+                    </button>
+                </div>
                 <button class="glass-btn" id="btn-gestione-mappa-data" style="flex: 1; justify-content: center; padding: 10px; border-radius: 12px; font-weight: 700; color: white; border: none; background: linear-gradient(135deg, var(--primary), #3730a3); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);" title="Apri la mappa interattiva per la data selezionata">
                     <span class="material-icons-round">edit_location</span> MAPPA
                 </button>
@@ -402,9 +484,11 @@
     <script src="script.js?v=6.465"></script>
     <script type="module" src="firebase-auth-sync.js?v=6.465"></script>
     <script type="module">
-        import { db, app } from "./core/firebase-init.js";
+        import { db, app, auth } from "./core/firebase-init.js";
+        import { CompanyContext } from "./core/CompanyContext.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getStorage, ref, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, limit, doc, getDoc, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
         import { firebaseConfig } from "./firebase-config.js"; 
         import { subscribeToReportsLogistici, subscribeToProcessingJobs } from "./services/viaggiService.js";
@@ -415,6 +499,47 @@
 
         const storage = getStorage(app);
         const functions = getFunctions(app, "europe-west1");
+
+        function aggiornaPulsanteSupervisione(buttonId, countId, totale) {
+            const button = document.getElementById(buttonId);
+            const count = document.getElementById(countId);
+            if (!button || !count) return;
+            count.textContent = String(totale);
+            button.classList.toggle('has-pending', totale > 0);
+        }
+
+        async function caricaIndicatoriSupervisione() {
+            try {
+                const tenantsSnapshot = await getDocs(collection(db, CompanyContext.getTenantsPath()));
+                const risultati = await Promise.all(tenantsSnapshot.docs.map(async tenantDoc => {
+                    const [puntiSnapshot, articoliSnapshot] = await Promise.all([
+                        getDocs(collection(db, CompanyContext.getDeliveryPointsPath(tenantDoc.id))),
+                        getDocs(collection(db, CompanyContext.getImportMappingsPath(tenantDoc.id)))
+                    ]);
+                    return {
+                        punti: puntiSnapshot.docs.filter(item => {
+                            const data = item.data();
+                            return data.is_verificato === false || data.da_verificare === true || data.stato === 'da_verificare';
+                        }).length,
+                        articoli: articoliSnapshot.docs.filter(item => item.data().is_articolo_noto === false).length
+                    };
+                }));
+
+                const totali = risultati.reduce((acc, item) => ({
+                    punti: acc.punti + item.punti,
+                    articoli: acc.articoli + item.articoli
+                }), { punti: 0, articoli: 0 });
+
+                aggiornaPulsanteSupervisione('btn-review-points', 'count-review-points', totali.punti);
+                aggiornaPulsanteSupervisione('btn-review-articles', 'count-review-articles', totali.articoli);
+            } catch (error) {
+                console.error('[Supervisione] Impossibile caricare gli indicatori:', error);
+            }
+        }
+
+        onAuthStateChanged(auth, user => {
+            if (user) caricaIndicatoriSupervisione();
+        });
 
         let filesFrutta = [];
         let filesLatte = [];
@@ -796,7 +921,7 @@
                             if (n_c > 0) {
                                 let listC = data.nuovi_clienti_list ? data.nuovi_clienti_list.join(', ') : '';
                                 combinedMsg += `<div style='margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;'>
-                                    <span style='background:#fee2e2; color:#ef4444; padding:3px 8px; border-radius:4px; font-weight:700; white-space:nowrap; font-size:11px;'>👥 ${n_c} Clienti</span>
+                                    <span style='background:#fee2e2; color:#ef4444; padding:3px 8px; border-radius:4px; font-weight:700; white-space:nowrap; font-size:11px;'>📍 ${n_c} Punti</span>
                                     <span style='font-size:12px; color:#475569; line-height:1.4;'>${listC}</span>
                                 </div>`;
                             }
@@ -831,7 +956,7 @@
                             ${data.error_message ? `<div style="color: #ef4444; font-size: 12px; margin-top: 6px; background: #fef2f2; border: 1px dashed #fca5a5; padding: 6px 10px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; word-break: break-word;">❌ Errore: ${data.error_message}</div>` : ''}
                             ${data.data_rilevata ? `<div style="font-size: 12px; color: #4f46e5; font-weight: 700; margin-top:2px;">📅 Data nel file: ${data.data_rilevata}</div>` : ''}
                             <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
-                                ${data.nuovi_clienti ? `<span style="background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">${data.nuovi_clienti} Clienti Ignoti</span>` : ''}
+                                ${data.nuovi_clienti ? `<span style="background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">${data.nuovi_clienti} Punti da verificare</span>` : ''}
                                 ${data.nuovi_articoli ? `<span style="background:#fef3c7; color:#d97706; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">${data.nuovi_articoli} Articoli Ignoti</span>` : ''}
                                 ${data.nuovi_orari ? `<span style="background:#e0e7ff; color:#4f46e5; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">${data.nuovi_orari} Orari Rilevati</span>` : ''}
                             </div>
@@ -850,17 +975,18 @@
 
             if (hasNewAnomalies) {
                 Swal.fire({
-                    title: 'Nuove Anomalie Rilevate!',
+                    title: 'Nuovi elementi rilevati',
                     html: combinedMsg,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Vai a Gestione Anomalie',
+                    confirmButtonText: 'Vai agli indicatori',
                     cancelButtonText: 'Ignora per ora',
                     confirmButtonColor: '#ef4444',
                     width: '600px'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.navigateWithState('gestione_anomalie.html');
+                        document.getElementById('btn-review-points')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        caricaIndicatoriSupervisione();
                     }
                 });
             }

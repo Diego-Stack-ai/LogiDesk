@@ -5,6 +5,7 @@ import { collection, doc, getDocs, addDoc, setDoc, serverTimestamp } from 'https
 
 const page = document.body.dataset.masterPage;
 const isArticles = page === 'articles';
+const pendingReviewOnly = new URLSearchParams(window.location.search).get('review') === 'pending';
 let tenants = [];
 let records = [];
 const el = id => document.getElementById(id);
@@ -78,9 +79,13 @@ function editButton(record) {
 function render() {
     const query = el('searchInput').value.trim().toLowerCase();
     const tenantId = el('tenantFilter').value;
-    const filtered = records.filter(record => (tenantId === 'ALL' || record.tenant_id === tenantId) && (!query || JSON.stringify(record).toLowerCase().includes(query)));
+    const filtered = records.filter(record =>
+        (tenantId === 'ALL' || record.tenant_id === tenantId) &&
+        (!pendingReviewOnly || !isArticles || record.is_articolo_noto === false) &&
+        (!query || JSON.stringify(record).toLowerCase().includes(query))
+    );
     filtered.sort((a,b) => isArticles ? a.id.localeCompare(b.id) : String(b.data_ddt || '').localeCompare(String(a.data_ddt || '')));
-    el('stats').textContent = `${filtered.length} ${isArticles ? 'articoli' : 'rientri'} visualizzati su ${records.length}`;
+    el('stats').textContent = `${filtered.length} ${isArticles ? 'articoli' : 'rientri'} ${pendingReviewOnly && isArticles ? 'da verificare' : 'visualizzati'} su ${records.length}`;
     el('records').innerHTML = filtered.map(isArticles ? articleCard : ddtCard).join('') || `<div class="master-empty">Nessun ${isArticles ? 'articolo' : 'rientro DDT'} trovato.</div>`;
 }
 

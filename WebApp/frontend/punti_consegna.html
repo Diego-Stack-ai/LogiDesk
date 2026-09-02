@@ -326,6 +326,7 @@
             return TENANT_ID_MAP[labelOrId] || null;
         }
         let fullData = [];
+        const pendingReviewOnly = new URLSearchParams(window.location.search).get('review') === 'pending';
         let associationMap = {};
         let activeTenantId = null;
         // Map Globals
@@ -373,6 +374,7 @@
             const statusF = document.getElementById("statusFilter").value;
             let filtered = fullData.filter(d => {
                 const type = resolvePointType(d);
+                if (pendingReviewOnly && !(d.is_verificato === false || d.da_verificare === true || d.stato === 'da_verificare')) return false;
                 // Tipo
                 if (typeF !== "ALL" && type !== typeF) return false;
                 // Stato
@@ -686,7 +688,9 @@
                         cap: document.getElementById("editCap").value,
                         citta: document.getElementById("editCitta").value,
                         provincia: document.getElementById("editProvincia").value,
-                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true
+                        attivo: document.getElementById("editStato") ? document.getElementById("editStato").value === "true" : true,
+                        is_verificato: true,
+                        da_verificare: false
                     };
                     if (!isNaN(lat) && !isNaN(lon)) {
                         dataToUpdate.geolocalizzazione = { lat: lat, lon: lon };
