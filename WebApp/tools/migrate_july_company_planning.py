@@ -14,6 +14,8 @@ SOURCE_PROJECT = "log-solution-60007"
 TARGET_PROJECT = "log-solutions-cantiere"
 COMPANY_ID = "NzXaCgyXxZWWehw1tSlo"
 TARGET_MONTH = "2026-07"
+TENANT_ALIASES = {"GREENLOGISTICA": "GREEN LOGISTICA"}
+COMPANY_ASSIGNMENT_LABELS = {"MAGAZZINO", "NAVETTA"}
 
 
 def normalize(value: object) -> str:
@@ -67,9 +69,10 @@ def run(execute: bool) -> int:
         for assignment in payload.get("assegnazioni", []):
             item = copy.deepcopy(assignment)
             customer = normalize(item.get("cliente"))
-            if customer and customer not in {"MAGAZZINO"}:
+            canonical_customer = TENANT_ALIASES.get(customer, customer)
+            if customer and customer not in COMPANY_ASSIGNMENT_LABELS:
                 business_assignments += 1
-                tenant_id = tenant_ids.get(customer)
+                tenant_id = tenant_ids.get(canonical_customer)
                 if tenant_id:
                     item["tenant_id"] = tenant_id
                     mapped += 1
