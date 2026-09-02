@@ -115,14 +115,17 @@ def run(project_id: str, execute: bool) -> int:
             )
             writes += 1
 
-    for reference, name in employee_label_updates:
-        pending.append((reference, {"nome_completo": name}))
-        writes += 1
-
     for offset in range(0, len(pending), 400):
         batch = db.batch()
         for reference, data in pending[offset : offset + 400]:
             batch.create(reference, data)
+        batch.commit()
+
+    for offset in range(0, len(employee_label_updates), 400):
+        batch = db.batch()
+        for reference, name in employee_label_updates[offset : offset + 400]:
+            batch.set(reference, {"nome_completo": name}, merge=True)
+            writes += 1
         batch.commit()
 
     _, reasons_verified, reasons_verify_conflicts = collect(
