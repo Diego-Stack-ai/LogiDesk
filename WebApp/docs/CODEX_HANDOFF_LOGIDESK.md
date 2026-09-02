@@ -315,3 +315,9 @@ Non riportare password, token, chiavi di servizio o altri segreti in questo file
   confermato l'assenza della root e la presenza della subcollection aziendale.
   Anche la relativa regola Firestore legacy è stata rimossa per impedirne la
   ricreazione accidentale.
+- Sono stati aggiunti e verificati 25 campi `nome_completo` nei documenti
+  aziendali `dipendenti`, derivati da `nome` e `cognome`. Il runtime versione
+  `6.465` mantiene automaticamente il campo nei salvataggi futuri. Le altre
+  etichette richieste erano già presenti (`nome`, `targa`, `email`) e non sono
+  state duplicate. Il permesso IAM temporaneo è stato nuovamente rimosso e
+  verificato.
