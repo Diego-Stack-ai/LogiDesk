@@ -25,6 +25,83 @@
         .glass-table tr:hover td:nth-child(2) {
             background-color: rgba(241, 245, 249, 0.95);
         }
+
+        .planning-date-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+
+        .planning-date-nav {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 38px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--surface);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .planning-date-nav:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .planning-date-nav .material-icons-round {
+            font-size: 23px;
+        }
+
+        @media (max-width: 600px) {
+            .planning-date-controls {
+                width: 100%;
+                gap: 4px;
+            }
+
+            .planning-date-controls .planning-date-nav {
+                width: 32px;
+                height: 34px;
+                min-width: 32px;
+                flex: 0 0 32px;
+            }
+
+            #dataPianificazione {
+                width: 128px !important;
+                min-width: 112px;
+                flex: 0 1 128px;
+                padding: 7px 5px;
+                font-size: 13px;
+            }
+
+            .planning-actions {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                width: 100%;
+                gap: 6px !important;
+            }
+
+            .filters-container .planning-actions button {
+                width: 100% !important;
+                min-width: 0;
+                min-height: 38px;
+                padding: 6px 5px !important;
+                gap: 3px;
+                font-size: 10px;
+                line-height: 1.15;
+                white-space: normal;
+            }
+
+            .planning-actions button .material-icons-round {
+                font-size: 17px;
+            }
+        }
     </style>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/svg+xml" href="assets/brand/logidesk-mark.svg">
@@ -58,9 +135,23 @@
         <div class="filters-container">
             <div class="input-group" style="flex: 0 1 auto; margin: 0;">
                 <label for="dataPianificazione" style="font-weight: 600; color: var(--text-muted);">Data Pianificazione:</label>
-                <input type="date" id="dataPianificazione" style="width: auto; font-weight: bold; background: var(--input-bg);">
+                <div class="planning-date-controls">
+                    <button type="button" class="planning-date-nav" data-date-shift="month" data-date-amount="-1" title="Mese precedente" aria-label="Vai al mese precedente">
+                        <span class="material-icons-round">keyboard_double_arrow_left</span>
+                    </button>
+                    <button type="button" class="planning-date-nav" data-date-shift="day" data-date-amount="-1" title="Giorno precedente" aria-label="Vai al giorno precedente">
+                        <span class="material-icons-round">chevron_left</span>
+                    </button>
+                    <input type="date" id="dataPianificazione" style="width: auto; font-weight: bold; background: var(--input-bg);">
+                    <button type="button" class="planning-date-nav" data-date-shift="day" data-date-amount="1" title="Giorno successivo" aria-label="Vai al giorno successivo">
+                        <span class="material-icons-round">chevron_right</span>
+                    </button>
+                    <button type="button" class="planning-date-nav" data-date-shift="month" data-date-amount="1" title="Mese successivo" aria-label="Vai al mese successivo">
+                        <span class="material-icons-round">keyboard_double_arrow_right</span>
+                    </button>
+                </div>
             </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div class="planning-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button id="btnBloccaGiornata" class="btn-primary" style="background-color: #ef4444; width: auto; padding: 10px 16px; display: none;">
                     <span class="material-icons-round">lock</span>
                     Blocca Giornata
@@ -294,6 +385,47 @@
         const domani = new Date();
         domani.setDate(domani.getDate() + 1);
         dataInput.value = domani.toISOString().split('T')[0];
+
+        function formattaDataLocale(data) {
+            const anno = data.getFullYear();
+            const mese = String(data.getMonth() + 1).padStart(2, '0');
+            const giorno = String(data.getDate()).padStart(2, '0');
+            return `${anno}-${mese}-${giorno}`;
+        }
+
+        function spostaData(tipo, quantita) {
+            const valore = dataInput.value;
+            if (!valore) return;
+
+            const [anno, mese, giorno] = valore.split('-').map(Number);
+            let nuovaData;
+
+            if (tipo === 'month') {
+                const primoDelMeseTarget = new Date(anno, mese - 1 + quantita, 1);
+                const ultimoGiornoTarget = new Date(
+                    primoDelMeseTarget.getFullYear(),
+                    primoDelMeseTarget.getMonth() + 1,
+                    0
+                ).getDate();
+                nuovaData = new Date(
+                    primoDelMeseTarget.getFullYear(),
+                    primoDelMeseTarget.getMonth(),
+                    Math.min(giorno, ultimoGiornoTarget)
+                );
+            } else {
+                nuovaData = new Date(anno, mese - 1, giorno);
+                nuovaData.setDate(nuovaData.getDate() + quantita);
+            }
+
+            dataInput.value = formattaDataLocale(nuovaData);
+            dataInput.dispatchEvent(new Event('change'));
+        }
+
+        document.querySelectorAll('[data-date-shift]').forEach(pulsante => {
+            pulsante.addEventListener('click', () => {
+                spostaData(pulsante.dataset.dateShift, Number(pulsante.dataset.dateAmount));
+            });
+        });
 
         // Helper per estrarre Cliente e Destinazione valida da una stringa
         function parseClienteDestinazione(stringaUnica) {
