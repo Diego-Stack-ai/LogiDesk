@@ -22,6 +22,10 @@ export const CompanyContext = {
 
     getPlanningPath: function() { return `aziende/${this.COMPANY_ID}/pianificazioni_viaggi`; },
 
+    getWarehousesPath: function() { return `aziende/${this.COMPANY_ID}/magazzini`; },
+
+    getShuttleListPath: function(type) { return `aziende/${this.COMPANY_ID}/navette_${type}`; },
+
     getAbsenceReasonsPath: function() { return `aziende/${this.COMPANY_ID}/giustificativi`; },
     
     getDeliveryPointsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/punti_consegna`; },

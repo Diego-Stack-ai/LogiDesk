@@ -1,0 +1,31 @@
+name: Migrate Company Operational Lists
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: Copy and verify warehouses and shuttle lists
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install firebase-admin
+      - name: Run gated migration
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" > /tmp/sa.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json
+          if [ "${{ inputs.execute }}" = "true" ]; then
+            python WebApp/tools/migrate_company_operational_lists.py --execute
+          else
+            python WebApp/tools/migrate_company_operational_lists.py
+          fi

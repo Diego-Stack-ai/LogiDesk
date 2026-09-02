@@ -119,8 +119,8 @@ function startRealtimeSync(isAdmin) {
 
 
     // Listeners per le 4 liste delle Scalette Navette e Navette Pure (unificate con doppio flag)
-    const setupUnifiedNavettaListener = (tipo, collectionPath, listPropName, legacyAutistiProp, legacyPuraProp) => {
-        const unsub = onSnapshot(collection(db, "clienti/DNR/" + collectionPath), { includeMetadataChanges: true }, (snapshot) => {
+    const setupUnifiedNavettaListener = (tipo, listPropName, legacyAutistiProp, legacyPuraProp) => {
+        const unsub = onSnapshot(collection(db, CompanyContext.getShuttleListPath(tipo)), { includeMetadataChanges: true }, (snapshot) => {
             const fullList = [];
             snapshot.forEach((d) => {
                 fullList.push({ id: d.id, ...d.data() });
@@ -146,10 +146,10 @@ function startRealtimeSync(isAdmin) {
         activeListeners.push(unsub);
     };
 
-    setupUnifiedNavettaListener('partenze', 'fatturazione_navette_partenze', 'anagrafica_partenze', 'lista_scaletta_partenze', 'lista_navetta_partenze');
-    setupUnifiedNavettaListener('carichi', 'fatturazione_navette_carichi', 'anagrafica_carichi', 'lista_scaletta_carico', 'lista_navetta_carico');
-    setupUnifiedNavettaListener('clienti', 'fatturazione_navette_clienti', 'anagrafica_clienti', 'lista_scaletta_clienti', 'lista_navetta_clienti');
-    setupUnifiedNavettaListener('destinazioni', 'fatturazione_navette_destinazioni', 'anagrafica_destinazioni', 'lista_scaletta_destinazioni_merce', 'lista_navetta_destinazioni_merce');
+    setupUnifiedNavettaListener('partenze', 'anagrafica_partenze', 'lista_scaletta_partenze', 'lista_navetta_partenze');
+    setupUnifiedNavettaListener('carichi', 'anagrafica_carichi', 'lista_scaletta_carico', 'lista_navetta_carico');
+    setupUnifiedNavettaListener('clienti', 'anagrafica_clienti', 'lista_scaletta_clienti', 'lista_navetta_clienti');
+    setupUnifiedNavettaListener('destinazioni', 'anagrafica_destinazioni', 'lista_scaletta_destinazioni_merce', 'lista_navetta_destinazioni_merce');
 
     // Listener per la lista delle Sedi Magazzino (lasciata separata)
     const setupScalettaListener = (tipo, globalProp) => {
@@ -161,7 +161,11 @@ function startRealtimeSync(isAdmin) {
         });
         activeListeners.push(unsub);
     };
-    setupScalettaListener('fatturazione_magazzini_sedi', 'lista_magazzini_sedi');
+    const unsubWarehouses = onSnapshot(collection(db, CompanyContext.getWarehousesPath()), { includeMetadataChanges: true }, (snapshot) => {
+        window.appData.lista_magazzini_sedi = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (typeof window.renderScaletteItems === 'function') window.renderScaletteItems('magazzini_sedi');
+    });
+    activeListeners.push(unsubWarehouses);
 
     // Listener per Giustificativi (Ferie, Malattia, ecc.)
     const unsubGiustificativi = onSnapshot(collection(db, ABSENCE_REASONS_PATH), { includeMetadataChanges: true }, (snapshot) => {

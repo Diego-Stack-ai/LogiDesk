@@ -456,12 +456,16 @@
 <!-- Logica di Base -->
 <script type="module">
     import { db } from './core/firebase-init.js';
+    import { CompanyContext } from './core/CompanyContext.js';
     import { collection, addDoc, doc, updateDoc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let currentReferenti = [];
     let currentZone = [];
     let currentMagazziniCliente = [];
     let editingClientId = null;
+    const operationalListPath = (collectionPath) => collectionPath === 'fatturazione_magazzini_sedi'
+        ? CompanyContext.getWarehousesPath()
+        : CompanyContext.getShuttleListPath(collectionPath.replace('fatturazione_navette_', ''));
 
     // ----- UI Form -----
     window.mostraFormNuovoCliente = () => {
@@ -982,7 +986,7 @@
         container.innerHTML = sorted.map(d => `
             <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
                 <span style="font-weight: 500;">${d.nome}</span>
-                <button type="button" style="background: none; border: none; color: #ef4444; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Elimina" onclick="window.eliminaAnagrafica('clienti/DNR/fatturazione_magazzini_sedi', '${d.id}', '${d.nome.replace(/'/g, "\\'")}')">
+                <button type="button" style="background: none; border: none; color: #ef4444; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Elimina" onclick="window.eliminaAnagrafica('fatturazione_magazzini_sedi', '${d.id}', '${d.nome.replace(/'/g, "\\'")}')">
                     <span class="material-icons-round" style="font-size: 18px;">delete_outline</span>
                 </button>
             </div>
@@ -997,7 +1001,7 @@
             return;
         }
         try {
-            await addDoc(collection(db, "clienti/DNR/" + collectionPath), { nome: nome });
+            await addDoc(collection(db, operationalListPath(collectionPath)), { nome: nome });
             input.value = '';
             Swal.fire({ title: 'Aggiunto', icon: 'success', timer: 1000, showConfirmButton: false });
         } catch (error) {
@@ -1089,7 +1093,7 @@
                             <button type="button" style="background: none; border: none; color: #3b82f6; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Modifica" onclick="window.modificaAnagraficaNavetta('${collectionPath}', '${id}', '${d.nome.replace(/'/g, "\\'")}', '${d.prezzo || ''}', ${!isNoPrezzo})">
                                 <span class="material-icons-round" style="font-size: 18px;">edit</span>
                             </button>
-                            <button type="button" style="background: none; border: none; color: #ef4444; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Elimina" onclick="window.eliminaAnagrafica('clienti/DNR/${collectionPath}', '${id}', '${d.nome.replace(/'/g, "\\'")}')">
+                            <button type="button" style="background: none; border: none; color: #ef4444; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Elimina" onclick="window.eliminaAnagrafica('${collectionPath}', '${id}', '${d.nome.replace(/'/g, "\\'")}')">
                                 <span class="material-icons-round" style="font-size: 18px;">delete_outline</span>
                             </button>
                         </div>
@@ -1141,7 +1145,7 @@
                 } else if (hasPrezzo) {
                     dataToUpdate.prezzo = null;
                 }
-                await updateDoc(doc(db, "clienti/DNR/" + collectionPath, id), dataToUpdate);
+                await updateDoc(doc(db, operationalListPath(collectionPath), id), dataToUpdate);
                 Swal.fire({ title: 'Salvato', icon: 'success', timer: 1000, showConfirmButton: false });
             } catch (error) {
                 alert("Errore modifica: " + error.message);
@@ -1180,7 +1184,7 @@
                     payload.intestatario_fattura_diretta = inputIntestatario.value.trim().toUpperCase();
                 }
             }
-            await addDoc(collection(db, "clienti/DNR/" + collectionPath), payload);
+            await addDoc(collection(db, operationalListPath(collectionPath)), payload);
             inputNome.value = '';
             if (inputPrezzo) inputPrezzo.value = '';
             if (inputFatturaDiretta) inputFatturaDiretta.checked = false;
@@ -1196,7 +1200,7 @@
 
     window.toggleUnifiedFlag = async (collectionPath, id, flagName, checked) => {
         try {
-            await updateDoc(doc(db, "clienti/DNR/" + collectionPath, id), {
+            await updateDoc(doc(db, operationalListPath(collectionPath), id), {
                 [flagName]: checked
             });
         } catch (error) {
@@ -1204,10 +1208,10 @@
         }
     };
 
-    window.eliminaAnagrafica = async (fullPath, id, nome) => {
+    window.eliminaAnagrafica = async (collectionPath, id, nome) => {
         if (!confirm(`Sei sicuro di voler eliminare "${nome}"?`)) return;
         try {
-            await deleteDoc(doc(db, fullPath, id));
+            await deleteDoc(doc(db, operationalListPath(collectionPath), id));
         } catch (error) {
             alert("Errore eliminazione: " + error.message);
         }

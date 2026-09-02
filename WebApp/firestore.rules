@@ -95,6 +95,11 @@ service cloud.firestore {
       allow write: if isAuthenticated() && (isAdmin() || isImpiegata());
     }
 
+    match /aziende/{companyId}/{listName}/{docId} {
+      allow read: if isAuthenticated() && listName in ['magazzini', 'navette_partenze', 'navette_carichi', 'navette_clienti', 'navette_destinazioni'];
+      allow write: if isAuthenticated() && isAdmin() && listName in ['magazzini', 'navette_partenze', 'navette_carichi', 'navette_clienti', 'navette_destinazioni'];
+    }
+
     match /mezzi/{docId} {
       allow read, write: if isAuthenticated();
     }
