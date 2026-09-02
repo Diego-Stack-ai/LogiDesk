@@ -321,3 +321,21 @@ Non riportare password, token, chiavi di servizio o altri segreti in questo file
   etichette richieste erano già presenti (`nome`, `targa`, `email`) e non sono
   state duplicate. Il permesso IAM temporaneo è stato nuovamente rimosso e
   verificato.
+- La pianificazione viaggi è stata riclassificata come dato operativo di
+  proprietà dell'azienda. Il runtime legge e scrive ora in
+  `aziende/NzXaCgyXxZWWehw1tSlo/pianificazioni_viaggi/{YYYY-MM-DD}` e non usa
+  più `clienti/DNR/pianificazione_viaggi` come radice o fallback.
+- Il 2026-09-02 sono state copiate dalla Produzione, senza cancellare la
+  sorgente, le 25 pianificazioni di luglio 2026. Il run GitHub Actions
+  `33639506064` ha certificato 25 documenti scritti e 25 verificati, zero
+  conflitti e zero clienti irrisolti. Le 242 assegnazioni commerciali sono
+  collegate ai tenant canonici; `MAGAZZINO` e `NAVETTA` restano assegnazioni
+  aziendali senza tenant, mentre `GREENLOGISTICA` è normalizzato al tenant
+  `GREEN LOGISTICA`.
+- I permessi IAM temporanei usati dalla migrazione sono stati rimossi e
+  verificati: nessun accesso residuo sul progetto Produzione e nessun ruolo
+  `Cloud Datastore User` residuo sull'account GitHub Actions del Cantiere.
+- I deploy automatici del solo Cantiere associati ai commit `ef354b4` e
+  `6d34da0` sono terminati con successo (pipeline #56 e #57). Il collaudo
+  visivo autenticato della pagina con una data di luglio resta da eseguire
+  durante il normale uso dell'app.
