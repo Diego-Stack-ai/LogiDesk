@@ -261,7 +261,7 @@ def main():
                 btn.innerText = "Salvataggio...";
                 const db = window.db; // Need to ensure db is accessible globally, or use a workaround
                 
-                await setDoc(doc(db, "presenze", docId), {
+                await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze", docId), {
                     attivitaAggiuntive: arr
                 }, { merge: true });
                 
@@ -287,7 +287,7 @@ def main():
                 
                 try {
                     const db = window.db; 
-                    await setDoc(doc(db, "presenze", docId), {
+                    await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze", docId), {
                         attivitaAggiuntive: arr
                     }, { merge: true });
                 } catch (err) {

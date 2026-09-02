@@ -14,6 +14,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getStorage, ref as sRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 import { app, db, auth } from "./core/firebase-init.js";
+import CompanyContext from "./core/CompanyContext.js";
 
 /**
  * Helper to parse time string (HH:MM or decimal) into decimal hours.
@@ -122,7 +123,7 @@ export async function saveTrip(tripData) {
     try {
         if (tripData.data && tripData.autista) {
             const presenzeDocId = `${user.uid}_${tripData.data}`;
-            const presenzeRef = doc(db, "presenze", presenzeDocId);
+            const presenzeRef = doc(db, CompanyContext.getAttendancePath(), presenzeDocId);
             
             const finalKmPartenza = Number(tripData.kmPartenza) || 0;
             const finalKmArrivo = Number(tripData.kmArrivo) || 0;
@@ -315,7 +316,7 @@ export async function closeTripWithAnomaly(tripData) {
         // 2. Segna le presenze come "hasError"
         if (tripData.data) {
             const presenzeDocId = `${user.uid}_${tripData.data}`;
-            const presenzeRef = doc(db, "presenze", presenzeDocId);
+            const presenzeRef = doc(db, CompanyContext.getAttendancePath(), presenzeDocId);
             
             await setDoc(presenzeRef, {
                 hasError: true,

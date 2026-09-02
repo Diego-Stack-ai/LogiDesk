@@ -38,7 +38,7 @@ async function runAnalysis() {
     });
 
     // 2. Fetch Presenze for July 2026
-    const presenzeSnap = await db.collection('presenze')
+    const presenzeSnap = await db.collection('aziende/NzXaCgyXxZWWehw1tSlo/presenze')
         .where('mese', '==', '2026-07')
         .get();
 

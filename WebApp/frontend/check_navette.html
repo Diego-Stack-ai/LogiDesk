@@ -56,7 +56,7 @@
                 out.innerHTML += "\n\nCLIENTI/MERCE TROVATI NEL DB:\n" + dumpClienti.join(", ") + "\n";
                 out.innerHTML += "--------------------------------------------------------\n\n";
                 
-                const q = query(collection(db, "presenze"), where("mese", "==", "2026-07"));
+                const q = query(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze"), where("mese", "==", "2026-07"));
                 const snapPresenze = await getDocs(q);
                 
                 out.innerHTML += "--- INIZIO REPORT ---\n\n";

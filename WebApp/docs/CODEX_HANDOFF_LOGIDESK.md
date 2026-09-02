@@ -280,3 +280,27 @@ Al termine di ogni fase rilevante aggiornare questo documento indicando:
 - decisioni ancora aperte.
 
 Non riportare password, token, chiavi di servizio o altri segreti in questo file.
+
+## 13. Aggiornamento 2026-09-02 — cutover dati HR aziendali
+
+- Branch di lavoro: `codex/company-hr-data-cutover`, basato sul commit handoff
+  `9bffea6` e quindi su `main` `c6e6699`.
+- Il runtime è stato spostato dai path root ai path canonici
+  `aziende/{companyId}/giustificativi` e
+  `aziende/{companyId}/presenze`; sono state aggiunte le relative regole.
+- Le cinque causali sono state copiate nel perimetro aziendale e verificate
+  nella UI Cantiere. La raccolta root `giustificativi` non risultava più
+  presente alla verifica live del 2026-09-02.
+- La raccolta root `presenze` risultava ancora presente e conteneva documenti
+  di più mesi. Non va cancellata: la copia selettiva di luglio 2026 nel
+  perimetro aziendale non è ancora certificata.
+- `system_migrations` risultava ancora presente con i marker tecnici delle
+  migrazioni core. Non è stato cancellato.
+- Hosting e regole erano già stati distribuiti sul solo progetto
+  `log-solutions-cantiere`; nessuna operazione è stata eseguita sul progetto
+  Produzione.
+- Il ramo remoto `copilot/fix-deploy-firebase-hosting` non è compatibile con la
+  pipeline corrente: ridurrebbe il rilascio al solo Hosting e riporterebbe
+  `actions/checkout` da v5 a v4. Non deve essere unito a `main`.
+- I quattro rami `feature/a416-*` risultavano già contenuti in `main`; il ramo
+  `docs/codex-handoff-logidesk` viene assorbito dal presente lavoro.
