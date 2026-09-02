@@ -80,8 +80,8 @@ def run(project_id: str, execute: bool) -> int:
     if not execute:
         return 0
 
-    batch = db.batch()
     writes = 0
+    pending = []
     for target_name, rows, existing in (
         ("giustificativi", reasons, set(reasons_existing)),
         ("presenze", attendance, set(attendance_existing)),
@@ -90,11 +90,44 @@ def run(project_id: str, execute: bool) -> int:
         for doc_id, data in rows:
             if doc_id in existing:
                 continue
-            batch.create(target.document(doc_id), {**data, "migrated_at": firestore.SERVER_TIMESTAMP})
+            pending.append(
+                (
+                    target.document(doc_id),
+                    {**data, "migrated_at": firestore.SERVER_TIMESTAMP},
+                )
+            )
             writes += 1
-    if writes:
+
+    for offset in range(0, len(pending), 400):
+        batch = db.batch()
+        for reference, data in pending[offset : offset + 400]:
+            batch.create(reference, data)
         batch.commit()
-    print(json.dumps({"status": "COPY_COMPLETE", "writes": writes, "root_deletions": 0}))
+
+    _, reasons_verified, reasons_verify_conflicts = collect(
+        db, "giustificativi", "giustificativi", lambda _: True
+    )
+    attendance_rows, attendance_verified, attendance_verify_conflicts = collect(
+        db, "presenze", "presenze", is_target_month
+    )
+    verification_conflicts = reasons_verify_conflicts + attendance_verify_conflicts
+    if verification_conflicts or len(attendance_verified) != len(attendance_rows):
+        raise RuntimeError(
+            "GATE_POST_VERIFY: copia non verificata; conflitti="
+            + ", ".join(verification_conflicts)
+        )
+
+    print(
+        json.dumps(
+            {
+                "status": "COPY_COMPLETE_VERIFIED",
+                "writes": writes,
+                "giustificativi_verified": len(reasons_verified),
+                "presenze_verified": len(attendance_verified),
+                "root_deletions": 0,
+            }
+        )
+    )
     return 0
 
 

@@ -1,0 +1,37 @@
+name: Migrate Company HR Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: 'Copy July 2026 attendance into the company scope'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install migration dependency
+        run: python -m pip install firebase-admin
+
+      - name: Run gated migration
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" > /tmp/sa.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json
+          if [ "${{ inputs.execute }}" = "true" ]; then
+            python WebApp/tools/migrate_company_hr_cutover.py --project log-solutions-cantiere --execute
+          else
+            python WebApp/tools/migrate_company_hr_cutover.py --project log-solutions-cantiere
+          fi
