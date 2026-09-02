@@ -61,6 +61,16 @@ service cloud.firestore {
         allow write: if isAuthenticated() && (isAdmin() || isImpiegata());
       }
 
+      match /import_mappings/{mappingId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && (isAdmin() || isImpiegata());
+      }
+
+      match /rientri_ddt/{rientroId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && (isAdmin() || isImpiegata());
+      }
+
       match /configurazioni/{configId} {
         allow read: if isAuthenticated();
         allow write: if isAuthenticated() && isAdmin();

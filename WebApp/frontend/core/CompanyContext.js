@@ -22,7 +22,9 @@ export const CompanyContext = {
     
     getDeliveryPointsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/punti_consegna`; },
     
-    getImportMappingsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/import_mappings`; }
+    getImportMappingsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/import_mappings`; },
+
+    getDdtReturnsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/rientri_ddt`; }
 };
 
 export default CompanyContext;
