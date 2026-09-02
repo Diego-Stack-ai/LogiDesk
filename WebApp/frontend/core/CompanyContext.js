@@ -5,6 +5,8 @@ export const CompanyContext = {
     getCompanyPath: function() { return `aziende/${this.COMPANY_ID}`; },
     
     getTenantPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}`; },
+
+    getTenantsPath: function() { return `aziende/${this.COMPANY_ID}/tenants`; },
     
     getSettingsPath: function(domain) { return `aziende/${this.COMPANY_ID}/settings/${domain}`; },
     

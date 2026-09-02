@@ -2,12 +2,13 @@ import { app, db } from "../core/firebase-init.js";
 import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { firebaseConfig } from "../firebase-config.js";
 import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { collection, onSnapshot, query, where, doc, getDocs, updateDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, onSnapshot, query, where, doc, getDoc, getDocs, updateDoc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { CompanyContext } from "../core/CompanyContext.js";
 
 const VEHICLES_PATH = CompanyContext.getVehiclesPath();
 const ABSENCE_REASONS_PATH = CompanyContext.getAbsenceReasonsPath();
 const EMPLOYEES_PATH = CompanyContext.getEmployeesPath();
+const TENANTS_PATH = CompanyContext.getTenantsPath();
 // Inizializzazione Listener Realtime (Condizionali ai permessi)
 window.activeListeners = window.activeListeners || [];
 function startRealtimeSync(isAdmin) {
@@ -89,10 +90,32 @@ function startRealtimeSync(isAdmin) {
         if (typeof window.renderMezzi === 'function') window.renderMezzi();
     });
     activeListeners.push(unsubMezzi);
-      // Listener per Clienti Fatturazione (Nuova Rubrica V2)
-      // DECOUPLED IN A4.16-C2A-LIVE-FIX5 - PENDING_CANONICAL_CONSUMER_MIGRATION (Tenants + Configurazioni)
-      window.appData.lista_clienti_fatturazione = [];
-      window.appData.lista_progetti = [];
+    // Committenti e zone di fatturazione dal modello canonico aziendale.
+    const unsubTenants = onSnapshot(collection(db, TENANTS_PATH), { includeMetadataChanges: true }, async (snapshot) => {
+        try {
+            const tenants = await Promise.all(snapshot.docs.map(async (tenantDoc) => {
+                const tenant = tenantDoc.data();
+                const billingRef = doc(db, `${TENANTS_PATH}/${tenantDoc.id}/configurazioni/fatturazione`);
+                const billingSnap = await getDoc(billingRef);
+                const billing = billingSnap.exists() ? billingSnap.data() : {};
+
+                return {
+                    id: tenantDoc.id,
+                    ...tenant,
+                    visibile_presenze: billing.visibile_presenze,
+                    zone_fatturazione: billing.rules?.zone_fatturazione || []
+                };
+            }));
+
+            tenants.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            window.appData.lista_clienti_fatturazione = tenants;
+            window.appData.lista_progetti = tenants;
+            if (typeof window.renderProgetti === 'function') window.renderProgetti();
+        } catch (error) {
+            console.error('Errore caricamento committenti canonici:', error);
+        }
+    });
+    activeListeners.push(unsubTenants);
 
 
     // Listeners per le 4 liste delle Scalette Navette e Navette Pure (unificate con doppio flag)

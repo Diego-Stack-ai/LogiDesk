@@ -576,7 +576,8 @@
             selects.forEach(select => {
                 const tr = select.closest('tr');
                 const autistaId = tr.getAttribute('data-id');
-                const currentVal = select.value || tr.dataset.pendingCliente || "";
+                const tenantSalvato = progetti.find(p => p.id === tr.dataset.pendingTenantId);
+                const currentVal = String(select.value || tenantSalvato?.nome || tr.dataset.pendingCliente || "").trim().toUpperCase();
                 
                 select.innerHTML = '<option value="">-- Seleziona --</option>';
                 progetti.forEach(p => {
@@ -584,6 +585,7 @@
                     const opt = document.createElement('option');
                     opt.value = nome;
                     opt.textContent = nome;
+                    opt.dataset.tenantId = p.id || '';
                     select.appendChild(opt);
                 });
                 
@@ -597,6 +599,7 @@
                 select.value = currentVal;
                 if (select.value === currentVal) {
                     delete tr.dataset.pendingCliente;
+                    delete tr.dataset.pendingTenantId;
                 }
                 
                 window.aggiornaDestinazioni(tr, autistaId);
@@ -643,7 +646,7 @@
             const selectTarga = tr.querySelector('.in-targa');
             
             // Salva valore viaggio corrente o recupera quello in caricamento
-            const currentViaggio = selectViaggio.value || tr.dataset.pendingViaggio || "";
+            const currentViaggio = String(selectViaggio.value || tr.dataset.pendingViaggio || "").trim().toUpperCase();
  
             // Aggiorna opzioni select viaggio per questa riga
             selectViaggio.innerHTML = '<option value="">-- Seleziona --</option>';
@@ -666,6 +669,15 @@
                 opt.textContent = vUpper;
                 selectViaggio.appendChild(opt);
             });
+
+            // Una zona storica deve restare visibile anche se non è ancora
+            // presente nella configurazione corrente del committente.
+            if (currentViaggio && !Array.from(selectViaggio.options).some(opt => opt.value === String(currentViaggio).trim().toUpperCase())) {
+                const historicalOpt = document.createElement('option');
+                historicalOpt.value = String(currentViaggio).trim().toUpperCase();
+                historicalOpt.textContent = `${historicalOpt.value} (STORICO)`;
+                selectViaggio.appendChild(historicalOpt);
+            }
  
             // Ripristina valore viaggio se valido
             selectViaggio.value = currentViaggio;
@@ -828,7 +840,7 @@
             const progetti = (window.appData?.lista_clienti_fatturazione?.length > 0) ? window.appData.lista_clienti_fatturazione : (window.appData?.lista_progetti || []);
             let opzioniClientiHtml = progetti.map(p => {
                 const nome = (p.nome || "").trim().toUpperCase();
-                return `<option value="${nome}">${nome}</option>`;
+                return `<option value="${nome}" data-tenant-id="${p.id || ''}">${nome}</option>`;
             }).join('');
             
             opzioniClientiHtml += `<option value="NAVETTA">🚐 NAVETTA</option>`;
@@ -998,6 +1010,7 @@
                 }
 
                 delete tr.dataset.pendingCliente;
+                delete tr.dataset.pendingTenantId;
                 delete tr.dataset.pendingViaggio;
                 delete tr.dataset.pendingTarga;
                 
@@ -1023,6 +1036,8 @@
                                 // Retrocompatibilità: se nel vecchio db c'era solo ass.viaggio (senza ass.cliente)
                                 let clientVal = ass.cliente || "";
                                 let destVal = ass.viaggio || "";
+                                const canonicalTenant = (window.appData?.lista_clienti_fatturazione || []).find(p => p.id === ass.tenant_id);
+                                if (canonicalTenant?.nome) clientVal = canonicalTenant.nome;
 
                                 if (!clientVal && destVal) {
                                     // Fai il parsing al volo per metterli nei rispettivi campi UI
@@ -1033,6 +1048,7 @@
 
                                 // Salva in dataset per evitare race conditions se i progetti/mezzi caricano dopo
                                 tr.dataset.pendingCliente = clientVal;
+                                tr.dataset.pendingTenantId = ass.tenant_id || '';
                                 tr.dataset.pendingViaggio = destVal;
                                 tr.dataset.pendingTarga = ass.targa || '';
 
@@ -1178,18 +1194,21 @@
                     const id = tr.getAttribute('data-id');
                     const nome = tr.querySelector('.driver-name').innerText;
                     const cliente = tr.querySelector('.in-cliente').value.trim();
+                    const tenantId = tr.querySelector('.in-cliente').selectedOptions[0]?.dataset.tenantId || '';
                     const viaggio = tr.querySelector('.in-viaggio').value.trim();
                     const targa = tr.querySelector('.in-targa').value.trim();
                     const confermato = tr.querySelector('.in-confermato').checked;
 
-                    assegnazioni.push({
+                    const assegnazione = {
                         dipendenteId: id,
                         nome: nome,
                         cliente: cliente,
                         viaggio: viaggio,
                         targa: targa,
                         confermato: confermato
-                    });
+                    };
+                    if (tenantId) assegnazione.tenant_id = tenantId;
+                    assegnazioni.push(assegnazione);
                 });
 
                 await salvaPianificazione(dataIso, assegnazioni);
