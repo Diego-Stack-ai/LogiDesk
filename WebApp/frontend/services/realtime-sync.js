@@ -151,16 +151,6 @@ function startRealtimeSync(isAdmin) {
     setupUnifiedNavettaListener('clienti', 'anagrafica_clienti', 'lista_scaletta_clienti', 'lista_navetta_clienti');
     setupUnifiedNavettaListener('destinazioni', 'anagrafica_destinazioni', 'lista_scaletta_destinazioni_merce', 'lista_navetta_destinazioni_merce');
 
-    // Listener per la lista delle Sedi Magazzino (lasciata separata)
-    const setupScalettaListener = (tipo, globalProp) => {
-        const unsub = onSnapshot(collection(db, "clienti/DNR/" + tipo), { includeMetadataChanges: true }, (snapshot) => {
-            const dataList = [];
-            snapshot.forEach((d) => dataList.push({ id: d.id, ...d.data() }));
-            window.appData[globalProp] = dataList;
-            if (typeof window.renderScaletteItems === 'function') window.renderScaletteItems(tipo);
-        });
-        activeListeners.push(unsub);
-    };
     const unsubWarehouses = onSnapshot(collection(db, CompanyContext.getWarehousesPath()), { includeMetadataChanges: true }, (snapshot) => {
         window.appData.lista_magazzini_sedi = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         if (typeof window.renderScaletteItems === 'function') window.renderScaletteItems('magazzini_sedi');
