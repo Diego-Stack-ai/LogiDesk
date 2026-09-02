@@ -15,6 +15,10 @@ DNR_TENANT_ID = "AgvcnbuUMu7YhzSuUKTY"
 SOURCE_COLLECTIONS = (
     "codici articoli",
     "fatturazione_magazzini_sedi",
+    "fatturazione_navette_carichi",
+    "fatturazione_navette_clienti",
+    "fatturazione_navette_destinazioni",
+    "fatturazione_navette_partenze",
     "magazzini_sedi",
     "navetta_carico",
     "navetta_clienti",
@@ -63,7 +67,7 @@ def main() -> int:
     )
     company = staging.collection("aziende").document(COMPANY_ID)
     for name in (
-        "articoli",
+        "import_mappings",
         "magazzini",
         "navette",
         "rientri_ddt",
