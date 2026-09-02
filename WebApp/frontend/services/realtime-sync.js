@@ -7,6 +7,7 @@ import { CompanyContext } from "../core/CompanyContext.js";
 
 const VEHICLES_PATH = CompanyContext.getVehiclesPath();
 const ABSENCE_REASONS_PATH = CompanyContext.getAbsenceReasonsPath();
+const EMPLOYEES_PATH = CompanyContext.getEmployeesPath();
 // Inizializzazione Listener Realtime (Condizionali ai permessi)
 window.activeListeners = window.activeListeners || [];
 function startRealtimeSync(isAdmin) {
@@ -54,7 +55,7 @@ function startRealtimeSync(isAdmin) {
     // Listener per Autisti/Utenti
     // Se Admin scarica tutti, altrimenti NON scarica nulla (o solo se stesso, già  fatto in Auth)
     if (isAdmin) {
-        const unsubUsers = onSnapshot(collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti"), { includeMetadataChanges: true }, (snapshot) => {
+        const unsubUsers = onSnapshot(collection(db, EMPLOYEES_PATH), { includeMetadataChanges: true }, (snapshot) => {
             const tuttiDipendenti = [];
             snapshot.forEach((d) => {
                 tuttiDipendenti.push({ id: d.id, ...d.data() });
@@ -317,8 +318,13 @@ window.addCustomer = (data) => window.updateCustomer(null, data);
 window.updateUser = async function(id, data) {
     try {
         const { id: _, ruolo, canElevate, email, createdAt, uid, ...updateData } = data;
+        if (updateData.nome !== undefined || updateData.cognome !== undefined) {
+            const nome = String(updateData.nome || '').trim();
+            const cognome = String(updateData.cognome || '').trim();
+            updateData.nome_completo = [nome, cognome].filter(Boolean).join(' ');
+        }
         if (id) {
-            const docRef = doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", id);
+            const docRef = doc(db, EMPLOYEES_PATH, id);
             await updateDoc(docRef, updateData);
         } else {
             console.warn("La creazione di nuovi account richiede l'uso della console Firebase Auth o Cloud Functions.");
@@ -341,10 +347,11 @@ window.registerNewUserCloud = async function(email, password, nome, cognome, ruo
         const uid = userCredential.user.uid;
 
         // Salva il documento profilo in Firestore nella collezione "dipendenti"
-        await setDoc(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/dipendenti", uid), {
+        await setDoc(doc(db, EMPLOYEES_PATH, uid), {
             uid: uid,
             nome: nome,
             cognome: cognome,
+            nome_completo: [nome, cognome].map(value => String(value || '').trim()).filter(Boolean).join(' '),
             email: email,          // Salvata email reale per busta paga
             ruolo: ruolo,
             tipoTurno: turno,

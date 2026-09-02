@@ -32,6 +32,13 @@ def comparable(data: dict) -> dict:
     return {key: value for key, value in data.items() if key != "migrated_at"}
 
 
+def employee_display_name(data: dict) -> str:
+    return " ".join(
+        part for part in (str(data.get("nome") or "").strip(), str(data.get("cognome") or "").strip())
+        if part
+    )
+
+
 def collect(db, source_name: str, target_name: str, predicate):
     rows = []
     conflicts = []
@@ -61,6 +68,15 @@ def run(project_id: str, execute: bool) -> int:
         db, "presenze", "presenze", is_target_month
     )
     conflicts = reasons_conflicts + attendance_conflicts
+    employees = list(
+        db.collection("aziende").document(COMPANY_ID).collection("dipendenti").stream()
+    )
+    employee_label_updates = [
+        (employee.reference, expected)
+        for employee in employees
+        if (expected := employee_display_name(employee.to_dict() or {}))
+        and (employee.to_dict() or {}).get("nome_completo") != expected
+    ]
 
     report = {
         "project": project_id,
@@ -71,6 +87,7 @@ def run(project_id: str, execute: bool) -> int:
         "giustificativi_already_applied": len(reasons_existing),
         "presenze_source": len(attendance),
         "presenze_already_applied": len(attendance_existing),
+        "employee_labels_pending": len(employee_label_updates),
         "conflicts": conflicts,
         "root_deletions": 0,
     }
@@ -98,6 +115,10 @@ def run(project_id: str, execute: bool) -> int:
             )
             writes += 1
 
+    for reference, name in employee_label_updates:
+        pending.append((reference, {"nome_completo": name}))
+        writes += 1
+
     for offset in range(0, len(pending), 400):
         batch = db.batch()
         for reference, data in pending[offset : offset + 400]:
@@ -117,6 +138,13 @@ def run(project_id: str, execute: bool) -> int:
             + ", ".join(verification_conflicts)
         )
 
+    employee_labels_verified = 0
+    for employee in db.collection("aziende").document(COMPANY_ID).collection("dipendenti").stream():
+        data = employee.to_dict() or {}
+        expected = employee_display_name(data)
+        if expected and data.get("nome_completo") == expected:
+            employee_labels_verified += 1
+
     print(
         json.dumps(
             {
@@ -124,6 +152,7 @@ def run(project_id: str, execute: bool) -> int:
                 "writes": writes,
                 "giustificativi_verified": len(reasons_verified),
                 "presenze_verified": len(attendance_verified),
+                "employee_labels_verified": employee_labels_verified,
                 "root_deletions": 0,
             }
         )
