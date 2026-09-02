@@ -310,3 +310,8 @@ Non riportare password, token, chiavi di servizio o altri segreti in questo file
   `33623429433`, tentativo 2. Il ruolo IAM `Cloud Datastore User` è stato
   aggiunto temporaneamente a `github-action-logidesk`, quindi rimosso e
   verificato dopo la migrazione.
+- Con conferma esplicita dell'utente, la raccolta root legacy `presenze` è
+  stata cancellata integralmente il 2026-09-02. La console Firebase ha
+  confermato l'assenza della root e la presenza della subcollection aziendale.
+  Anche la relativa regola Firestore legacy è stata rimossa per impedirne la
+  ricreazione accidentale.
