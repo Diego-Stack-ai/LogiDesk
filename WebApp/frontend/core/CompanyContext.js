@@ -15,6 +15,10 @@ export const CompanyContext = {
     getUsersPath: function() { return `aziende/${this.COMPANY_ID}/utenti`; },
     
     getVehiclesPath: function() { return `aziende/${this.COMPANY_ID}/mezzi`; },
+
+    getAttendancePath: function() { return `aziende/${this.COMPANY_ID}/presenze`; },
+
+    getAbsenceReasonsPath: function() { return `aziende/${this.COMPANY_ID}/giustificativi`; },
     
     getDeliveryPointsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/punti_consegna`; },
     

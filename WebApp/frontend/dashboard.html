@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.463">
+    <link rel="stylesheet" href="styles.css?v=6.464">
     <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"></noscript>
     <!-- PWA & Mobile Optimization -->
@@ -154,12 +154,12 @@
                 <p>Nuovo sistema modulare isolato per test presenze e viaggi.</p>
             </a>
 
-            <!-- Fatturazione Committenti -->
+            <!-- Gestione Committenti -->
             <a href="javascript:void(0)" onclick="window.navigateWithState('fatturazione_committenti.html')" class="nav-card theme-amber" data-page="fatturazione_committenti.html">
                 <div class="icon-circle" style="background: rgba(245, 158, 11, 0.15); color: #d97706;">
                     <span class="material-icons-round" style="font-size: 32px;">monetization_on</span>
                 </div>
-                <h3 style="color: #d97706;">Fatturazione Committenti</h3>
+                <h3 style="color: #d97706;">Gestione Committenti</h3>
                 <p>Configura il nuovo motore di fatturazione a zone, a viaggi e a DDT.</p>
             </a>
 
@@ -173,19 +173,35 @@
             </a>
 
             <!-- Impostazioni -->
+            <a href="javascript:void(0)" onclick="window.navigateWithState('impostazioni.html?sezione=personale')" class="nav-card theme-blue" data-page="gestione_personale.html">
+                <div class="icon-circle">
+                    <span class="material-icons-round" style="font-size: 32px;">badge</span>
+                </div>
+                <h3>Gestione Personale</h3>
+                <p>Anagrafica dipendenti e credenziali essenziali di accesso.</p>
+            </a>
+
+            <a href="javascript:void(0)" onclick="window.navigateWithState('impostazioni.html?sezione=voci-presenza')" class="nav-card theme-green" data-page="voci_presenza.html">
+                <div class="icon-circle">
+                    <span class="material-icons-round" style="font-size: 32px;">event_available</span>
+                </div>
+                <h3>Giustificativi e Voci Presenza</h3>
+                <p>Configura ferie, malattie, permessi e le altre causali aziendali.</p>
+            </a>
+
             <a href="javascript:void(0)" onclick="window.navigateWithState('impostazioni.html')" class="nav-card" data-page="impostazioni.html">
                 <div class="icon-circle">
                     <span class="material-icons-round" style="font-size: 32px;">settings</span>
                 </div>
                 <h3>Impostazioni Sistema</h3>
-                <p>Gestisci autisti e configurazioni globali</p>
+                <p>Permessi Dashboard, servizio e-mail, cache e sincronizzazione.</p>
             </a>
         </div>
     </main>
 
 
-    <script src="script.js?v=6.463"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.463"></script>
+    <script src="script.js?v=6.464"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.464"></script>
     <script>
         // Funzione centrale di rendering della dashboard
         let _dashRendered = false;

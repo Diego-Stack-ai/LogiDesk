@@ -56,7 +56,7 @@ export async function getAutistiAttivi() {
 export async function getStoricoPresenze(limiteDataIso) {
     // Al momento l'app legge tutte le presenze e le filtra lato client. 
     // In futuro potremo usare una query() con where() se necessario.
-    const presenzeSnap = await getDocs(collection(db, "presenze"));
+    const presenzeSnap = await getDocs(collection(db, CompanyContext.getAttendancePath()));
     let storico = [];
     presenzeSnap.forEach(p => {
         const pd = p.data();

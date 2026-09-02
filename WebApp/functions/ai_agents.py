@@ -3,6 +3,7 @@ import json
 import firebase_admin
 from firebase_admin import firestore
 from firebase_functions import storage_fn, options
+from infrastructure.company_context import get_current_company_id
 
 # Assicuriamoci che Firebase sia inizializzato (spesso già fatto nel main.py)
 if not firebase_admin._apps:
@@ -169,7 +170,12 @@ def agent_chat_assistant(req) -> any:
             autista: (Opzionale) Nome dell'autista
         """
         try:
-            query = db.collection("presenze").where("mese", "==", mese)
+            query = (
+                db.collection("aziende")
+                .document(get_current_company_id())
+                .collection("presenze")
+                .where("mese", "==", mese)
+            )
             docs = query.stream()
             risultati = []
             for d in docs:

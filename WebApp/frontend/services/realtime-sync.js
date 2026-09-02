@@ -6,6 +6,7 @@ import { collection, onSnapshot, query, where, doc, getDocs, updateDoc, setDoc, 
 import { CompanyContext } from "../core/CompanyContext.js";
 
 const VEHICLES_PATH = CompanyContext.getVehiclesPath();
+const ABSENCE_REASONS_PATH = CompanyContext.getAbsenceReasonsPath();
 // Inizializzazione Listener Realtime (Condizionali ai permessi)
 window.activeListeners = window.activeListeners || [];
 function startRealtimeSync(isAdmin) {
@@ -139,7 +140,7 @@ function startRealtimeSync(isAdmin) {
     setupScalettaListener('fatturazione_magazzini_sedi', 'lista_magazzini_sedi');
 
     // Listener per Giustificativi (Ferie, Malattia, ecc.)
-    const unsubGiustificativi = onSnapshot(collection(db, "giustificativi"), { includeMetadataChanges: true }, (snapshot) => {
+    const unsubGiustificativi = onSnapshot(collection(db, ABSENCE_REASONS_PATH), { includeMetadataChanges: true }, (snapshot) => {
         const giustificativi = [];
         snapshot.forEach((d) => {
             giustificativi.push({ id: d.id, ...d.data() });
@@ -255,9 +256,9 @@ window.deleteProgetto = async function(id) {
 window.saveGiustificativo = async function(id, data) {
     try {
         if (id) {
-            await updateDoc(doc(db, "giustificativi", id), data);
+            await updateDoc(doc(db, ABSENCE_REASONS_PATH, id), data);
         } else {
-            await addDoc(collection(db, "giustificativi"), data);
+            await addDoc(collection(db, ABSENCE_REASONS_PATH), data);
         }
         return true;
     } catch (e) {
@@ -268,7 +269,7 @@ window.saveGiustificativo = async function(id, data) {
 
 window.deleteGiustificativo = async function(id) {
     try {
-        await deleteDoc(doc(db, "giustificativi", id));
+        await deleteDoc(doc(db, ABSENCE_REASONS_PATH, id));
         return true;
     } catch (e) {
         console.error("Errore deleteGiustificativo:", e);

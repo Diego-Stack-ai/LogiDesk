@@ -15,7 +15,7 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
-    <link rel="stylesheet" href="styles.css?v=6.463">
+    <link rel="stylesheet" href="styles.css?v=6.464">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         .navetta-details-row {
@@ -589,13 +589,13 @@ tr.weekend:hover
         </div>
     </main>
 
-    <script src="script.js?v=6.463"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.463"></script>
+    <script src="script.js?v=6.464"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.464"></script>
     <script type="module">
         import { db, app } from "./core/firebase-init.js";
         import { getFirestore, collection, doc, setDoc, query, where, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { firebaseConfig } from "./firebase-config.js";
-        import { calculateHours } from "./firestore-service.js?v=6.463";
+        import { calculateHours } from "./firestore-service.js?v=6.464";
 
           window.db = getFirestore(app);
 
@@ -958,12 +958,12 @@ tr.weekend:hover
             let q;
             if (empId === 'tutti' || empId === 'in_forza' || empId === 'licenziati') {
                 q = query(
-                    collection(db, "presenze"),
+                    collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze"),
                     where("mese", "==", month)
                 );
             } else {
                 q = query(
-                    collection(db, "presenze"),
+                    collection(db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze"),
                     where("autistaId", "==", empId),
                     where("mese", "==", month)
                 );
@@ -1909,7 +1909,7 @@ tr.weekend:hover
             // Controllo Connessione
             let isOnline = true;
             try {
-                const { connectivityService } = await import("./core/connectivity-service.js?v=6.463");
+                const { connectivityService } = await import("./core/connectivity-service.js?v=6.464");
                 isOnline = connectivityService.getStatus() === 'online';
             } catch (e) {}
 
@@ -1970,14 +1970,14 @@ tr.weekend:hover
                 btn.disabled = true;
                 btn.innerText = "Salvataggio in corso...";
                 
-                await setDoc(doc(window.db, "presenze", docId), {
+                await setDoc(doc(window.db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze", docId), {
                     attivitaAggiuntive: currentNavetteArray
                 }, { merge: true });
 
                 // Accoda le foto offline
                 if (window.offlinePresenzePhotoBlobs && Object.keys(window.offlinePresenzePhotoBlobs).length > 0) {
                     try {
-                        const { syncManager } = await import("./core/sync-manager.js?v=6.463");
+                        const { syncManager } = await import("./core/sync-manager.js?v=6.464");
                         for (const index in window.offlinePresenzePhotoBlobs) {
                             const fileBlob = window.offlinePresenzePhotoBlobs[index];
                             const photoId = `foto_presenza_${docId}_${index}`;
@@ -2310,7 +2310,7 @@ tr.weekend:hover
                 discrepanzaAutista: discrepanzaAutista
             };
 
-            batch.set(doc(db, "presenze", docId), updatedData, { merge: true });
+            batch.set(doc(db, "aziende/NzXaCgyXxZWWehw1tSlo/presenze", docId), updatedData, { merge: true });
         };
 
         window.toggleRowEdit = async function(btn) {
@@ -2449,7 +2449,7 @@ tr.weekend:hover
               btn.disabled = true;
 
               try {
-                  const presenzeRef = collection(getFirestore(), 'presenze');
+                  const presenzeRef = collection(getFirestore(), 'aziende/NzXaCgyXxZWWehw1tSlo/presenze');
                   const q = query(presenzeRef, where('mese', '==', monthVal));
                   const querySnapshot = await window.getDocsConFallback(q);
                   
@@ -2743,7 +2743,7 @@ tr.weekend:hover
             </div>
         </div>
     </div>
-    <script type="module" src="cedolini-splitter.js?v=6.463"></script>
+    <script type="module" src="cedolini-splitter.js?v=6.464"></script>
 
 </body>
 </html>

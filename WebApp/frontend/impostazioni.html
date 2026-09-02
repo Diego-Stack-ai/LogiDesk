@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiDesk</title>
-    <link rel="stylesheet" href="styles.css?v=6.463">
+    <link rel="stylesheet" href="styles.css?v=6.464">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -16,6 +16,26 @@
     <meta name="apple-mobile-web-app-title" content="LogiDesk">
         <meta name="theme-color" content="#4f46e5">
     <style>
+        html[data-settings-view="system"] #toggleAutistiBtn,
+        html[data-settings-view="system"] #autistiContent,
+        html[data-settings-view="system"] #toggleGiustificativiBtn,
+        html[data-settings-view="system"] #giustificativiContent {
+            display: none !important;
+        }
+        html[data-settings-view="personale"] .system-settings-section,
+        html[data-settings-view="personale"] #toggleGiustificativiBtn,
+        html[data-settings-view="personale"] #giustificativiContent,
+        html[data-settings-view="personale"] #systemDiagnosticsPanel,
+        html[data-settings-view="personale"] #modalPermessiModuli {
+            display: none !important;
+        }
+        html[data-settings-view="voci-presenza"] .system-settings-section,
+        html[data-settings-view="voci-presenza"] #toggleAutistiBtn,
+        html[data-settings-view="voci-presenza"] #autistiContent,
+        html[data-settings-view="voci-presenza"] #systemDiagnosticsPanel,
+        html[data-settings-view="voci-presenza"] #modalPermessiModuli {
+            display: none !important;
+        }
         .list-row {
             display: flex;
             justify-content: space-between;
@@ -56,6 +76,11 @@
             box-shadow: 0 2px 6px rgba(239, 68, 68, 0.1);
         }
     </style>
+    <script>
+        const settingsView = new URLSearchParams(window.location.search).get('sezione');
+        document.documentElement.dataset.settingsView =
+            settingsView === 'personale' || settingsView === 'voci-presenza' ? settingsView : 'system';
+    </script>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/svg+xml" href="assets/brand/logidesk-mark.svg">
     <link rel="apple-touch-icon" href="assets/brand/logidesk-mark.png">
@@ -86,7 +111,7 @@
             style="border:none; background:none; cursor:pointer; margin-right:8px; display:flex;">
             <span class="material-icons-round">dashboard</span>
         </button>
-        <div class="nav-title" style="flex: 1;">Impostazioni Sistema</div>
+        <div class="nav-title" id="settingsPageTitle" style="flex: 1;">Impostazioni Sistema</div>
         <a href="#" onclick="window.logoutFirebase(); return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
     </div>
 </nav>
@@ -95,7 +120,7 @@
     <div class="glass-panel form-card">
         <div
             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-            <h2 style="margin: 0; color: var(--primary);">Gestione Sistema</h2>
+            <h2 id="settingsSectionTitle" style="margin: 0; color: var(--primary);">Gestione Sistema</h2>
         </div>
 
         <!-- Sezione Gestione Credenziali (Solo per Amministrazione) -->
@@ -113,7 +138,7 @@
             </div>
             <div id="formAutistiContainer" style="display: none; background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:24px;">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 10px;">
-                💡 <b>Nuovo Accesso:</b> Inserisci l'<b>Email di Accesso completa</b> (es. <code>mario.rossi@logsolution.app</code>). Questo sarà il login ufficiale. L'Email Personale invece è facoltativa e serve solo per inviare comunicazioni.
+                💡 <b>Credenziali essenziali:</b> per l'accesso si gestiscono soltanto <b>nome utente e password</b>. I dati personali restano nell'unica anagrafica del dipendente e non devono essere duplicati in una seconda scheda utente.
             </p>
             <div class="form-grid">
                 <div class="input-group">
@@ -326,14 +351,14 @@
 
 
         <!-- Sezione Gestione e Ripristino Cache Distanze -->
-        <div id="toggleCacheBtn"
+        <div id="toggleCacheBtn" class="system-settings-section"
             style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 0 0; cursor: pointer; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <h3 class="section-title" style="margin: 0;">Gestione e Ripristino Cache Distanze</h3>
             <span class="material-icons-round" id="toggleCacheIcon"
                 style="color: var(--primary); transition: transform 0.3s ease;">expand_more</span>
         </div>
 
-        <div id="cacheContent" style="display: none; padding-top: 20px;">
+        <div id="cacheContent" class="system-settings-section" style="display: none; padding-top: 20px;">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 10px;">
                 💡 <b>Backup e Sicurezza:</b> Qui puoi ispezionare i backup giornalieri automatizzati delle cache distanze e ripristinare all'istante una copia precedente in caso di corruzione o per esigenze di Ricerca e Sviluppo.
             </p>
@@ -358,14 +383,14 @@
         </div>
 
         <!-- Sezione Configurazione Servizio Email -->
-        <div id="toggleEmailBtn"
+        <div id="toggleEmailBtn" class="system-settings-section"
             style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 0 0; cursor: pointer; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <h3 class="section-title" style="margin: 0;">✉️ Configurazione Servizio Email</h3>
             <span class="material-icons-round" id="toggleEmailIcon"
                 style="color: var(--primary); transition: transform 0.3s ease;">expand_more</span>
         </div>
 
-        <div id="emailContent" style="display: none; padding-top: 20px;">
+        <div id="emailContent" class="system-settings-section" style="display: none; padding-top: 20px;">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 10px;">
                 💡 <b>Servizio Email Aziendale:</b> Configura qui i dati SMTP e IMAP per l'invio delle fatture e il salvataggio automatico dello storico nella posta inviata.
             </p>
@@ -417,14 +442,14 @@
         </div>
 
         <!-- NUOVA SEZIONE: GESTIONE PERMESSI DASHBOARD -->
-        <div id="togglePermessiBtn"
+        <div id="togglePermessiBtn" class="system-settings-section"
             style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 0 0; cursor: pointer; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <h3 class="section-title" style="margin: 0;">Gestione Permessi Dashboard</h3>
             <span class="material-icons-round" id="togglePermessiIcon"
                 style="color: var(--primary); transition: transform 0.3s ease;">expand_more</span>
         </div>
 
-        <div id="permessiContent" style="display: none; padding-top: 20px;">
+        <div id="permessiContent" class="system-settings-section" style="display: none; padding-top: 20px;">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 10px;">
                 💡 <b>Permessi Dinamici:</b> Questa tabella viene generata automaticamente leggendo le schede presenti nella Dashboard. Scegli quali ruoli possono accedere a ciascuna area. (L'Amministratore ha sempre accesso completo).
             </p>
@@ -476,7 +501,7 @@
 </div>
 
     <!-- SEZIONE DIAGNOSTICA OFFLINE -->
-    <div class="glass-panel form-card" style="margin-top: 24px;">
+    <div id="systemDiagnosticsPanel" class="glass-panel form-card" style="margin-top: 24px;">
         <h3 style="margin-top:0; color:var(--primary); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
             <span class="material-icons-round">offline_bolt</span> Diagnostica Offline & Sincronizzazione
         </h3>
@@ -555,6 +580,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const currentSettingsView = document.documentElement.dataset.settingsView;
+        const pageTitles = {
+            system: ['Impostazioni Sistema', 'Gestione Sistema'],
+            personale: ['Gestione Personale', 'Personale e Credenziali'],
+            'voci-presenza': ['Giustificativi e Voci Presenza', 'Giustificativi e Voci Presenza']
+        };
+        const [pageTitle, sectionTitle] = pageTitles[currentSettingsView] || pageTitles.system;
+        document.title = `${pageTitle} - LogiDesk`;
+        document.getElementById('settingsPageTitle').textContent = pageTitle;
+        document.getElementById('settingsSectionTitle').textContent = sectionTitle;
+
         const driverEmailPersonaleInput = document.getElementById('driverEmailPersonaleInput');
         const driverCellulareInput = document.getElementById('driverCellulareInput');
         const adminExtraFields = document.getElementById('adminExtraFields');
@@ -609,6 +645,14 @@
         }
 
         let editIndexAutista = -1;
+
+        if (currentSettingsView === 'personale') {
+            autistiContent.style.display = 'block';
+            toggleAutistiIcon.style.transform = 'rotate(180deg)';
+        } else if (currentSettingsView === 'voci-presenza') {
+            document.getElementById('giustificativiContent').style.display = 'block';
+            document.getElementById('toggleGiustificativiIcon').style.transform = 'rotate(180deg)';
+        }
 
         toggleAutistiBtn.addEventListener('click', () => {
             if (autistiContent.style.display !== 'none' && editIndexAutista !== -1) {
@@ -1275,8 +1319,8 @@
         }
     });
 </script>
-    <script src="script.js?v=6.463"></script>
-    <script type="module" src="firebase-auth-sync.js?v=6.463"></script>
+    <script src="script.js?v=6.464"></script>
+    <script type="module" src="firebase-auth-sync.js?v=6.464"></script>
 
     <script type="module">
     // ─── GESTIONE CLIENTI & VIAGGI (PROGETTI) — modulo autonomo ─────────────
@@ -1842,8 +1886,8 @@ const functions = getFunctions(app, "europe-west1");
     
     // ─── CODICE JS GESTIONE DIAGNOSTICA OFFLINE ──────────────────────────────
     try {
-        const { connectivityService } = await import("./core/connectivity-service.js?v=6.463");
-        const { syncManager } = await import("./core/sync-manager.js?v=6.463");
+        const { connectivityService } = await import("./core/connectivity-service.js?v=6.464");
+        const { syncManager } = await import("./core/sync-manager.js?v=6.464");
 
         const elStato = document.getElementById("diagStatoConnessione");
         const elCoda = document.getElementById("diagElementiCoda");
