@@ -292,8 +292,10 @@ Non riportare password, token, chiavi di servizio o altri segreti in questo file
   nella UI Cantiere. La raccolta root `giustificativi` non risultava più
   presente alla verifica live del 2026-09-02.
 - La raccolta root `presenze` risultava ancora presente e conteneva documenti
-  di più mesi. Non va cancellata: la copia selettiva di luglio 2026 nel
-  perimetro aziendale non è ancora certificata.
+  di più mesi. La copia selettiva di luglio 2026 è stata completata il
+  2026-09-02: 625 documenti copiati con gli stessi ID in
+  `aziende/NzXaCgyXxZWWehw1tSlo/presenze`, zero conflitti e verifica finale di
+  625 documenti. La root legacy non è stata cancellata.
 - `system_migrations` risultava ancora presente con i marker tecnici delle
   migrazioni core. Non è stato cancellato.
 - Hosting e regole erano già stati distribuiti sul solo progetto
@@ -304,3 +306,7 @@ Non riportare password, token, chiavi di servizio o altri segreti in questo file
   `actions/checkout` da v5 a v4. Non deve essere unito a `main`.
 - I quattro rami `feature/a416-*` risultavano già contenuti in `main`; il ramo
   `docs/codex-handoff-logidesk` viene assorbito dal presente lavoro.
+- Esecuzione certificata: GitHub Actions `Migrate Company HR Data`, run
+  `33623429433`, tentativo 2. Il ruolo IAM `Cloud Datastore User` è stato
+  aggiunto temporaneamente a `github-action-logidesk`, quindi rimosso e
+  verificato dopo la migrazione.
