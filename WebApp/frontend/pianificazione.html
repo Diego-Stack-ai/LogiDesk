@@ -1010,7 +1010,7 @@
             });
 
             try {
-                const data = await getPianificazioneGiorno("DNR", dataIso);
+                const data = await getPianificazioneGiorno(dataIso);
                 
                 if (data) {
                     window.currentGiornataBloccata = data.isBloccato || false;
@@ -1132,7 +1132,7 @@
             
             const newState = !window.currentGiornataBloccata;
             try {
-                await bloccaGiornataPianificazione("DNR", dataIso, newState);
+                await bloccaGiornataPianificazione(dataIso, newState);
                 window.currentGiornataBloccata = newState;
                 applicaStatoBlocco(newState);
                 Swal.fire('Fatto!', newState ? 'Giornata bloccata con successo.' : 'Giornata sbloccata con successo.', 'success');
@@ -1192,7 +1192,7 @@
                     });
                 });
 
-                await salvaPianificazione("DNR", dataIso, assegnazioni);
+                await salvaPianificazione(dataIso, assegnazioni);
 
                 Swal.fire({
                     title: 'Salvato!',

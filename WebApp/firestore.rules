@@ -90,6 +90,11 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    match /aziende/{companyId}/pianificazioni_viaggi/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || isImpiegata());
+    }
+
     match /mezzi/{docId} {
       allow read, write: if isAuthenticated();
     }

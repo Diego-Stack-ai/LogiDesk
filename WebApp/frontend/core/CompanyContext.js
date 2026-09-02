@@ -18,6 +18,8 @@ export const CompanyContext = {
 
     getAttendancePath: function() { return `aziende/${this.COMPANY_ID}/presenze`; },
 
+    getPlanningPath: function() { return `aziende/${this.COMPANY_ID}/pianificazioni_viaggi`; },
+
     getAbsenceReasonsPath: function() { return `aziende/${this.COMPANY_ID}/giustificativi`; },
     
     getDeliveryPointsPath: function(tenantId) { return `aziende/${this.COMPANY_ID}/tenants/${tenantId}/punti_consegna`; },

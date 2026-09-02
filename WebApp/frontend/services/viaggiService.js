@@ -1,5 +1,6 @@
 import { collection, query, orderBy, limit, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { app, db } from "../core/firebase-init.js";
+import { CompanyContext } from "../core/CompanyContext.js";
 
 // Inizializzazione sicura di Firebase (evita l'errore "app already exists")
 
@@ -38,8 +39,8 @@ export function subscribeToProcessingJobs(tenantId, limitCount = 10, callback) {
  * @param {string} dataIso - Data in formato YYYY-MM-DD.
  * @returns {Promise<Object|null>} I dati della pianificazione o null se non esiste.
  */
-export async function getPianificazioneGiorno(tenantId, dataIso) {
-    const docRef = doc(db, "clienti", tenantId, "pianificazione_viaggi", dataIso);
+export async function getPianificazioneGiorno(dataIso) {
+    const docRef = doc(db, CompanyContext.getPlanningPath(), dataIso);
     const docSnap = await getDoc(docRef);
     return docSnap.exists() ? docSnap.data() : null;
 }
@@ -51,8 +52,8 @@ export async function getPianificazioneGiorno(tenantId, dataIso) {
  * @param {Array} assegnazioni - Array delle assegnazioni.
  * @returns {Promise<void>}
  */
-export async function salvaPianificazione(tenantId, dataIso, assegnazioni) {
-    const docRef = doc(db, "clienti", tenantId, "pianificazione_viaggi", dataIso);
+export async function salvaPianificazione(dataIso, assegnazioni) {
+    const docRef = doc(db, CompanyContext.getPlanningPath(), dataIso);
     return await setDoc(docRef, {
         dataPianificazione: dataIso,
         ultimaModifica: new Date().toISOString(),
@@ -67,7 +68,7 @@ export async function salvaPianificazione(tenantId, dataIso, assegnazioni) {
  * @param {boolean} isBloccato - true per bloccare, false per sbloccare.
  * @returns {Promise<void>}
  */
-export async function bloccaGiornataPianificazione(tenantId, dataIso, isBloccato) {
-    const docRef = doc(db, "clienti", tenantId, "pianificazione_viaggi", dataIso);
+export async function bloccaGiornataPianificazione(dataIso, isBloccato) {
+    const docRef = doc(db, CompanyContext.getPlanningPath(), dataIso);
     return await setDoc(docRef, { isBloccato: isBloccato }, { merge: true });
 }
