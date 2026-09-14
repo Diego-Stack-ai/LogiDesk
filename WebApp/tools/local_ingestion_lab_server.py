@@ -14,6 +14,7 @@ from compare_ingestion_pipelines import _ai_bundle  # noqa:E402
 
 HTML=ROOT/'tools'/'local-ingestion-lab.html'; DEST=ROOT/'test-data'/'ingestion-private'/'derived'/'lab-sessions'; MAX=25*1024*1024
 SESSION_RE=re.compile(r'^\d{8}-\d{6}-[0-9a-f]{6}$')
+SOURCE_CHANNEL_RE=re.compile(r'^[A-Z0-9][A-Z0-9 _./-]{0,63}$')
 def reply(handler,status,payload,content_type='application/json'):
     body=payload if isinstance(payload,bytes) else json.dumps(payload,ensure_ascii=False).encode(); handler.send_response(status); handler.send_header('Content-Type',content_type); handler.send_header('Content-Length',str(len(body))); handler.end_headers(); handler.wfile.write(body)
 def analyze_unknown_pdf(pages,tenant,file_name):
@@ -29,10 +30,14 @@ def analyze_unknown_pdf(pages,tenant,file_name):
     if not isinstance(proposal.get('field_mapping'),list) or proposal.get('writes_performed')!=0: raise ValueError('Proposta AI generale non valida')
     proposal.update(producer='LOCAL_AI',model=envelope.get('model','qwen3.5:9b'),elapsed_seconds=round(envelope.get('total_duration',0)/1_000_000_000,2),tenant_id=tenant,source_file=file_name,review_required=True,writes_performed=0)
     return proposal
+def normalize_ingestion_context(payload):
+    tenant=str(payload.get('tenant_id') or '').strip()
+    source_channel=str(payload.get('source_channel') or payload.get('channel') or '').strip().upper() or None
+    if not tenant: raise ValueError('Committente obbligatorio')
+    if source_channel and not SOURCE_CHANNEL_RE.fullmatch(source_channel): raise ValueError('Canale sorgente non valido')
+    return tenant,source_channel
 def extract(payload):
-    tenant=str(payload.get('tenant_id') or '').strip(); channel=str(payload.get('channel') or '').upper(); raw=base64.b64decode(payload.get('file_base64') or '',validate=True)
-    if not tenant: raise ValueError('Committente obbligatorio');
-    if channel not in {'LATTE','FRUTTA'}: raise ValueError('Canale non valido')
+    tenant,source_channel=normalize_ingestion_context(payload); raw=base64.b64decode(payload.get('file_base64') or '',validate=True)
     if len(raw)>MAX: raise ValueError('File oltre il limite di 25 MB')
     reader=PdfReader(io.BytesIO(raw)); points={}; notes=[]; articles=[]; ai_result=None; pages=[]
     for page_no,page in enumerate(reader.pages,1):
@@ -58,7 +63,7 @@ def extract(payload):
                 if not code: continue
                 key=str(code).upper()
                 if key not in points: points[key]={'tenant_id':tenant,'codice_punto_committente':code,'denominazione_punto':stop.get('denomination'),'indirizzo':stop.get('address'),'cap':stop.get('postal_code'),'localita':stop.get('city'),'provincia':stop.get('province'),'telefono':stop.get('phone'),'referente':None,'ai_confidence':stop.get('confidence'),'source':{'file':payload.get('file_name'),'page':stop.get('source_page'),'route_code':route.get('route_code')},'producer':'LOCAL_AI_PROPOSAL','review_status':'PENDING'}
-    return {'mode':'LOCAL_LAB_NO_REMOTE_ACCESS','tenant_id':tenant,'channel':channel,'file_name':payload.get('file_name'),'delivery_points':list(points.values()),'travel_notes':notes,'articles':articles,'ai_result':ai_result,'firebase_reads':0,'firebase_writes':0,'storage_writes':0}
+    return {'mode':'LOCAL_LAB_NO_REMOTE_ACCESS','tenant_id':tenant,'source_channel':source_channel,'file_name':payload.get('file_name'),'delivery_points':list(points.values()),'travel_notes':notes,'articles':articles,'ai_result':ai_result,'firebase_reads':0,'firebase_writes':0,'storage_writes':0}
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in {'/','/index.html'}: return reply(self,200,HTML.read_bytes(),'text/html; charset=utf-8')
@@ -68,7 +73,7 @@ class Handler(BaseHTTPRequestHandler):
             if not sessions: return reply(self,404,{'error':'Nessuna sessione locale salvata'})
             folder=sessions[0]
             manifest=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
-            result={'mode':'LOCAL_LAB_NO_REMOTE_ACCESS','tenant_id':manifest.get('tenant_id'),'file_name':manifest.get('source_file'),'channel':manifest.get('channel')}
+            result={'mode':'LOCAL_LAB_NO_REMOTE_ACCESS','tenant_id':manifest.get('tenant_id'),'file_name':manifest.get('source_file'),'source_channel':manifest.get('source_channel') or manifest.get('channel')}
             for group in ('delivery_points','travel_notes','articles'):
                 result[group]=json.loads((folder/f'{group}.json').read_text(encoding='utf-8'))
             ai=folder/'ai_result.json'; result['ai_result']=json.loads(ai.read_text(encoding='utf-8')) if ai.exists() else None
@@ -87,7 +92,7 @@ class Handler(BaseHTTPRequestHandler):
                     rows=[]
                     for i,row in enumerate(result.get(group,[])): rows.append({**row,'operator_review_status':'APPROVED_FOR_LOCAL_STAGING' if approvals.get(f'{group}:{i}') else 'PENDING'})
                     (folder/f'{group}.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
-                manifest={'session_id':session,'created_at':datetime.now(timezone.utc).isoformat(),'source_file':result.get('file_name'),'tenant_id':result.get('tenant_id'),'channel':result.get('channel'),'firebase_reads':0,'firebase_writes':0,'storage_writes':0}; (folder/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+                manifest={'session_id':session,'created_at':datetime.now(timezone.utc).isoformat(),'source_file':result.get('file_name'),'tenant_id':result.get('tenant_id'),'source_channel':result.get('source_channel'),'firebase_reads':0,'firebase_writes':0,'storage_writes':0}; (folder/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
                 if result.get('ai_result') is not None: (folder/'ai_result.json').write_text(json.dumps(result['ai_result'],ensure_ascii=False,indent=2),encoding='utf-8')
                 return reply(self,200,{'session_id':session,'folder':str(folder),'firebase_writes':0,'storage_writes':0})
             if self.path=='/api/save-comparison':

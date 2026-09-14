@@ -19,3 +19,11 @@ test('inline module of importazione assistita has valid syntax', () => {
         .join('\n');
     new vm.Script(`(function () {${source}\n})`);
 });
+
+test('local ingestion lab has no DNR tenant or source-channel fallback', () => {
+    const htmlPath = path.resolve(__dirname, '..', '..', 'tools', 'local-ingestion-lab.html');
+    const html = fs.readFileSync(htmlPath, 'utf8');
+    assert.doesNotMatch(html, /id="tenant"[^>]*value="DNR"/i);
+    assert.match(html, /id="tenant"[^>]*required/i);
+    assert.match(html, /source_channel:\$\('sourceChannel'\)\.value\.trim\(\)\|\|null/);
+});
