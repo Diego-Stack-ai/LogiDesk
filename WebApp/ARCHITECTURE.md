@@ -368,7 +368,20 @@ Storage Bucket (log-solutions-cantiere / log-solution-60007)
 
 ---
 
-## 22. ARCHITETTURA TARGET AI (ORCHESTRATORE E SUB-AGENTI) `[EVOLUZIONE FUTURA]`
+## 22. ARCHITETTURA AI IBRIDA `[PROTOTIPO LOCALE VERIFICATO / ORCHESTRATORE FUTURO]`
+
+La prima componente verificata è un assistente di ingestion locale e opzionale:
+
+- i formati certificati continuano a essere elaborati da parser deterministici, senza dipendere dall'AI;
+- l'AI locale riceve soltanto campioni anonimizzati e propone mapping verso campi canonici;
+- ogni risposta viene validata da un contratto deterministico; una risposta non conforme viene rifiutata;
+- è ammesso un solo tentativo automatico di riparazione formale del JSON;
+- nessuna proposta AI certifica un profilo o scrive dati senza revisione umana;
+- il client locale accetta esclusivamente endpoint loopback (`127.0.0.1`/`localhost`).
+
+Il prototipo usa Ollama con modello configurabile. Il collaudo iniziale su PC CPU-only ha usato `qwen3.5:9b`; modello e prestazioni non fanno parte del dominio e possono cambiare. Il frontend mantiene anche il ponte manuale anonimizzato per ChatGPT e deve funzionare con AI disabilitata.
+
+L'orchestratore multi-agente seguente resta un'evoluzione futura:
 
 ```mermaid
 flowchart TD
@@ -399,7 +412,7 @@ flowchart TD
     BUSINESS --> AUDIT
 ```
 
-L'**Orchestratore Centrale AI** è una componente di evoluzione futura destinata a supervisionare l'ingestione ed il Data Lineage dei file ricevuti.
+L'**Orchestratore Centrale AI** è una componente di evoluzione futura destinata a supervisionare l'ingestione ed il Data Lineage dei file ricevuti. Non coincide con il client locale già prototipato.
 
 ---
 

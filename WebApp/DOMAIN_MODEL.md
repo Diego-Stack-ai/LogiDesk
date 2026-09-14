@@ -166,6 +166,14 @@ Durante l'importazione (AI Ingestion), se viene riconosciuto un nuovo dataset ap
 - **Creazione Manuale**: Non vengono creati tenant impliciti al volo. È richiesta la registrazione del nuovo Committente/Tenant nell'anagrafica canonica (Single Source of Truth).
 - **Ripresa**: L'ingestion può riprendere e associare i dati solo dopo che il tenant esiste formalmente.
 
+### Profilo di ingestione e proposta AI
+
+- **Ingestion Profile**: regole versionate che identificano una famiglia documentale, il tenant esplicito, la firma strutturale e il parser deterministico associato.
+- **Stati profilo**: `DRAFT -> REVIEWED -> TESTED -> CERTIFIED`; ogni avanzamento richiede evidenze e la certificazione richiede approvazione umana.
+- **AI Mapping Proposal**: suggerimento non persistito e non certificato, sottoposto a validazione di schema e confronto con le anagrafiche.
+- **Reconciliation Decision**: scelta campo per campo (`KEEP_EXISTING`, `REPLACE`, `ADD_AS_NOTE`) che resta separata dal salvataggio effettivo.
+- Un cambiamento della firma strutturale riporta il documento in revisione; non è consentito riutilizzare silenziosamente un parser certificato per una struttura differente.
+
 ---
 
 ## 7. ANOMALY OWNERSHIP E TIME WINDOWS

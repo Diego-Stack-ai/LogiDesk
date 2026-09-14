@@ -604,6 +604,8 @@ Alla luce dell'audit A4.1, si ufficializza il seguente stato:
 
 ## A5 - AI INGESTION PIPELINE & ANOMALY HANDLING
 
+Il disegno operativo aggiornato, inclusa la separazione fra parser certificati, AI tecnica opzionale e archivio storico, è definito in `LOGIDESK_AI_PARSER_AND_ARCHIVE_PLAN.md`.
+
 ### 1. PRINCIPLES OF THE NEW INGESTION FLOW
 LogiDesk sta sostituendo progressivamente il vecchio modello di importazione basato su pulsanti/card specifici per tenant con un **AI INGESTION AGENT**. Il futuro ingresso dati seguira concettualmente questo flusso:
 FILE / DOCUMENTO -> AI INGESTION AGENT -> riconoscimento formato/sorgente -> identificazione tenant -> estrazione -> normalizzazione -> classificazione per dominio -> DATO CONOSCIUTO oppure DATO DA VERIFICARE.

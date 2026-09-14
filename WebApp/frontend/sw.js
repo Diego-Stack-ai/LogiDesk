@@ -38,6 +38,7 @@ const OPTIONAL_ASSETS = [
     './tenant-master.css',
     './tenant-master-page.js',
     './elaborazione.html',
+    './importazione_assistita.html',
     './link_viaggi.html',
     './centrale_resi.html',
     './pianificazione.html',
@@ -57,10 +58,12 @@ const OPTIONAL_ASSETS = [
     './services/dipendentiService.js',
     './services/fatturazioneService.js',
     './services/viaggiService.js',
+    './services/manual-ai-bridge.js',
     'https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js',
     'https://fonts.googleapis.com/icon?family=Material+Icons+Round',
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+    'https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js'
 ];
 
 // 1. Installazione: cache resiliente

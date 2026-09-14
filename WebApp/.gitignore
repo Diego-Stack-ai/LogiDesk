@@ -153,6 +153,9 @@ audit_data_*.json
 scratch_*.json
 inventory.json
 
+# Campioni privati per il collaudo dell'ingestion (mai versionare)
+test-data/ingestion-private/
+
 # LogiDesk App Requirements
 .env.*
 *serviceAccount*.json

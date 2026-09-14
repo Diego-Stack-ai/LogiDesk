@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importazione assistita - LogiDesk</title>
+    <link rel="stylesheet" href="styles.css?v=6.465">
+    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js"></script>
+    <style>
+        .assistant-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+        .assistant-card { background:white; border:1px solid #e2e8f0; border-radius:16px; padding:18px; }
+        .assistant-card h2 { margin:0 0 12px; font-size:18px; color:#1e293b; }
+        .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+        .field label { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; }
+        .field input,.field select,.field textarea { border:1px solid #cbd5e1; border-radius:10px; padding:11px; font:inherit; width:100%; box-sizing:border-box; }
+        .field textarea { min-height:180px; resize:vertical; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:12px; }
+        .assistant-actions { display:flex; flex-wrap:wrap; gap:10px; }
+        .assistant-btn { border:0; border-radius:10px; padding:10px 14px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+        .assistant-btn.primary { background:#4f46e5; color:white; }
+        .assistant-btn.secondary { background:#e0e7ff; color:#3730a3; }
+        .assistant-btn:disabled { opacity:.45; cursor:not-allowed; }
+        .status { border-radius:10px; padding:11px; margin-top:12px; background:#f1f5f9; color:#475569; white-space:pre-wrap; }
+        .status.ok { background:#dcfce7; color:#166534; }
+        .status.error { background:#fee2e2; color:#991b1b; }
+        .privacy-note { background:#fff7ed; border-left:4px solid #f97316; padding:12px; border-radius:8px; font-size:13px; }
+        .section-list { display:grid; gap:8px; max-height:220px; overflow:auto; margin:10px 0; }
+        .section-choice { display:flex; gap:9px; align-items:flex-start; background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:9px; }
+        .section-choice input { margin-top:3px; }
+        .mapping-row { display:grid; grid-template-columns:1fr 1fr 100px; gap:10px; align-items:end; padding:10px; border-bottom:1px solid #e2e8f0; }
+        .mapping-row select,.mapping-row input { width:100%; border:1px solid #cbd5e1; border-radius:8px; padding:8px; }
+        .review-panel { margin-top:16px; display:none; }
+        .review-panel.active { display:block; }
+        .preview-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:12px; }
+        .preview-table th,.preview-table td { border:1px solid #e2e8f0; padding:7px; text-align:left; vertical-align:top; }
+        .preview-table th { background:#f1f5f9; }
+        .table-scroll { overflow:auto; max-height:420px; }
+        @media (max-width:760px) { .assistant-grid { grid-template-columns:1fr; } .assistant-btn { flex:1; justify-content:center; } }
+    </style>
+</head>
+<body>
+    <nav class="glass-nav"><div class="nav-content">
+        <img src="assets/brand/logidesk-mark.svg" alt="LogiDesk" style="height:32px;width:auto;margin-right:8px;">
+        <button class="logout-btn" onclick="window.navigateWithState('dashboard.html')" title="Dashboard" style="border:0;background:none;cursor:pointer;"><span class="material-icons-round">dashboard</span></button>
+        <div class="nav-title" style="flex:1;">Importazione assistita <span class="app-version-badge"></span></div>
+        <a href="#" onclick="window.logoutFirebase();return false;" class="logout-btn" title="Esci"><span class="material-icons-round">logout</span></a>
+    </div></nav>
+
+    <main class="main-container">
+        <div class="welcome-section">
+            <h1>Assistente di importazione</h1>
+            <p>Analisi locale e ponte manuale per ChatGPT gratuito. Nessun dato viene salvato.</p>
+        </div>
+        <div class="privacy-note"><strong>Modalità prototipo:</strong> il file resta nel browser. Il testo generato contiene campioni anonimizzati; controllalo comunque prima di copiarlo in un servizio esterno.</div>
+
+        <div class="assistant-grid" style="margin-top:16px;">
+            <section class="assistant-card">
+                <h2>1. Documento e contesto</h2>
+                <div class="field"><label>Azienda</label><input id="company" readonly></div>
+                <div class="field"><label for="tenant">Committente obbligatorio</label><select id="tenant"><option value="">Seleziona il committente</option></select></div>
+                <div class="field"><label for="work-date">Data prevista del viaggio</label><input type="date" id="work-date"></div>
+                <div class="field"><label for="source-file">PDF, Excel, testo o immagine</label><input type="file" id="source-file" accept=".pdf,.xlsx,.xls,.csv,.txt,image/*"></div>
+                <div class="field"><label for="known-profile">Profilo precedente facoltativo</label><input type="file" id="known-profile" accept="application/json,.json"></div>
+                <div class="field"><label for="operator-note">Istruzioni dell'operatore</label><textarea id="operator-note" placeholder="Esempio: leggi solo Riepilogo; la colonna Giro separa tre viaggi."></textarea></div>
+                <div class="field" style="flex-direction:row;align-items:flex-start;">
+                    <input type="checkbox" id="include-pdf-text" style="width:auto;margin-top:3px;">
+                    <label for="include-pdf-text" style="text-transform:none;line-height:1.4;">Includi il testo estratto da PDF/TXT. Potrebbe contenere dati personali: controllare il testo prima di copiarlo.</label>
+                </div>
+                <div class="field" style="flex-direction:row;align-items:flex-start;">
+                    <input type="checkbox" id="ocr-scanned-pdf" checked style="width:auto;margin-top:3px;">
+                    <label for="ocr-scanned-pdf" style="text-transform:none;line-height:1.4;">Usa OCR locale sulle pagine PDF senza testo digitale (più lento, soprattutto su telefono).</label>
+                </div>
+                <div class="assistant-actions"><button id="analyze" class="assistant-btn primary"><span class="material-icons-round">document_scanner</span>Analizza localmente</button></div>
+                <div id="inventory-status" class="status">In attesa del documento.</div>
+                <div id="section-panel" hidden>
+                    <div class="assistant-actions" style="margin-top:12px;">
+                        <button id="select-all" class="assistant-btn secondary" type="button">Seleziona tutto</button>
+                        <button id="select-none" class="assistant-btn secondary" type="button">Deseleziona tutto</button>
+                        <button id="rebuild-prompt" class="assistant-btn primary" type="button">Rigenera testo</button>
+                    </div>
+                    <div id="section-list" class="section-list"></div>
+                </div>
+            </section>
+
+            <section class="assistant-card">
+                <h2>2. Testo per ChatGPT gratuito</h2>
+                <div class="field"><textarea id="prompt-output" readonly placeholder="Il testo anonimizzato comparirà qui."></textarea></div>
+                <div class="assistant-actions">
+                    <button id="copy-prompt" class="assistant-btn secondary" disabled><span class="material-icons-round">content_copy</span>Copia testo</button>
+                </div>
+                <h2 style="margin-top:20px;">3. Risposta restituita</h2>
+                <div class="field"><textarea id="response-input" placeholder="Incolla qui esclusivamente la risposta JSON."></textarea></div>
+                <div class="assistant-actions"><button id="validate-response" class="assistant-btn primary"><span class="material-icons-round">fact_check</span>Verifica risposta</button></div>
+                <div id="validation-status" class="status">Nessuna risposta verificata.</div>
+            </section>
+        </div>
+
+        <section id="review-panel" class="assistant-card review-panel">
+            <h2>4. Revisione della proposta</h2>
+            <p>Ogni associazione è modificabile. Il profilo scaricato rimane una bozza tecnica e non aggiorna l'app.</p>
+            <div id="mapping-list"></div>
+            <div id="ambiguity-list" class="status"></div>
+            <div class="assistant-actions" style="margin-top:12px;">
+                <button id="download-profile" class="assistant-btn primary" type="button"><span class="material-icons-round">download</span>Scarica profilo bozza</button>
+                <button id="preview-normalized" class="assistant-btn secondary" type="button"><span class="material-icons-round">preview</span>Anteprima normalizzata</button>
+                <button id="compare-masters" class="assistant-btn secondary" type="button" disabled><span class="material-icons-round">compare_arrows</span>Confronta anagrafiche</button>
+            </div>
+            <div id="normalized-status" class="status" hidden></div>
+            <div id="normalized-table" class="table-scroll"></div>
+            <div id="reconciliation-status" class="status" hidden></div>
+            <div id="reconciliation-review" class="mapping-list" aria-live="polite"></div>
+            <button id="download-normalized" class="assistant-btn primary" type="button" hidden style="margin-top:12px;"><span class="material-icons-round">download</span>Scarica dati normalizzati</button>
+        </section>
+    </main>
+
+    <script src="script.js?v=6.465"></script>
+    <script type="module">
+        import './core/auth-service.js';
+        import { db, auth } from './core/firebase-init.js';
+        import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { CompanyContext } from './core/CompanyContext.js';
+        import { CANONICAL_FIELDS, BRIDGE_SCHEMA_VERSION, applyMappings, applyReconciliationDecisions, buildManualPrompt, createStructuralSignature, detectTableRegions, findCandidateDuplicates, reconcileNormalizedRecords, uniqueHeaders, validateManualResponse } from './services/manual-ai-bridge.js';
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const companyInput = document.getElementById('company');
+        const tenantSelect = document.getElementById('tenant');
+        const inventoryStatus = document.getElementById('inventory-status');
+        const validationStatus = document.getElementById('validation-status');
+        const promptOutput = document.getElementById('prompt-output');
+        const copyButton = document.getElementById('copy-prompt');
+        const sectionPanel = document.getElementById('section-panel');
+        const sectionList = document.getElementById('section-list');
+        const reviewPanel = document.getElementById('review-panel');
+        const mappingList = document.getElementById('mapping-list');
+        const ambiguityList = document.getElementById('ambiguity-list');
+        let currentInventory = null;
+        let validatedProposal = null;
+        let knownProfile = null;
+        let currentSelectionSignature = null;
+        let normalizedExport = null;
+
+        companyInput.value = CompanyContext.COMPANY_ID;
+        document.getElementById('work-date').value = new Date().toISOString().slice(0, 10);
+
+        function setStatus(element, text, kind = '') {
+            element.textContent = text;
+            element.className = `status ${kind}`.trim();
+        }
+
+        async function loadTenants() {
+            try {
+                const snapshot = await getDocs(collection(db, CompanyContext.getTenantsPath()));
+                snapshot.docs
+                    .map(item => ({ id: item.id, ...item.data() }))
+                    .sort((a, b) => String(a.nome || a.name || a.id).localeCompare(String(b.nome || b.name || b.id)))
+                    .forEach(tenant => {
+                        const option = document.createElement('option');
+                        option.value = tenant.id;
+                        option.textContent = tenant.nome || tenant.name || tenant.id;
+                        tenantSelect.appendChild(option);
+                    });
+            } catch (error) {
+                setStatus(inventoryStatus, `Impossibile caricare i committenti: ${error.message}`, 'error');
+            }
+        }
+
+        function rowsFromRegion(matrix, region, maxRows = 12) {
+            const headers = uniqueHeaders(matrix[region.headerRowIndex] || []);
+            return matrix
+                .slice(region.dataStartRowIndex, Math.min(region.endRowIndex + 1, region.dataStartRowIndex + maxRows))
+                .filter(row => row.some(value => value !== null && value !== undefined && String(value).trim() !== ''))
+                .map(row => Object.fromEntries(headers.map((header, index) => [header, row[index] ?? null])));
+        }
+
+        async function inspectExcel(file) {
+            const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array', cellDates: true });
+            const sections = [];
+            const sampleRows = [];
+            const recordsBySection = {};
+            workbook.SheetNames.forEach(name => {
+                const matrix = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, defval: null, raw: false });
+                const regions = detectTableRegions(matrix);
+                regions.forEach((region, regionIndex) => {
+                    const sectionName = regions.length === 1 ? name : `${name} — tabella riga ${region.headerRowIndex + 1}`;
+                    const headers = uniqueHeaders(matrix[region.headerRowIndex] || []);
+                    recordsBySection[sectionName] = rowsFromRegion(matrix, region, 50000);
+                    sections.push({
+                        name: sectionName,
+                        worksheet: name,
+                        header_row: region.headerRowIndex + 1,
+                        row_count: recordsBySection[sectionName].length,
+                        columns: headers,
+                        detection: region.fallback ? 'heuristic_fallback' : 'header_hints',
+                        table_index: regionIndex + 1
+                    });
+                    recordsBySection[sectionName].slice(0, 4).forEach(row => sampleRows.push({ Foglio: sectionName, ...row }));
+                });
+            });
+            return { name: file.name, kind: 'excel', size: file.size, sections, sampleRows, recordsBySection };
+        }
+
+        async function inspectPdf(file) {
+            const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+            const sections = [];
+            const sampleRows = [];
+            const useOcr = document.getElementById('ocr-scanned-pdf').checked;
+            const mobileDevice = matchMedia('(max-width: 760px)').matches;
+            const maxOcrPages = mobileDevice ? 6 : 20;
+            let ocrPages = 0;
+            let skippedOcrPages = 0;
+            let worker;
+            try {
+                for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+                    const page = await pdf.getPage(pageNumber);
+                    const content = await page.getTextContent();
+                    let text = content.items.map(item => item.str).filter(Boolean).join(' ').trim();
+                    let extraction = 'digital_text';
+                    let confidence = null;
+                    if (useOcr && text.length < 30) {
+                        if (ocrPages >= maxOcrPages) {
+                            skippedOcrPages += 1;
+                            extraction = 'ocr_skipped_limit';
+                        } else {
+                            if (!window.Tesseract?.createWorker) throw new Error('Motore OCR locale non disponibile. Controlla la connessione iniziale.');
+                            if (!worker) {
+                                worker = await Tesseract.createWorker('ita+eng', 1, {
+                                    logger: message => {
+                                        const percentage = Number.isFinite(message.progress) ? ` ${Math.round(message.progress * 100)}%` : '';
+                                        setStatus(inventoryStatus, `OCR PDF: ${message.status || 'elaborazione'}${percentage}`);
+                                    }
+                                });
+                            }
+                            const viewport = page.getViewport({ scale: mobileDevice ? 1.5 : 2 });
+                            const canvas = document.createElement('canvas');
+                            canvas.width = Math.ceil(viewport.width);
+                            canvas.height = Math.ceil(viewport.height);
+                            const context = canvas.getContext('2d', { alpha: false });
+                            await page.render({ canvasContext: context, viewport }).promise;
+                            const result = await worker.recognize(canvas);
+                            text = result.data?.text?.trim() || '';
+                            confidence = Math.round(result.data?.confidence || 0);
+                            extraction = 'local_ocr';
+                            ocrPages += 1;
+                            canvas.width = 1;
+                            canvas.height = 1;
+                        }
+                    }
+                    sections.push({ name: `Pagina ${pageNumber}`, character_count: text.length, extraction, ocr_confidence: confidence });
+                    if (pageNumber <= 12) sampleRows.push({ Pagina: pageNumber, Testo: text.slice(0, 3000) });
+                }
+            } finally {
+                if (worker) await worker.terminate();
+            }
+            const warnings = [];
+            if (ocrPages) warnings.push(`${ocrPages} pagine lette con OCR locale: verificare codici, date e quantità.`);
+            if (skippedOcrPages) warnings.push(`${skippedOcrPages} pagine senza testo non elaborate per il limite del dispositivo.`);
+            return { name: file.name, kind: ocrPages ? 'pdf_mixed_or_scanned' : 'pdf', size: file.size, sections, sampleRows, warning: warnings.join(' ') };
+        }
+
+        async function inspectText(file) {
+            const text = await file.text();
+            const lines = text.split(/\r?\n/).filter(Boolean);
+            return {
+                name: file.name, kind: file.name.toLowerCase().endsWith('.csv') ? 'csv' : 'text', size: file.size,
+                sections: [{ name: 'Testo', line_count: lines.length }],
+                sampleRows: lines.slice(0, 12).map((line, index) => ({ Riga: index + 1, Testo: line.slice(0, 1200) }))
+            };
+        }
+
+        async function inspectFile(file) {
+            const lower = file.name.toLowerCase();
+            if (lower.endsWith('.xlsx') || lower.endsWith('.xls')) return inspectExcel(file);
+            if (lower.endsWith('.pdf')) return inspectPdf(file);
+            if (lower.endsWith('.txt') || lower.endsWith('.csv')) return inspectText(file);
+            if (file.type.startsWith('image/')) {
+                return inspectImage(file);
+            }
+            throw new Error('Formato non supportato in questo prototipo.');
+        }
+
+        async function inspectImage(file) {
+            const mobileDevice = matchMedia('(max-width: 760px)').matches;
+            const maxBytes = mobileDevice ? 12 * 1024 * 1024 : 25 * 1024 * 1024;
+            if (file.size > maxBytes) {
+                throw new Error(`Immagine troppo grande per l'OCR su questo dispositivo (limite ${mobileDevice ? 12 : 25} MB).`);
+            }
+            if (!window.Tesseract?.createWorker) throw new Error('Motore OCR locale non disponibile. Controlla la connessione iniziale.');
+            let worker;
+            try {
+                worker = await Tesseract.createWorker('ita+eng', 1, {
+                    logger: message => {
+                        const percentage = Number.isFinite(message.progress) ? ` ${Math.round(message.progress * 100)}%` : '';
+                        setStatus(inventoryStatus, `OCR locale: ${message.status || 'elaborazione'}${percentage}`);
+                    }
+                });
+                const result = await worker.recognize(file);
+                const text = result.data?.text?.trim() || '';
+                if (!text) throw new Error('Nessun testo riconosciuto nell’immagine.');
+                return {
+                    name: file.name,
+                    kind: 'image_ocr',
+                    size: file.size,
+                    sections: [{
+                        name: 'Testo',
+                        mime_type: file.type,
+                        character_count: text.length,
+                        ocr_confidence: Math.round(result.data?.confidence || 0)
+                    }],
+                    sampleRows: [{ Riga: 1, Testo: text.slice(0, 12000) }],
+                    warning: 'Testo ottenuto con OCR: verificare sempre codici, quantità e date sull’immagine originale.'
+                };
+            } finally {
+                if (worker) await worker.terminate();
+            }
+        }
+
+        function renderSectionChoices(inventory) {
+            sectionList.replaceChildren();
+            inventory.sections.forEach((section, index) => {
+                const label = document.createElement('label');
+                label.className = 'section-choice';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.dataset.sectionIndex = String(index);
+                const description = document.createElement('span');
+                const detail = section.row_count != null ? `${section.row_count} righe` : `${section.character_count ?? 0} caratteri`;
+                description.textContent = `${section.name} — ${detail}`;
+                label.append(checkbox, description);
+                sectionList.appendChild(label);
+            });
+            sectionPanel.hidden = false;
+        }
+
+        function selectedInventory() {
+            if (!currentInventory) throw new Error('Analizza prima un documento.');
+            const selectedIndexes = [...sectionList.querySelectorAll('input:checked')].map(input => Number(input.dataset.sectionIndex));
+            if (!selectedIndexes.length) throw new Error('Seleziona almeno un foglio o una pagina.');
+            const selectedNames = new Set(selectedIndexes.map(index => currentInventory.sections[index].name));
+            return {
+                ...currentInventory,
+                sections: selectedIndexes.map(index => currentInventory.sections[index]),
+                sampleRows: (currentInventory.sampleRows || []).filter(row => {
+                    const sectionName = row.Foglio || (row.Pagina != null ? `Pagina ${row.Pagina}` : 'Testo');
+                    return selectedNames.has(sectionName);
+                })
+            };
+        }
+
+        function regeneratePrompt() {
+            const inventory = selectedInventory();
+            inventory.sourceSignature = createStructuralSignature(inventory);
+            currentSelectionSignature = inventory.sourceSignature;
+            promptOutput.value = buildManualPrompt({
+                file: inventory,
+                companyId: CompanyContext.COMPANY_ID,
+                tenantId: tenantSelect.value,
+                workDate: document.getElementById('work-date').value,
+                operatorNote: document.getElementById('operator-note').value,
+                keepSampleKeys: document.getElementById('include-pdf-text').checked ? ['testo'] : []
+            });
+            copyButton.disabled = false;
+            const matchDescription = describeProfileMatch(inventory);
+            const mismatch = knownProfile && knownProfile.source_signature !== inventory.sourceSignature;
+            setStatus(inventoryStatus, `${inventory.kind}: ${inventory.sections.length} sezioni incluse.\n${inventory.warning || 'Campione anonimizzato pronto.'}${matchDescription}`, mismatch ? 'error' : 'ok');
+        }
+
+        async function loadKnownProfile() {
+            const file = document.getElementById('known-profile').files[0];
+            if (!file) {
+                knownProfile = null;
+                return;
+            }
+            let parsed;
+            try {
+                parsed = JSON.parse(await file.text());
+            } catch {
+                throw new Error('Il profilo precedente non contiene JSON valido.');
+            }
+            if (parsed.schema_version !== BRIDGE_SCHEMA_VERSION) throw new Error('Versione del profilo precedente non riconosciuta.');
+            if (!parsed.source_signature) throw new Error('Il profilo precedente non contiene l’impronta strutturale.');
+            knownProfile = parsed;
+        }
+
+        function describeProfileMatch(inventory) {
+            if (!knownProfile) return '';
+            const sameCompany = knownProfile.company_id === CompanyContext.COMPANY_ID;
+            const sameTenant = knownProfile.tenant_id === tenantSelect.value;
+            const sameSignature = knownProfile.source_signature === inventory.sourceSignature;
+            if (sameCompany && sameTenant && sameSignature) {
+                return '\nFormato candidato già visto: impronta, azienda e committente coincidono. Serve comunque la certificazione tecnica.';
+            }
+            const differences = [];
+            if (!sameSignature) differences.push('struttura');
+            if (!sameCompany) differences.push('azienda');
+            if (!sameTenant) differences.push('committente');
+            return `\nProfilo precedente NON applicabile: differiscono ${differences.join(', ')}.`;
+        }
+
+        document.getElementById('analyze').addEventListener('click', async () => {
+            const file = document.getElementById('source-file').files[0];
+            if (!file) return setStatus(inventoryStatus, 'Seleziona prima un documento.', 'error');
+            if (!tenantSelect.value) return setStatus(inventoryStatus, 'Seleziona esplicitamente il committente.', 'error');
+            setStatus(inventoryStatus, 'Analisi locale in corso…');
+            try {
+                await loadKnownProfile();
+                currentInventory = await inspectFile(file);
+                currentInventory.sourceSignature = createStructuralSignature(currentInventory);
+                renderSectionChoices(currentInventory);
+                regeneratePrompt();
+            } catch (error) {
+                promptOutput.value = '';
+                copyButton.disabled = true;
+                setStatus(inventoryStatus, error.message, 'error');
+            }
+        });
+
+        document.getElementById('select-all').addEventListener('click', () => {
+            sectionList.querySelectorAll('input').forEach(input => { input.checked = true; });
+        });
+        document.getElementById('select-none').addEventListener('click', () => {
+            sectionList.querySelectorAll('input').forEach(input => { input.checked = false; });
+        });
+        document.getElementById('rebuild-prompt').addEventListener('click', () => {
+            try { regeneratePrompt(); } catch (error) { setStatus(inventoryStatus, error.message, 'error'); }
+        });
+
+        copyButton.addEventListener('click', async () => {
+            await navigator.clipboard.writeText(promptOutput.value);
+            setStatus(inventoryStatus, 'Testo copiato. Controllalo e incollalo manualmente in ChatGPT.', 'ok');
+        });
+
+        document.getElementById('validate-response').addEventListener('click', () => {
+            try {
+                const result = validateManualResponse(document.getElementById('response-input').value);
+                validatedProposal = result;
+                renderProposal(result);
+                setStatus(validationStatus, `Risposta formalmente valida.\nTipo: ${result.tipo_documento}\nGiri proposti: ${result.numero_giri_proposto}\nMapping: ${(result.mapping || []).length}\nAmbiguità: ${(result.ambiguita || []).length}\n\nNessun dato è stato salvato.`, 'ok');
+            } catch (error) {
+                setStatus(validationStatus, error.message, 'error');
+            }
+        });
+
+        function renderProposal(result) {
+            mappingList.replaceChildren();
+            (result.mapping || []).forEach((mapping, index) => {
+                const row = document.createElement('div');
+                row.className = 'mapping-row';
+                const sourceWrap = document.createElement('div');
+                const sourceLabel = document.createElement('label');
+                sourceLabel.textContent = 'Campo sorgente';
+                const source = document.createElement('input');
+                source.value = mapping.campo_sorgente;
+                source.dataset.mappingSource = String(index);
+                sourceWrap.append(sourceLabel, source);
+                const targetWrap = document.createElement('div');
+                const targetLabel = document.createElement('label');
+                targetLabel.textContent = 'Campo LogiDesk';
+                const target = document.createElement('select');
+                target.dataset.mappingTarget = String(index);
+                CANONICAL_FIELDS.forEach(field => {
+                    const option = document.createElement('option');
+                    option.value = field;
+                    option.textContent = field;
+                    option.selected = field === mapping.campo_logidesk;
+                    target.appendChild(option);
+                });
+                targetWrap.append(targetLabel, target);
+                const confidenceWrap = document.createElement('div');
+                const confidenceLabel = document.createElement('label');
+                confidenceLabel.textContent = 'Confidenza';
+                const confidence = document.createElement('input');
+                confidence.value = `${Math.round(mapping.confidenza * 100)}%`;
+                confidence.readOnly = true;
+                confidenceWrap.append(confidenceLabel, confidence);
+                row.append(sourceWrap, targetWrap, confidenceWrap);
+                mappingList.appendChild(row);
+            });
+            const questions = (result.ambiguita || []).map(item => `• ${item.campo_sorgente}: ${item.domanda}`);
+            ambiguityList.textContent = questions.length ? `Domande da risolvere:\n${questions.join('\n')}` : 'Nessuna ambiguità dichiarata.';
+            reviewPanel.classList.add('active');
+        }
+
+        document.getElementById('download-profile').addEventListener('click', () => {
+            if (!validatedProposal || !currentInventory) return;
+            const mapping = [...mappingList.querySelectorAll('.mapping-row')].map((row, index) => ({
+                ...validatedProposal.mapping[index],
+                campo_sorgente: row.querySelector('[data-mapping-source]').value.trim(),
+                campo_logidesk: row.querySelector('[data-mapping-target]').value
+            }));
+            const profile = {
+                schema_version: BRIDGE_SCHEMA_VERSION,
+                status: 'DRAFT_REQUIRES_TECHNICAL_CERTIFICATION',
+                company_id: CompanyContext.COMPANY_ID,
+                tenant_id: tenantSelect.value,
+                source_name: currentInventory.name,
+                source_kind: currentInventory.kind,
+                source_signature: currentSelectionSignature,
+                signature_strength: 'candidate_only',
+                selected_sections: selectedInventory().sections.map(section => section.name),
+                work_date: document.getElementById('work-date').value || null,
+                tipo_documento: validatedProposal.tipo_documento,
+                numero_giri_proposto: validatedProposal.numero_giri_proposto,
+                mapping,
+                ambiguita: validatedProposal.ambiguita || [],
+                campi_nuovi: validatedProposal.campi_nuovi || [],
+                avvisi: validatedProposal.avvisi || []
+            };
+            const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = `profilo_importazione_${Date.now()}.json`;
+            anchor.click();
+            URL.revokeObjectURL(url);
+        });
+
+        function editedMappings() {
+            return [...mappingList.querySelectorAll('.mapping-row')].map((row, index) => ({
+                ...validatedProposal.mapping[index],
+                campo_sorgente: row.querySelector('[data-mapping-source]').value.trim(),
+                campo_logidesk: row.querySelector('[data-mapping-target]').value
+            }));
+        }
+
+        function selectedSourceRows() {
+            const inventory = selectedInventory();
+            if (inventory.kind !== 'excel') throw new Error('L’anteprima tabellare è disponibile in questa fase soltanto per Excel.');
+            const rows = [];
+            inventory.sections.forEach(section => {
+                (currentInventory.recordsBySection?.[section.name] || []).forEach(row => rows.push({ __foglio: section.name, ...row }));
+            });
+            return rows;
+        }
+
+        function renderNormalizedTable(records) {
+            const container = document.getElementById('normalized-table');
+            container.replaceChildren();
+            const fields = [...new Set(records.flatMap(record => Object.keys(record.data || {})))];
+            if (!records.length || !fields.length) return;
+            const table = document.createElement('table');
+            table.className = 'preview-table';
+            const head = document.createElement('thead');
+            const headRow = document.createElement('tr');
+            ['Riga', ...fields].forEach(field => {
+                const cell = document.createElement('th');
+                cell.textContent = field;
+                headRow.appendChild(cell);
+            });
+            head.appendChild(headRow);
+            const body = document.createElement('tbody');
+            records.slice(0, 20).forEach(record => {
+                const row = document.createElement('tr');
+                [record.source_row, ...fields.map(field => record.data[field])].forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value == null ? '' : String(value);
+                    row.appendChild(cell);
+                });
+                body.appendChild(row);
+            });
+            table.append(head, body);
+            container.appendChild(table);
+        }
+
+        function renderReconciliation(reconciliation) {
+            const container = document.getElementById('reconciliation-review');
+            if (!container) return;
+            container.replaceChildren();
+            reconciliation.forEach((item, itemIndex) => {
+                if (item.status !== 'MODIFIED') return;
+                item.differences.forEach((difference, differenceIndex) => {
+                    const row = document.createElement('div');
+                    row.className = 'mapping-row';
+                    const text = document.createElement('span');
+                    text.textContent = `${item.domain} ${item.key} · ${difference.field}: “${difference.existing ?? ''}” → “${difference.incoming ?? ''}”`;
+                    const select = document.createElement('select');
+                    select.dataset.decisionKey = `${itemIndex}:${differenceIndex}`;
+                    [['KEEP_EXISTING', 'Mantieni esistente'], ['REPLACE', 'Sostituisci'], ['ADD_AS_NOTE', 'Aggiungi come nota']].forEach(([value, label]) => {
+                        const option = document.createElement('option');
+                        option.value = value; option.textContent = label; select.appendChild(option);
+                    });
+                    row.append(text, select);
+                    container.appendChild(row);
+                });
+            });
+            container.addEventListener('change', () => {
+                if (!normalizedExport?.reconciliation) return;
+                const decisions = Object.fromEntries([...container.querySelectorAll('[data-decision-key]')]
+                    .map(select => [select.dataset.decisionKey, select.value]));
+                normalizedExport.reconciliation_review = applyReconciliationDecisions(normalizedExport.reconciliation, decisions);
+            });
+        }
+
+        document.getElementById('preview-normalized').addEventListener('click', () => {
+            const status = document.getElementById('normalized-status');
+            try {
+                const records = applyMappings(selectedSourceRows(), editedMappings());
+                const duplicates = findCandidateDuplicates(records, tenantSelect.value);
+                normalizedExport = {
+                    schema_version: BRIDGE_SCHEMA_VERSION,
+                    status: 'NORMALIZED_PREVIEW_NOT_PERSISTED',
+                    company_id: CompanyContext.COMPANY_ID,
+                    tenant_id: tenantSelect.value,
+                    source_signature: currentSelectionSignature,
+                    generated_at: new Date().toISOString(),
+                    records,
+                    duplicate_candidates: duplicates
+                };
+                status.hidden = false;
+                setStatus(status, `${records.length} record normalizzati. ${duplicates.length} possibili duplicati interni. Sono mostrate al massimo 20 righe.`, duplicates.length ? 'error' : 'ok');
+                renderNormalizedTable(records);
+                document.getElementById('download-normalized').hidden = false;
+                document.getElementById('compare-masters').disabled = false;
+            } catch (error) {
+                normalizedExport = null;
+                status.hidden = false;
+                setStatus(status, error.message, 'error');
+                document.getElementById('normalized-table').replaceChildren();
+                document.getElementById('download-normalized').hidden = true;
+                document.getElementById('compare-masters').disabled = true;
+            }
+        });
+
+        document.getElementById('download-normalized').addEventListener('click', () => {
+            if (!normalizedExport) return;
+            const blob = new Blob([JSON.stringify(normalizedExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = `dati_normalizzati_${Date.now()}.json`;
+            anchor.click();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('compare-masters').addEventListener('click', async () => {
+            const status = document.getElementById('reconciliation-status');
+            status.hidden = false;
+            setStatus(status, 'Lettura anagrafiche in corso…');
+            try {
+                const tenantId = tenantSelect.value;
+                if (!tenantId || !normalizedExport) throw new Error('Anteprima o committente mancanti.');
+                const [pointsSnapshot, articlesSnapshot] = await Promise.all([
+                    getDocs(collection(db, CompanyContext.getDeliveryPointsPath(tenantId))),
+                    getDocs(collection(db, CompanyContext.getImportMappingsPath(tenantId)))
+                ]);
+                const reconciliation = reconcileNormalizedRecords(normalizedExport.records, {
+                    deliveryPoints: pointsSnapshot.docs.map(item => ({ id: item.id, ...item.data() })),
+                    articles: articlesSnapshot.docs.map(item => ({ id: item.id, ...item.data() }))
+                }, tenantId);
+                normalizedExport.reconciliation = reconciliation;
+                renderReconciliation(reconciliation);
+                const decisions = Object.fromEntries([...document.querySelectorAll('[data-decision-key]')].map(select => [select.dataset.decisionKey, select.value]));
+                normalizedExport.reconciliation_review = applyReconciliationDecisions(reconciliation, decisions);
+                const counts = reconciliation.reduce((accumulator, item) => {
+                    accumulator[item.status] = (accumulator[item.status] || 0) + 1;
+                    return accumulator;
+                }, {});
+                setStatus(status, `Confronto in sola lettura completato.\nIdentici: ${counts.IDENTICAL || 0}\nNuovi: ${counts.NEW || 0}\nModificati: ${counts.MODIFIED || 0}\nAmbigui: ${counts.AMBIGUOUS || 0}\n\nNessun dato è stato scritto.`, (counts.MODIFIED || counts.AMBIGUOUS) ? 'error' : 'ok');
+            } catch (error) {
+                setStatus(status, `Confronto non completato: ${error.message}`, 'error');
+            }
+        });
+
+        onAuthStateChanged(auth, user => {
+            if (user) loadTenants();
+        });
+    </script>
+</body>
+</html>

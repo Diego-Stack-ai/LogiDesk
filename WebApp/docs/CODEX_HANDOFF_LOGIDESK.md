@@ -339,3 +339,84 @@ Non riportare password, token, chiavi di servizio o altri segreti in questo file
   `6d34da0` sono terminati con successo (pipeline #56 e #57). Il collaudo
   visivo autenticato della pagina con una data di luglio resta da eseguire
   durante il normale uso dell'app.
+
+## 14. Aggiornamento 2026-09-04 — piano agente e archivio storico
+
+- È stato formalizzato in
+  `docs/active-plans/LOGIDESK_AI_PARSER_AND_ARCHIVE_PLAN.md` il modello in cui
+  l'app quotidiana usa parser deterministici certificati e non dipende né dal
+  PC tecnico acceso né dall'AI.
+- L'AI locale è prevista come strumento tecnico opzionale per conoscere nuovi
+  committenti e formati, proporre mapping e preparare nuove versioni dei parser;
+  la modalità AI cloud resta un'opzione futura separata.
+- È stato definito il ciclo Storage caldo -> chiusura mensile -> pacchetto
+  verificato -> archivio freddo, mantenendo dati strutturati sufficienti alle
+  analisi annuali e agli approfondimenti sui documenti originali.
+- Google Drive è candidato come archivio esterno via API, preferibilmente come
+  Drive condiviso aziendale, non come sostituto dello Storage operativo.
+- È stato aggiunto il primo componente offline
+  `functions/services/manual_ai_bridge.py`: genera il testo anonimizzato per il
+  copia/incolla in ChatGPT gratuito e valida la risposta JSON senza applicarla
+  o salvarla. I quattro test unitari dedicati risultano superati.
+- È stata aggiunta la pagina prototipo `frontend/importazione_assistita.html`,
+  collegata dalla dashboard: inventaria localmente PDF, Excel, CSV e testo,
+  richiede il tenant senza fallback, genera il prompt e controlla il JSON
+  restituito. L'OCR immagini e il salvataggio delle proposte non sono ancora
+  implementati. Quattro test del contratto browser risultano superati.
+- La pagina consente ora di includere o escludere singoli fogli Excel e pagine
+  PDF, rigenerare il prompt, revisionare i mapping in una scheda visuale e
+  scaricare un profilo JSON con stato
+  `DRAFT_REQUIRES_TECHNICAL_CERTIFICATION`. Il profilo non è ancora eseguibile
+  né persistito. Il controllo frontend complessivo conta cinque test superati.
+- Le fotografie sono ora analizzabili con OCR Tesseract eseguito nel browser
+  (`ita+eng`), senza upload del file. L'accuratezza non è certificata: il testo
+  prodotto mantiene l'avviso di verifica obbligatoria per codici, date e
+  quantità. Il runtime OCR e i modelli linguistici richiedono download al primo
+  utilizzo; una distribuzione completamente offline resta da predisporre.
+- I PDF scannerizzati usano ora lo stesso motore come fallback per le pagine
+  prive di testo digitale. Sono imposti limiti di 6 pagine OCR su telefono e
+  20 su desktop; le eccedenze vengono marcate `ocr_skipped_limit`, mai trattate
+  come pagine correttamente interpretate.
+- È disponibile il primo riconoscimento di formati già analizzati: ogni
+  selezione di fogli/pagine genera una `source_signature`; un profilo JSON
+  precedente può essere caricato e confrontato per azienda, tenant e impronta.
+  La corrispondenza è deliberatamente `candidate_only` e non equivale alla
+  certificazione o all'esecuzione automatica di un parser.
+- Il mapping revisionato è applicabile localmente alle righe Excel dei fogli
+  selezionati. La pagina produce anteprima, JSON scaricabile e controllo dei
+  duplicati candidati interni su punto di consegna, articolo e DDT. Lo stato è
+  `NORMALIZED_PREVIEW_NOT_PERSISTED`; non esiste ancora confronto o scrittura
+  verso le anagrafiche remote.
+- Nessun dato Firebase è stato letto, modificato o distribuito in questa
+  attività. Lo stato remoto resta da ricontrollare prima dell'implementazione.
+
+## 15. Aggiornamento 2026-09-05 — collaudo ingestion e AI locale
+
+- I riferimenti precedenti che indicavano OCR e confronto anagrafiche come non
+  implementati sono superati: il prototipo include OCR browser, riconciliazione
+  read-only e revisione delle differenze campo per campo, sempre senza salvataggio.
+- Sono stati censiti 15 campioni privati ignorati da Git. Il dry-run ha rilevato
+  148 DDT completi (90 Frutta e 58 Latte) e 312 occorrenze articolo; zero
+  scritture Firebase/Storage. Il caso `FNS17765` conserva `D4110`, separando
+  agente `D` e zona logistica `4110`.
+- `ReportPianificazione.xlsx` viene identificato come tre fogli-giro più un
+  riepilogo; la scelta della strategia resta obbligatoriamente all'operatore.
+- È stato introdotto il ciclo profilo
+  `DRAFT -> REVIEWED -> TESTED -> CERTIFIED`, senza salti e con evidenze
+  obbligatorie. Nessun profilo reale è stato certificato automaticamente.
+- Ollama `0.33.3` e i modelli `qwen3.5:9b`/`qwen3.5:27b` risultano presenti sul
+  PC. Il client LogiDesk usa esclusivamente loopback. Il dry-run anonimo sul 9B
+  ha proposto nove mapping coerenti e un'ambiguità sulla fascia oraria. Una
+  chiave JSON errata (`confienza`) è stata bloccata; un unico tentativo guidato
+  di riparazione ha prodotto una risposta valida. Tempo CPU osservato circa
+  55 secondi, pertanto la concorrenza prevista è uno.
+- Il confronto live con Firebase Cantiere non è stato eseguito dal terminale:
+  mancano credenziali ADC locali. Dovrà essere collaudato dalla pagina con
+  utente autenticato. Produzione non è stata toccata.
+- Il 2026-09-05 è stato aggiunto il confronto locale a tre vie fra parser app,
+  parser candidato e AI. Sui DDT reali `FNS17765` e `FNS62295`, l'AI ha trovato
+  correttamente dati anagrafici aggiuntivi e codici articolo complessi, ma ha
+  sbagliato in entrambi i casi la scomposizione zona/agente/orario e nel caso
+  Latte ha perso un'occorrenza articolo e creato un'associazione inattesa.
+  Conseguenza: doppio binario confermato; AI esplorativa, parser deterministico
+  certificato per l'uso quotidiano. Nessun dato remoto scritto.

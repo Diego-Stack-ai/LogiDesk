@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LogiDesk — confronto ingestion locale</title>
+<style>body{font:15px system-ui;margin:24px;background:#f3f6fb;color:#172033}main{max-width:1200px;margin:auto}.card{background:#fff;padding:20px;border-radius:14px;box-shadow:0 4px 18px #20305018;margin:16px 0}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid #d9e1ee;padding:8px;text-align:left;vertical-align:top}th{background:#eaf0fa}.diff{background:#fff1f0}.equal{background:#effaf3}code{white-space:pre-wrap}.warning{color:#a33;font-weight:700}</style></head>
+<body><main><h1>Confronto ingestion locale</h1><p>Seleziona uno o più <code>comparison.json</code>. La pagina legge soltanto file locali e non contatta Firebase.</p>
+<input id="files" type="file" accept="application/json,.json" multiple><div id="output"></div></main>
+<script>
+const esc=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+document.getElementById('files').addEventListener('change',async event=>{const out=document.getElementById('output');out.replaceChildren();for(const file of event.target.files){const data=JSON.parse(await file.text());const card=document.createElement('section');card.className='card';const rows=(data.rows||[]).map(row=>`<tr class="${row.status==='EQUAL'?'equal':'diff'}"><td>${esc(row.group)}</td><td>${esc(row.field)}</td><td><code>${esc(JSON.stringify(row.values,null,2))}</code></td><td>${esc(row.status)}</td></tr>`).join('');const article=data.article_analysis||{};card.innerHTML=`<h2>${esc(data.numero_ddt||file.name)}</h2><p>Tenant: ${esc(data.tenant_id)} · File: ${esc(data.source_file)} · Scritture: ${esc(data.writes_performed)}</p><table><thead><tr><th>Gruppo</th><th>Campo</th><th>Valori</th><th>Esito</th></tr></thead><tbody>${rows}</tbody></table><h3>Articoli</h3><pre>${esc(JSON.stringify(article,null,2))}</pre><p class="warning">Ogni differenza richiede revisione umana. Questa pagina non salva dati.</p>`;out.appendChild(card);}});
+</script></body></html>
