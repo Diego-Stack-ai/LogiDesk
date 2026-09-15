@@ -710,27 +710,41 @@
             });
         };
 
-        function getTenantDbPath(typeName) {
-            const t = typeName.toUpperCase();
-            if (t === "GRAND_CHEF" || t === "GRAND CHEF" || t === "GRAN CHEF") {
-                return ['clienti', 'GRAN CHEF'];
+        const CLASSIC_IMPORT_PROFILES = Object.freeze({
+            FRUTTA: Object.freeze({ tenantId: 'DNR', sourceChannel: 'FRUTTA', fileKind: 'PDF', ingestionProfileId: 'dnr-frutta-ddt-pdf', ingestionProfileVersion: 1 }),
+            LATTE: Object.freeze({ tenantId: 'DNR', sourceChannel: 'LATTE', fileKind: 'PDF', ingestionProfileId: 'dnr-latte-ddt-pdf', ingestionProfileVersion: 1 }),
+            GRAN_CHEF: Object.freeze({ tenantId: 'GRAN CHEF', sourceChannel: 'ALTRO', fileKind: 'XLSX', ingestionProfileId: 'gran-chef-consegne-xlsx', ingestionProfileVersion: 1 }),
+            CATTEL: Object.freeze({ tenantId: 'CATTEL', sourceChannel: 'ALTRO', fileKind: 'XLSX', ingestionProfileId: 'cattel-consegne-xlsx', ingestionProfileVersion: 1 }),
+            DAC: Object.freeze({ tenantId: 'DAC', sourceChannel: 'ALTRO', fileKind: 'XLSX', ingestionProfileId: 'dac-consegne-xlsx', ingestionProfileVersion: 1 })
+        });
+
+        function normalizeClassicImportKey(typeName) {
+            const key = String(typeName || '').trim().toUpperCase().replace(/[\s-]+/g, '_');
+            return key === 'GRAND_CHEF' || key === 'GRANCHEF' ? 'GRAN_CHEF' : key;
+        }
+
+        function getClassicImportProfile(typeName) {
+            const key = normalizeClassicImportKey(typeName);
+            const profile = CLASSIC_IMPORT_PROFILES[key];
+            if (!profile) {
+                throw new Error(`Sorgente di importazione non riconosciuta: ${typeName || '(vuota)'}. Caricamento interrotto.`);
             }
-            if (t === "CATTEL") {
-                return ['clienti', 'CATTEL'];
-            }
-            if (t === "DAC") {
-                return ['clienti', 'DAC'];
-            }
-            return ['clienti', 'DNR'];
+            return { key, ...profile };
         }
 
         async function uploadFileToStorage(file, typeName) {
             if (!file) return null;
+            const importProfile = getClassicImportProfile(typeName);
             const dateInput = document.getElementById('master-date-selector').value;
+            if (!dateInput) throw new Error('Data di lavoro mancante. Caricamento interrotto.');
             const dateStr = dateInput.split('-').reverse().join('-');
             const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-            const isExcel = file.name.endsWith('.xlsx');
-            const path = `input_pdf_fornitore/${typeName}_${dateStr}_${safeName}`;
+            const isExcel = file.name.toLowerCase().endsWith('.xlsx');
+            const actualFileKind = isExcel ? 'XLSX' : 'PDF';
+            if (actualFileKind !== importProfile.fileKind) {
+                throw new Error(`Formato ${actualFileKind} non valido per ${importProfile.key}. Atteso ${importProfile.fileKind}.`);
+            }
+            const path = `input_pdf_fornitore/${importProfile.key}_${dateStr}_${safeName}`;
             const storageRef = ref(storage, path);
             
             const fillDiv = document.getElementById('progress-fill');
@@ -750,37 +764,40 @@
                     (error) => reject(error), 
                     async () => {
                         try {
-                            const tenantPath = getTenantDbPath(typeName);
-                            const jobsRef = collection(db, ...tenantPath, 'processing_jobs');
-                            
-                            let competenzaVal = typeName.toUpperCase();
-                            const tnUpper = typeName.toUpperCase();
-                            if (tnUpper === "FRUTTA") {
-                                competenzaVal = "DNR_FRUTTA";
-                            } else if (tnUpper === "LATTE") {
-                                competenzaVal = "DNR_LATTE";
-                            } else if (tnUpper === "GRAND_CHEF" || tnUpper === "GRAND CHEF" || tnUpper === "GRAN CHEF") {
-                                competenzaVal = "GRAN_CHEF";
-                            } else if (tnUpper === "CATTEL") {
-                                competenzaVal = "CATTEL";
-                            } else if (tnUpper === "DAC") {
-                                competenzaVal = "DAC";
-                            }
+                            const jobsRef = collection(db, 'clienti', importProfile.tenantId, 'processing_jobs');
+                            const competenzaVal = importProfile.sourceChannel === 'ALTRO'
+                                ? importProfile.key
+                                : `${importProfile.tenantId}_${importProfile.sourceChannel}`;
                             
                             const jobDoc = await addDoc(jobsRef, {
+                                contract_version: "2.0",
                                 status: "uploaded",
-                                type: typeName.toUpperCase(),
+                                type: importProfile.key,
+                                tenantId: importProfile.tenantId,
+                                sourceChannel: importProfile.sourceChannel,
                                 competenza: competenzaVal,
                                 data_lavoro: dateStr, // Forziamo la data scelta nel calendario
                                 storage_path: path,
                                 is_excel: isExcel,
+                                source: {
+                                    originalFilename: file.name,
+                                    storagePath: path,
+                                    fileType: file.type || (isExcel ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/pdf'),
+                                    fileSize: file.size
+                                },
+                                classification: {
+                                    mode: 'CLASSIC',
+                                    operatorConfirmedSource: true,
+                                    ingestionProfileId: importProfile.ingestionProfileId,
+                                    ingestionProfileVersion: importProfile.ingestionProfileVersion
+                                },
                                 created_at: serverTimestamp(),
                                 updated_at: serverTimestamp()
                             });
                             
                             // Avvio immediato della funzione cloud
                             const processaJob = httpsCallable(functions, 'processa_job_pdf', { timeout: 540000 });
-                            processaJob({ job_id: jobDoc.id, tenant: tenantPath[1] }).catch(e => {
+                            processaJob({ job_id: jobDoc.id, tenant: importProfile.tenantId }).catch(e => {
                                 console.error("Errore trigger:", e);
                                 alert("Errore durante l'elaborazione: " + e.message);
                             });
@@ -900,11 +917,13 @@
             sliced.forEach(data => {
                 let icon = 'hourglass_empty';
                 let color = '#f59e0b';
-                if (data.status === 'completed') { icon = 'check_circle'; color = '#10b981'; }
+                if (data.status === 'completed' || data.status === 'ready_for_certification') { icon = 'check_circle'; color = '#10b981'; }
+                if (data.status === 'awaiting_domain_review') { icon = 'rate_review'; color = '#f59e0b'; }
+                if (data.status === 'failed_no_documents') { icon = 'find_in_page'; color = '#ef4444'; }
                 if (data.status === 'error') { icon = 'error'; color = '#ef4444'; }
                 if (data.status === 'processing') { icon = 'autorenew'; color = '#3b82f6'; }
 
-                if (data.status === 'completed') {
+                if (data.status === 'completed' || data.status === 'awaiting_domain_review') {
                     if (initialLoad) {
                         notifiedJobs.add(data.id);
                     } else if (!notifiedJobs.has(data.id)) {
@@ -954,7 +973,9 @@
                             </div>
                             <div style="color: var(--text-muted); font-size: 13px;">Stato: <b style="color: ${color}; text-transform: uppercase;">${data.status}</b></div>
                             ${data.error_message ? `<div style="color: #ef4444; font-size: 12px; margin-top: 6px; background: #fef2f2; border: 1px dashed #fca5a5; padding: 6px 10px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; word-break: break-word;">❌ Errore: ${data.error_message}</div>` : ''}
+                            ${data.message ? `<div style="color: #475569; font-size: 12px; margin-top: 6px;">${data.message}</div>` : ''}
                             ${data.data_rilevata ? `<div style="font-size: 12px; color: #4f46e5; font-weight: 700; margin-top:2px;">📅 Data nel file: ${data.data_rilevata}</div>` : ''}
+                            ${data.page_accounting ? `<div style="font-size: 11px; color: ${data.page_accounting.skipped ? '#ef4444' : '#64748b'}; margin-top:2px;">Pagine: ${data.page_accounting.recognized}/${data.page_accounting.received} riconosciute${data.page_accounting.skipped ? ` — ${data.page_accounting.skipped} da verificare` : ''}</div>` : ''}
                             <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
                                 ${data.nuovi_clienti ? `<span style="background:#fee2e2; color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">${data.nuovi_clienti} Punti da verificare</span>` : ''}
                                 ${data.nuovi_articoli ? `<span style="background:#fef3c7; color:#d97706; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">${data.nuovi_articoli} Articoli Ignoti</span>` : ''}
@@ -1401,38 +1422,26 @@
             let loadedClients = [];
             let tipologie_caricate = [];
             window.ultime_tipologie_caricate = tipologie_caricate;
-            let tenant_caricati = [];
-            let cliente_zona_caricati = [];
             
             if (filesFrutta.length > 0) {
                 loadedClients.push('Frutta');
                 tipologie_caricate.push('FRUTTA');
-                tenant_caricati.push('DNR');
-                cliente_zona_caricati.push('DNR');
             }
             if (filesLatte.length > 0) {
                 loadedClients.push('Latte');
                 tipologie_caricate.push('LATTE');
-                tenant_caricati.push('DNR');
-                cliente_zona_caricati.push('DNR');
             }
             if (filesChef.length > 0) {
                 loadedClients.push('Gran Chef');
                 tipologie_caricate.push('GRAND_CHEF');
-                tenant_caricati.push('GRAN CHEF');
-                cliente_zona_caricati.push('GRAN CHEF');
             }
             if (filesCattel.length > 0) {
                 loadedClients.push('Cattel');
                 tipologie_caricate.push('CATTEL');
-                tenant_caricati.push('CATTEL');
-                cliente_zona_caricati.push('CATTEL');
             }
             if (filesDac.length > 0) {
                 loadedClients.push('DAC');
                 tipologie_caricate.push('DAC');
-                tenant_caricati.push('DAC');
-                cliente_zona_caricati.push('DAC');
             }
 
             if (loadedClients.length === 0) {
@@ -1468,27 +1477,8 @@
             const statText = document.getElementById('progress-status-text');
 
             try {
-                // 1. PULIZIA PREVENTIVA SELETTIVA
-                statText.textContent = `Pulizia preventiva dei vecchi dati (${clientsStr})...`;
-                console.log('[Upload] Inizio pulizia preventiva per:', tipologie_caricate);
-                
-                try {
-                    const eliminaGiornataFn = httpsCallable(functions, 'elimina_giornata_logistica', { timeout: 120000 });
-                    await eliminaGiornataFn({
-                        data_consegna: dateFormatted,
-                        soft_delete: false,
-                        tipologie_da_eliminare: tipologie_caricate,
-                        tenant_da_eliminare: tenant_caricati,
-                        cliente_zona_da_eliminare: cliente_zona_caricati
-                    });
-                    console.log('[Upload] Pulizia completata. Inizio caricamento file.');
-                } catch (err) {
-                    if (err?.code === "functions/permission-denied" || err?.code === "permission-denied") {
-                        console.warn("[Upload] Pulizia preventiva non autorizzata: proseguo senza cancellazione.");
-                    } else {
-                        throw err;
-                    }
-                }
+                // I dati esistenti non vengono eliminati prima che i nuovi job siano validati.
+                statText.textContent = `Caricamento non distruttivo dei dati (${clientsStr})...`;
 
                 // Upload Frutta
                 for (let file of filesFrutta) {
@@ -1586,5 +1576,3 @@
     </script>
 </body>
 </html>
-
-

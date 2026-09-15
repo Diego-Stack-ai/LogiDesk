@@ -92,6 +92,8 @@ Per evitare qualsiasi malinteso tra sviluppatori, architetti ed agenti AI, i seg
 1. **Pariteticità dei Tenant**: DNR non è il tenant radice o proprietario dell'app, ma un committente cliente come gli altri.
 2. **Canali DNR**: `DNR_FRUTTA` e `DNR_LATTE` non sono due tenant distinti, ma rappresentano `tenantId = "DNR"` con `sourceChannel = "FRUTTA"` o `sourceChannel = "LATTE"`.
 3. **Isolamento Anagrafico**: Ciascun committente possiede il proprio sotto-albero anagrafico in Firestore (`clienti/{tenantId}/raccolta clienti`).
+4. **Tenant Sconosciuto**: Qualsiasi sorgente o identificativo tenant non presente nell'anagrafica canonica causa un `HARD STOP`. Non è consentito ricondurlo implicitamente a DNR o a un altro tenant esistente.
+5. **Canale Residuale Esplicito**: Per un tenant valido, un canale reale diverso da quelli specializzati può essere rappresentato con `sourceChannel = "ALTRO"`. `ALTRO` non corregge e non sostituisce mai un tenant sconosciuto e deve essere confermato dall'operatore.
 
 ---
 
@@ -174,6 +176,14 @@ Durante l'importazione (AI Ingestion), se viene riconosciuto un nuovo dataset ap
 - **Reconciliation Decision**: scelta campo per campo (`KEEP_EXISTING`, `REPLACE`, `ADD_AS_NOTE`) che resta separata dal salvataggio effettivo.
 - Un cambiamento della firma strutturale riporta il documento in revisione; non è consentito riutilizzare silenziosamente un parser certificato per una struttura differente.
 
+### Modalità di Ingestion
+L'importazione supporta due modalità complementari, entrambe soggette a validazione prima della persistenza canonica:
+
+1. **Importazione Classica Assistita da Pulsanti**: l'operatore conosce con certezza la sorgente e seleziona un profilo configurato. La selezione determina esplicitamente `tenantId` e `sourceChannel`; l'AI non viene invocata e non genera costi di inferenza.
+2. **Importazione AI per Sorgente Incerta o Nuovo Formato**: l'operatore usa un ingresso dedicato quando la sorgente o il formato non sono conosciuti. L'AI propone tenant, canale, formato e mapping, ma l'operatore deve confermare. Un tenant proposto ma sconosciuto attiva il gate di onboarding e non viene creato automaticamente.
+
+In entrambe le modalità, una chiave di ingresso sconosciuta o una combinazione tenant/canale non valida arresta la procedura. Il fallback automatico a DNR è vietato.
+
 ---
 
 ## 7. ANOMALY OWNERSHIP E TIME WINDOWS
@@ -211,5 +221,4 @@ Vedere report output per il dettaglio.
 
 ## TERMINOLOGIA DEFINITIVA CORE V1
 Azienda (Loge Solution) -> Serve i **Tenant** (Clienti Commerciali) -> I quali gestiscono i **Punti_Consegna** (Destinazioni Fisiche).
-
 

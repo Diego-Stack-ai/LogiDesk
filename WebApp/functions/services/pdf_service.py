@@ -8,7 +8,14 @@ from io import BytesIO
 from firebase_admin import firestore, storage
 from firebase_functions import https_fn
 from infrastructure.firebase_setup import get_db, BUCKET_NAME
+from infrastructure.company_context import get_current_company_id
 from core.utils import clean_client_code, _is_primary_code
+from core.ingestion_contract import (
+    build_canonical_delivery_point_index,
+    IngestionContractError,
+    determine_ingestion_outcome,
+    validate_v2_job,
+)
 import gc
 
 DATA_DDT_RE = re.compile(r'del\s+(\d{2})/(\d{2})/(\d{4})', re.I)
@@ -17,16 +24,65 @@ CAP_RE = re.compile(r"\b(\d{5})\b")
 PROVINCIA_RE = re.compile(r"\(([A-Z]{2})\)")
 CAUSALE_RE = re.compile(r'(?:conto di|ordine e conto di)\s+([A-Z]\d{4})(?:\s+H(\d{2}))?(?:\s+(\d{3}))?', re.I)
 NUM_DDT_RE = re.compile(r'DDT\s*[Nn][°º\.\s]*([A-Za-z0-9/-]+)', re.I)
+
+
+def _resolve_canonical_tenant_id(db, tenant_name):
+    normalized_name = str(tenant_name or "").strip().upper()
+    matches = []
+    tenants_ref = (
+        db.collection("aziende")
+        .document(get_current_company_id())
+        .collection("tenants")
+    )
+    for tenant_doc in tenants_ref.stream():
+        tenant_data = tenant_doc.to_dict() or {}
+        candidate_names = {
+            str(tenant_doc.id).strip().upper(),
+            str(tenant_data.get("nome") or "").strip().upper(),
+            str(tenant_data.get("codice") or "").strip().upper(),
+        }
+        if normalized_name in candidate_names:
+            matches.append(tenant_doc.id)
+
+    if len(matches) != 1:
+        raise IngestionContractError(
+            f"Tenant canonico {tenant_name!r} non risolto in modo univoco. Match trovati: {len(matches)}."
+        )
+    return matches[0]
+
+
+def _load_canonical_master_data(db, tenant_name, source_channel):
+    tenant_id = _resolve_canonical_tenant_id(db, tenant_name)
+    tenant_ref = (
+        db.collection("aziende")
+        .document(get_current_company_id())
+        .collection("tenants")
+        .document(tenant_id)
+    )
+    points = [doc.to_dict() or {} for doc in tenant_ref.collection("punti_consegna").stream()]
+    point_index = build_canonical_delivery_point_index(points, source_channel)
+    article_index = {
+        doc.id: doc.to_dict() or {}
+        for doc in tenant_ref.collection("import_mappings").stream()
+    }
+    return point_index, article_index, tenant_id
+
+
 def handle_processa_job_pdf(req: https_fn.CallableRequest):
     # Retrieve job_id and tenant from the request payload
     data = req.data
     job_id = data.get("job_id")
-    tenant = data.get("tenant", "DNR")
+    tenant = data.get("tenant")
     
     if not job_id:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message="job_id mancante."
+        )
+    if not isinstance(tenant, str) or not tenant.strip():
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message="tenant mancante. Il tenant non può essere dedotto automaticamente."
         )
         
     # Local import to avoid circular dependency since core_processa_job_pdf is still in main.py
@@ -128,6 +184,7 @@ def _processa_pdf_core_logic(pdf_bytes: bytes, etichetta: str, db_mappati: dict,
     visti = {}
     blocchi = {}
     chiave_zona = {}
+    skipped_pages = []
     
     reader = PdfReader(io.BytesIO(pdf_bytes))
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
@@ -137,6 +194,15 @@ def _processa_pdf_core_logic(pdf_bytes: bytes, etichetta: str, db_mappati: dict,
             d, l, num_ddt, zona = _estrai_data_luogo(text)
             if not d or not l:
                 print(f"[WARN] Pagina {i+1} saltata. Data estratta: {d or 'MANCANTE'}, Codice estratto: {l or 'MANCANTE'}. Motivo: Elementi identificativi assenti.")
+                skipped_pages.append({
+                    "page": i + 1,
+                    "reason": "MISSING_REQUIRED_IDENTIFIERS",
+                    "missing": [
+                        field
+                        for field, value in (("document_date", d), ("delivery_code", l))
+                        if not value
+                    ],
+                })
                 continue
             
             chiave = (l, d, num_ddt)
@@ -234,7 +300,14 @@ def _processa_pdf_core_logic(pdf_bytes: bytes, etichetta: str, db_mappati: dict,
         "nuovi_dati": nuovi_dati,
         "nuovi_orari": nuovi_orari,
         "nuovi_articoli": nuovi_articoli,
-        "deliveries": deliveries_list
+        "deliveries": deliveries_list,
+        "page_accounting": {
+            "received": len(reader.pages),
+            "recognized": len(reader.pages) - len(skipped_pages),
+            "skipped": len(skipped_pages),
+            "skipped_pages": skipped_pages,
+            "ddt_extracted": len(deliveries_list),
+        },
     }
 
 def parse_fascia_oraria(val):
@@ -790,7 +863,7 @@ def enrich_delivery_with_canonical_schema(
     
     return enriched
 
-def core_processa_job_pdf(job_id, tenant="DNR"):
+def core_processa_job_pdf(job_id, tenant):
     start_time = time.time()
     db = get_db()
     job_ref = db.collection('clienti').document(tenant).collection('processing_jobs').document(job_id)
@@ -815,6 +888,24 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
     
     if not data: return {"status": "errore", "message": "Job non trovato"}
     if data.get("status") != "uploaded": return {"status": "errore", "message": "Stato job non valido per elaborazione"}
+
+    contract_version = data.get("contract_version")
+    validated_profile = None
+    if contract_version is not None:
+        try:
+            if contract_version != "2.0":
+                raise IngestionContractError("Versione contratto ingestion non supportata.")
+            validated_profile = validate_v2_job(data, tenant)
+        except IngestionContractError as exc:
+            job_ref.update({
+                "status": "error",
+                "error_code": "INVALID_INGESTION_CONTEXT",
+                "error_message": str(exc),
+                "updated_at": firestore.SERVER_TIMESTAMP,
+                "failed_at": firestore.SERVER_TIMESTAMP,
+            })
+            return {"status": "errore", "message": str(exc)}
+
     data_lavoro_forzata = data.get('data_lavoro')
     
     competenza = data.get("competenza") or data.get("type", "FRUTTA").upper()
@@ -828,18 +919,32 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
         etichetta = data.get("type", "FRUTTA").upper()
         is_excel = data.get("is_excel", False) or etichetta == "GRAND_CHEF"
         
-        # 1. Carica Mappatura dal tenant corretto per isolare i dati
-        db_mappati = {}
-        clienti_ref = db.collection('clienti').document(tenant).collection('raccolta clienti')
-        for doc in clienti_ref.stream():
-            d = doc.to_dict()
-            cf = str(d.get('codice_frutta') or '').strip().lower()
-            cl = str(d.get('codice_latte') or '').strip().lower()
-            if cf and cf != 'p00000' and cf != 'nan': db_mappati[cf] = d
-            if cl and cl != 'p00000' and cl != 'nan': db_mappati[cl] = d
-        
-        articoli_ref = db.collection('clienti').document(tenant).collection('codici articoli')
-        db_articoli = {doc.id: doc.to_dict() for doc in articoli_ref.stream()}
+        # 1. Carica Master Data dalla sorgente dichiarata dal profilo.
+        if validated_profile and validated_profile.master_data_source == "CANONICAL":
+            db_mappati, db_articoli, canonical_tenant_id = _load_canonical_master_data(
+                db,
+                tenant,
+                validated_profile.source_channel,
+            )
+            job_ref.update({
+                "master_data_source": "CANONICAL",
+                "canonical_tenant_id": canonical_tenant_id,
+                "known_delivery_points": len(db_mappati),
+                "known_articles": len(db_articoli),
+                "updated_at": firestore.SERVER_TIMESTAMP,
+            })
+        else:
+            db_mappati = {}
+            clienti_ref = db.collection('clienti').document(tenant).collection('raccolta clienti')
+            for doc in clienti_ref.stream():
+                d = doc.to_dict()
+                cf = str(d.get('codice_frutta') or '').strip().lower()
+                cl = str(d.get('codice_latte') or '').strip().lower()
+                if cf and cf != 'p00000' and cf != 'nan': db_mappati[cf] = d
+                if cl and cl != 'p00000' and cl != 'nan': db_mappati[cl] = d
+
+            articoli_ref = db.collection('clienti').document(tenant).collection('codici articoli')
+            db_articoli = {doc.id: doc.to_dict() for doc in articoli_ref.stream()}
         
         # 2. Download
         blob = bucket.blob(path)
@@ -879,6 +984,16 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
         nuovi_dati = risultato["nuovi_dati"]
         nuovi_orari = risultato.get("nuovi_orari", {})
         nuovi_articoli = risultato.get("nuovi_articoli", {})
+        page_accounting = risultato.get("page_accounting")
+        skipped_pages = page_accounting.get("skipped", 0) if page_accounting else 0
+
+        outcome_status, blocking_reasons = determine_ingestion_outcome(
+            deliveries_count=len(deliveries),
+            new_delivery_points=len(nuovi_dati),
+            new_articles=len(nuovi_articoli),
+            new_time_windows=len(nuovi_orari),
+            skipped_pages=skipped_pages,
+        )
         
         # 5. Salvataggio nuovi dati dinamici nel tenant corretto
         for l, info in nuovi_dati.items():
@@ -893,9 +1008,12 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
             
         if not deliveries:
             job_ref.update({
-                "status": "completed", 
-                "completed_at": firestore.SERVER_TIMESTAMP,
-                "message": "Nessun DDT trovato (Clienti da mappare?)",
+                "status": outcome_status,
+                "failed_at": firestore.SERVER_TIMESTAMP,
+                "error_code": "NO_DOCUMENTS_EXTRACTED",
+                "message": "Nessun DDT trovato. Il job non è certificabile.",
+                "blocking_reasons": blocking_reasons,
+                "page_accounting": page_accounting,
                 "nuovi_clienti": len(nuovi_dati),
                 "nuovi_articoli": len(nuovi_articoli),
                 "nuovi_orari": len(nuovi_orari),
@@ -904,7 +1022,12 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
                 "nuovi_orari_list": list(nuovi_orari.keys()),
                 "updated_at": firestore.SERVER_TIMESTAMP
             })
-            return {"status": "ok", "pdf_generati": 0}
+            return {
+                "status": "errore",
+                "code": "NO_DOCUMENTS_EXTRACTED",
+                "message": "Nessun DDT trovato. Il job non è certificabile.",
+                "pdf_generati": 0,
+            }
             
         # Applica il campo competenza a ciascun DDT
         for ddt in deliveries:
@@ -918,7 +1041,7 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
             data_elab = deliveries[0]["data"]
             print(f"[INFO] Uso data estratta dal file: {data_elab}")
         
-        # --- PULIZIA PREVENTIVA RIMOSSA (Gestita centralmente al caricamento) ---
+        # Nessuna pulizia preventiva: gli output restano in staging fino alla futura certificazione.
         print(f"[INFO] Elaborazione file per {data_elab} - {etichetta}")
 
         # 4. Upload split e salvataggio DDT
@@ -935,7 +1058,10 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
             "data_elab": data_elab,
             "tipo": etichetta,
             "competenza": competenza,
-            "deliveries": deliveries
+            "deliveries": deliveries,
+            "page_accounting": page_accounting,
+            "ingestion_status": outcome_status,
+            "blocking_reasons": blocking_reasons,
         }
         meta_path = f"split_ddt/{data_elab}/{etichetta}/ddt_estratti_{job_id}.json"
         bucket.blob(meta_path).upload_from_string(
@@ -945,10 +1071,12 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
         
         elapsed = time.time() - start_time
         job_ref.update({
-            "status": "completed",
-            "completed_at": firestore.SERVER_TIMESTAMP,
+            "status": outcome_status,
+            "processing_completed_at": firestore.SERVER_TIMESTAMP,
             "data_rilevata": data_elab,
             "meta_path_json": meta_path,
+            "page_accounting": page_accounting,
+            "blocking_reasons": blocking_reasons,
             "pdf_generati": len(split_files),
             "nuovi_clienti": len(nuovi_dati),
             "nuovi_articoli": len(nuovi_articoli),
@@ -960,7 +1088,13 @@ def core_processa_job_pdf(job_id, tenant="DNR"):
             "updated_at": firestore.SERVER_TIMESTAMP
         })
         
-        return {"status": "ok", "pdf_generati": len(split_files), "tempo_sec": round(elapsed, 2)}
+        return {
+            "status": "ok",
+            "job_status": outcome_status,
+            "blocking_reasons": blocking_reasons,
+            "pdf_generati": len(split_files),
+            "tempo_sec": round(elapsed, 2),
+        }
         
     except Exception as e:
         job_ref.update({"status": "error", "error_message": str(e), "updated_at": firestore.SERVER_TIMESTAMP, "failed_at": firestore.SERVER_TIMESTAMP})

@@ -459,6 +459,16 @@ L'**Orchestratore Centrale AI** è una componente di evoluzione futura destinata
 * **Rollback**: Mantenimento temporaneo delle funzioni di lettura legacy per garantire la compatibilità con i viaggi storici.
 * **Migrazione**: Script di normalizzazione in sola lettura senza alterare i dati di produzione.
 
+### ADR-002: Doppia Modalità di Ingestion e Assenza di Fallback Tenant
+* **Data**: Settembre 2026
+* **Stato**: Approvata
+* **Contesto**: L'invocazione dell'AI per ogni file introduce costi non necessari quando l'operatore conosce già con certezza la sorgente. Il flusso legacy, inoltre, assegna a DNR i tipi non riconosciuti.
+* **Decisione**: L'ingestion espone due ingressi distinti: importazione classica tramite pulsanti/profili noti, senza invocazione AI, e importazione AI opzionale per sorgenti incerte o nuovi formati. Ogni ingresso classico risolve una coppia esplicita `tenantId`/`sourceChannel`; una chiave sconosciuta causa un `HARD STOP`. Per un tenant valido è ammesso il canale residuale esplicito `ALTRO`, previa conferma dell'operatore. `ALTRO` non è un tenant e non può sanare un tenant sconosciuto.
+* **Alternative Considerate**: Invocare sempre l'AI (scartata per costo e latenza); mantenere DNR come fallback (scartata perché viola isolamento e lineage); creare automaticamente un nuovo tenant (scartata perché priva di conferma e onboarding).
+* **Conseguenze**: Il frontend deve usare una registry chiusa degli ingressi classici; backend e job devono validare tenant e canale; l'ingresso AI deve avere conferma umana e sospendere i tenant non censiti.
+* **Rollback**: La modalità AI può essere disabilitata mantenendo disponibili i soli profili classici; non viene reintrodotto alcun fallback tenant.
+* **Migrazione**: Prima fase sul formato dei nuovi job nei path correnti, preservando in sola lettura la compatibilità con i job legacy. La migrazione dei path Firestore/Storage resta separata e richiede approvazione dedicata.
+
 ---
 
 ## 27. GLOSSARIO E MATRICE TERMINOLOGICA `[STATO ATTUALE CONFERMATO]`
@@ -495,4 +505,3 @@ In linea con la decisione di trasformare CANTIERE in una nuova entità applicati
 - **Git Repository**: I repository per l'app legacy (Produzione) e la nuova entità (Cantiere) devono essere divisi, con pipeline e branch distinte.
 - **Firebase Project**: `log-solution-60007` (Produzione) e `log-solutions-cantiere` (Cantiere) sono isolati in modo assoluto. Nessuna Cloud Function del Cantiere può leggere/scrivere la Produzione, salvo tramite script MIGRATION_TOOL/AUDIT_READ_ONLY esplicitamente autorizzati.
 - **Struttura Dati Target**: Cantiere implementa la nuova architettura dati target (es. `tenants/{tenant}/punti_consegna/{id_punto}`). La Produzione manterrà i dati legacy. L'ingestion in Cantiere avverrà tramite esportazione read-only, normalizzazione, validazione e inserimento.
-
