@@ -811,7 +811,10 @@
             });
         }
 
-        window.eliminaJob = async (jobId, storagePath, tenant = 'DNR', skipConfirm = false) => {
+        window.eliminaJob = async (jobId, storagePath, tenant, skipConfirm = false) => {
+            if (typeof tenant !== 'string' || !tenant.trim()) {
+                throw new Error('Tenant mancante: eliminazione del job interrotta.');
+            }
             if(!skipConfirm && !confirm("Sei sicuro di voler eliminare questo Job? Verranno rimossi anche i DDT associati.")) return;
             
             try {
@@ -935,7 +938,7 @@
                         if (n_c > 0 || n_a > 0 || n_o > 0) {
                             hasNewAnomalies = true;
                             combinedMsg += `<div style='text-align:left; font-size:14px; margin-top:10px; padding:12px; background:#f8fafc; border-radius:8px; border: 1px solid #e2e8f0;'>`;
-                            combinedMsg += `<div style='color:#0f172a; font-size:15px; font-weight:800; text-transform:uppercase; margin-bottom:10px;'>📌 JOB ${data.type} <span style='font-size:10px; color:#94a3b8; font-weight:700;'>[${data.tenant || 'DNR'}]</span></div>`;
+                            combinedMsg += `<div style='color:#0f172a; font-size:15px; font-weight:800; text-transform:uppercase; margin-bottom:10px;'>📌 JOB ${data.type} <span style='font-size:10px; color:#94a3b8; font-weight:700;'>[${data.tenant || 'TENANT MANCANTE'}]</span></div>`;
                             
                             if (n_c > 0) {
                                 let listC = data.nuovi_clienti_list ? data.nuovi_clienti_list.join(', ') : '';
@@ -969,7 +972,7 @@
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 15px; display:flex; align-items:center; gap:8px;">
                                 Job ${data.type}
-                                <span style="font-size: 10px; background: ${data.tenant === 'GRAN CHEF' ? '#fef3c7' : (data.tenant === 'CATTEL' ? '#e0f2fe' : (data.tenant === 'DAC' ? '#f5f3ff' : '#e0e7ff'))}; color: ${data.tenant === 'GRAN CHEF' ? '#d97706' : (data.tenant === 'CATTEL' ? '#0369a1' : (data.tenant === 'DAC' ? '#8b5cf6' : '#4f46e5'))}; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${data.tenant || 'DNR'}</span>
+                                <span style="font-size: 10px; background: ${data.tenant === 'GRAN CHEF' ? '#fef3c7' : (data.tenant === 'CATTEL' ? '#e0f2fe' : (data.tenant === 'DAC' ? '#f5f3ff' : '#e0e7ff'))}; color: ${data.tenant === 'GRAN CHEF' ? '#d97706' : (data.tenant === 'CATTEL' ? '#0369a1' : (data.tenant === 'DAC' ? '#8b5cf6' : '#4f46e5'))}; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${data.tenant || 'TENANT MANCANTE'}</span>
                             </div>
                             <div style="color: var(--text-muted); font-size: 13px;">Stato: <b style="color: ${color}; text-transform: uppercase;">${data.status}</b></div>
                             ${data.error_message ? `<div style="color: #ef4444; font-size: 12px; margin-top: 6px; background: #fef2f2; border: 1px dashed #fca5a5; padding: 6px 10px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; word-break: break-word;">❌ Errore: ${data.error_message}</div>` : ''}
@@ -986,7 +989,7 @@
                         </div>
 
                         <div style="display:flex; gap:8px;">
-                            <button onclick="window.eliminaJob('${data.id}', '${data.storage_path}', '${data.tenant || 'DNR'}')" style="background:#fee2e2; color:#ef4444; border:none; padding:8px; border-radius:8px; cursor:pointer;" title="Elimina Job e DDT associati">
+                            <button onclick="window.eliminaJob('${data.id}', '${data.storage_path}', '${data.tenant || ''}')" style="background:#fee2e2; color:#ef4444; border:none; padding:8px; border-radius:8px; cursor:pointer;" title="Elimina Job e DDT associati" ${data.tenant ? '' : 'disabled'}>
                                 <span class="material-icons-round" style="font-size:18px;">delete</span>
                             </button>
                         </div>
@@ -1272,7 +1275,11 @@
                 } catch (e) { console.warn("Archiviazione mensile automatica check:", e); }
             }, 3000);
 
-            const activeTenant = localStorage.getItem('activeTenant') || 'DNR';
+            const activeTenant = localStorage.getItem('activeTenant');
+            if (!activeTenant) {
+                console.warn('[Reports] Tenant attivo mancante: sottoscrizione non avviata.');
+                return;
+            }
             subscribeToReportsLogistici(activeTenant, (snapshot) => {
                 const reportsList = document.getElementById('reports-list');
                 let docsData = [];

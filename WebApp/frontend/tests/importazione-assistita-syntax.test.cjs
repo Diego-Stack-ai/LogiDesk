@@ -27,3 +27,11 @@ test('local ingestion lab has no DNR tenant or source-channel fallback', () => {
     assert.match(html, /id="tenant"[^>]*required/i);
     assert.match(html, /source_channel:\$\('sourceChannel'\)\.value\.trim\(\)\|\|null/);
 });
+
+test('classic ingestion UI never invents DNR for a missing tenant', () => {
+    const htmlPath = path.resolve(__dirname, '..', 'elaborazione.html');
+    const html = fs.readFileSync(htmlPath, 'utf8');
+    assert.doesNotMatch(html, /tenant\s*=\s*['"]DNR['"]/);
+    assert.doesNotMatch(html, /tenant\s*\|\|\s*['"]DNR['"]/);
+    assert.doesNotMatch(html, /activeTenant['"]\)\s*\|\|\s*['"]DNR['"]/);
+});
